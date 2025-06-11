@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tests', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->unsignedBigInteger('formateur_id');
             $table->integer('resultat');
             $table->integer('pourcentage');

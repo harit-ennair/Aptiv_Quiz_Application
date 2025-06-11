@@ -17,9 +17,4 @@ class repo extends Model
         'create_at',
     ];
 
-//     - id : Integer
-// - description : String
-// - quz_id : Integer
-// - status : bool
-// - create_at : date
 }

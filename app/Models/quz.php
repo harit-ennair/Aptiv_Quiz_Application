@@ -15,9 +15,4 @@ class quz extends Model
     ];
 
 
-//     - id : Integer
-// - description : String
-// - repo_id : Integer 
-// - categories_id : Integer 
-// - create_at : date
 }

@@ -19,12 +19,4 @@ class test extends Model
     ];
 
 
-//     - test_id : Integer
-// - user_id : Integer
-// - quz_id : Integer
-// - description : String
-// - formateur_id : Integer
-// - resultat : integer
-// - pourcentage : integer
-// - create_at : date
 }

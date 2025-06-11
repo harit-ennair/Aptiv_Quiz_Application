@@ -14,8 +14,4 @@ protected $fillable = [
         'create_at',
     ];
 
-// - id : Integer
-// - title : String
-// - process_id : Integer
-// - create_at : date
 }

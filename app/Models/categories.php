@@ -13,7 +13,6 @@ class categories extends Model
         'title',
         'create_at',
     ];
-//     - id : Integer
-// - title : String
-// - create_at : date
+
+
 }

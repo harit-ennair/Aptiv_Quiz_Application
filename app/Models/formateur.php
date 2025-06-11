@@ -15,7 +15,4 @@ class formateur extends Model
         'identification',
     ];
 
-//     - id : Integer
-// - name : String
-// - create_at : date
 }

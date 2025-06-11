@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('quzs', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('description');
-            $table->unsignedBigInteger('categories_id');
-            $table->unsignedBigInteger('test_id');
-            $table->foreign('categories_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->foreign('test_id')->references('id')->on('tests')->onDelete('cascade');
+            $table->string('title');
+            $table->unsignedBigInteger('process_id')->nullable();
+            $table->foreign('process_id')->references('id')->on('processes')->onDelete('cascade');
             $table->date('create_at')->default(now());
             $table->timestamps();
         });
+
+        //     - id : Integer
+// - title : String
+// - create_at : date
     }
 
     /**
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('quzs');
+        Schema::dropIfExists('categories');
     }
 };
