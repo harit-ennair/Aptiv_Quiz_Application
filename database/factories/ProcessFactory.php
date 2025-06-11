@@ -17,7 +17,8 @@ class ProcessFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => fake()->words(4, true),
+            'create_at' => fake()->date(),
         ];
     }
 }

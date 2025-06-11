@@ -14,4 +14,9 @@ protected $fillable = [
         'create_at',
     ];
 
+    // Relationships
+    public function categories()
+    {
+        return $this->hasMany(categories::class, 'process_id');
+    }
 }

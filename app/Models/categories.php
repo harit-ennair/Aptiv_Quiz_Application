@@ -12,7 +12,17 @@ class categories extends Model
     protected $fillable = [
         'title',
         'create_at',
+        'process_id',
     ];
 
+    // Relationships
+    public function process()
+    {
+        return $this->belongsTo(process::class, 'process_id');
+    }
 
+    public function quzs()
+    {
+        return $this->hasMany(quz::class, 'categories_id');
+    }
 }

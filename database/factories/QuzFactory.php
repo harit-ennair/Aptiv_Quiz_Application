@@ -17,7 +17,9 @@ class QuzFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'description' => fake()->paragraph(),
+            'categories_id' => \App\Models\categories::factory(),
+            'create_at' => fake()->date(),
         ];
     }
 }

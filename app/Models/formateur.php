@@ -15,4 +15,9 @@ class formateur extends Model
         'identification',
     ];
 
+    // Relationships
+    public function tests()
+    {
+        return $this->hasMany(test::class);
+    }
 }

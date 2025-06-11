@@ -17,4 +17,9 @@ class repo extends Model
         'create_at',
     ];
 
+    // Relationships
+    public function quz()
+    {
+        return $this->belongsTo(quz::class, 'quz_id');
+    }
 }

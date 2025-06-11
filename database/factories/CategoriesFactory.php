@@ -17,7 +17,9 @@ class CategoriesFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => fake()->words(3, true),
+            'process_id' => \App\Models\process::factory(),
+            'create_at' => fake()->date(),
         ];
     }
 }

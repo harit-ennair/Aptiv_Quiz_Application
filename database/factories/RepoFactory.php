@@ -17,7 +17,10 @@ class RepoFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'description' => fake()->paragraph(),
+            'quz_id' => \App\Models\quz::factory(),
+            'status' => fake()->boolean(),
+            'create_at' => fake()->date(),
         ];
     }
 }
