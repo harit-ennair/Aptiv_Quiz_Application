@@ -21,7 +21,6 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('formateur_id')->references('id')->on('formateurs')->onDelete('cascade');
             $table->date('create_at')->default(now());
-
             $table->timestamps();
         });
     }
