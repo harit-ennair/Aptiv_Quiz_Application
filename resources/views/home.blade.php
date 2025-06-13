@@ -52,11 +52,10 @@
                     @else
                         <img src="{{ asset('images/default-process.svg') }}" alt="{{ $process->title }} Icon" class="w-full h-full object-cover">
                     @endif
-                </div>
-                <div class="p-6">
+                </div>                <div class="p-6">
                     <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ $process->title }}</h3>
                     <p class="text-gray-600 mb-4">{{ $process->description }}</p>
-                    <a href="#" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 font-medium">Learn More →</a>
+                    <a href="{{ route('process.categories', $process) }}" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 font-medium">Learn More →</a>
                 </div>
             </div>
             @endforeach

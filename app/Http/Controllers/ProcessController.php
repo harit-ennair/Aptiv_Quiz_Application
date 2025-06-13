@@ -38,7 +38,10 @@ class ProcessController extends Controller
      */
     public function show(process $process)
     {
-        //
+        // Load the process with its categories
+        $process->load('categories');
+        
+        return view('process.categories', compact('process'));
     }
 
     /**

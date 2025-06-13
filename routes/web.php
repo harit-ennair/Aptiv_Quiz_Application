@@ -15,3 +15,4 @@ use App\Http\Controllers\ProcessController;
 */
 
 Route::get('/', [ProcessController::class, 'index'])->name('home');
+Route::get('/process/{process}/categories', [ProcessController::class, 'show'])->name('process.categories');
