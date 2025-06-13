@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white font-semibold px-6 py-3 rounded transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white font-semibold px-6 py-3 rounded transition-colors duration-200;
+  }
+
+  .btn-orange-outline {
+    @apply border-2 border-aptiv-orange-600 text-aptiv-orange-600 hover:bg-aptiv-orange-600 hover:text-white font-semibold px-6 py-3 rounded transition-colors duration-200;
+  }
+}

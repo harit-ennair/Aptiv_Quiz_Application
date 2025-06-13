@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" class="architecture-icon">
+  <defs>
+    <style>
+      .icon-white { fill: white; opacity: 0.3; }
+    </style>
+  </defs>
+  
+  <!-- Architecture blocks -->
+  <rect x="80" y="120" width="60" height="40" rx="5" class="icon-white"/>
+  <rect x="160" y="120" width="60" height="40" rx="5" class="icon-white"/>
+  <rect x="240" y="120" width="60" height="40" rx="5" class="icon-white"/>
+  
+  <!-- Connections -->
+  <path d="M140 140 L160 140" stroke="white" stroke-width="3" opacity="0.4"/>
+  <path d="M220 140 L240 140" stroke="white" stroke-width="3" opacity="0.4"/>
+  
+  <!-- Central processing unit -->
+  <rect x="160" y="180" width="60" height="40" rx="5" class="icon-white"/>
+  <path d="M190 160 L190 180" stroke="white" stroke-width="3" opacity="0.4"/>
+</svg>

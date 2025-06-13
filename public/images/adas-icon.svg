@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" class="adas-icon">
+  <defs>
+    <style>
+      .icon-white { fill: white; opacity: 0.3; }
+    </style>
+  </defs>
+  
+  <!-- Car outline -->
+  <path d="M80 200 L90 180 L120 160 L280 160 L310 180 L320 200 L320 220 L300 240 L100 240 L80 220 Z" class="icon-white"/>
+  
+  <!-- Radar lines -->
+  <path d="M200 160 L200 100" stroke="white" stroke-width="3" opacity="0.4"/>
+  <path d="M200 160 L160 120" stroke="white" stroke-width="2" opacity="0.3"/>
+  <path d="M200 160 L240 120" stroke="white" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Sensor dots -->
+  <circle cx="200" cy="100" r="4" class="icon-white"/>
+  <circle cx="160" cy="120" r="3" class="icon-white"/>
+  <circle cx="240" cy="120" r="3" class="icon-white"/>
+</svg>
