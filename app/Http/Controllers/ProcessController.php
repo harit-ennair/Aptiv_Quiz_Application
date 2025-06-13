@@ -13,7 +13,8 @@ class ProcessController extends Controller
      */
     public function index()
     {
-        //
+        $processes = process::all();
+        return view('home', compact('processes'));
     }
 
     /**

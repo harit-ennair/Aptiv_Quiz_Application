@@ -1,0 +1,11 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#2B6CB0"/>
+  <rect x="50" y="50" width="700" height="500" fill="#2C5282" rx="10"/>
+  <text x="400" y="250" font-family="Arial, sans-serif" font-size="32" fill="#E2E8F0" text-anchor="middle">Process de coupe</text>
+  <text x="400" y="300" font-family="Arial, sans-serif" font-size="18" fill="#A0AEC0" text-anchor="middle">Cutting Process</text>
+  <rect x="300" y="350" width="200" height="100" fill="#4A5568" rx="5"/>
+  <line x1="350" y1="320" x2="450" y2="320" stroke="#F56565" stroke-width="4"/>
+  <circle cx="350" cy="320" r="8" fill="#F56565"/>
+  <circle cx="450" cy="320" r="8" fill="#F56565"/>
+  <path d="M 300 450 L 500 450 L 450 480 L 350 480 Z" fill="#ED8936"/>
+</svg>
