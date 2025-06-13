@@ -2,11 +2,15 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <!-- Newsletter Section -->
         <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold mb-4">Shape the Future of Mobility. Join Us.</h2>
-            <p class="text-gray-300 mb-6 max-w-2xl mx-auto">
+            <h2 class="text-3xl font-bold mb-4">Shape the Future of Mobility</h2>
+            <h2 class="text-3xl font-bold mb-4">Join Us</h2>
+            <!-- <p class="text-gray-300 mb-6 max-w-2xl mx-auto">
                 Keep pace with where mobility is going. See what's next and get the latest updates.
+            </p> -->
+            <p class="text-gray-300 mb-6 max-w-2xl mx-auto">
+                Develop a richer understanding of the fundamental technologies shaping the safe, green and connected future of mobility.
             </p>
-            <a href="https://go.aptiv.com/subscribe-to-newsletter.html" class="inline-block bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white font-semibold px-8 py-3 rounded transition-colors duration-200">
+            <a href="https://go.aptiv.com/subscribe-to-newsletter.html" class="btn-orange-outline inline-block text-center">
                 SIGN UP FOR OUR NEWSLETTER
             </a>
             <p class="text-sm text-gray-400 mt-2">Don't worry. We won't flood your inbox or share your email.</p>

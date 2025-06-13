@@ -10,7 +10,7 @@ class process extends Model
     use HasFactory;
 protected $fillable = [
         'title',
-        'categories_id',
+        'description',
         'create_at',
     ];
 

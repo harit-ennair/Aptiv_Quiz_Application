@@ -14,12 +14,13 @@
             <p class="text-xl text-gray-200 mb-8 leading-relaxed">
                 With our deep domain expertise, Aptiv is developing solutions that solve our customers' toughest challenges. 
                 We are enabling the transition to software-defined vehicles supported by electrified and intelligently connected architectures.
-            </p>            <div class="flex flex-col sm:flex-row gap-4">
+            </p>            
+            <div class="flex flex-col sm:flex-row gap-4">
                 <a href="https://www.aptiv.com/en/solutions" class="btn-primary inline-block text-center">
                     READ MORE
                 </a>
                 <a href="#" class="btn-orange-outline inline-block text-center">
-                    WATCH VIDEO
+                    ADMEN PORTEL
                 </a>
             </div>
         </div>
@@ -41,9 +42,12 @@
             </p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">            <!-- ADAS & Autonomous Driving -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">           
+
+        
+             <!-- ADAS & Autonomous Driving -->
             <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border-t-4 border-aptiv-orange-500">
-                <div class="h-48 bg-gradient-to-br from-gray-700 to-black relative flex items-center justify-center">
+                <div class="h-48 bg-gradient-to-br from-gray-600 to-gray-800 relative flex items-center justify-center">
                     <img src="{{ asset('images/adas-icon.svg') }}" alt="ADAS Icon" class="w-24 h-24">
                 </div><div class="p-6">
                     <h3 class="text-xl font-semibold text-gray-900 mb-3">ADAS & Autonomous Driving</h3>
@@ -53,7 +57,27 @@
             </div>
               <!-- User Experience -->
             <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border-t-4 border-aptiv-orange-500">
-                <div class="h-48 bg-gradient-to-br from-aptiv-orange-400 to-aptiv-orange-600 relative flex items-center justify-center">
+                <div class="h-48 bg-gradient-to-br from-gray-600 to-gray-800 relative flex items-center justify-center">
+                    <img src="{{ asset('images/ux-icon.svg') }}" alt="UX Icon" class="w-24 h-24">
+                </div>                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">User Experience</h3>
+                    <p class="text-gray-600 mb-4">Intelligent interfaces and connected services that create intuitive and personalized mobility experiences.</p>
+                    <a href="#" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 font-medium">Learn More →</a>
+                </div>
+            </div>
+                 <!-- ADAS & Autonomous Driving -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border-t-4 border-aptiv-orange-500">
+                <div class="h-48 bg-gradient-to-br from-gray-600 to-gray-800 relative flex items-center justify-center">
+                    <img src="{{ asset('images/adas-icon.svg') }}" alt="ADAS Icon" class="w-24 h-24">
+                </div><div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">ADAS & Autonomous Driving</h3>
+                    <p class="text-gray-600 mb-4">Advanced driver assistance systems and autonomous driving technologies that enhance safety and convenience.</p>
+                    <a href="#" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 font-medium">Learn More →</a>
+                </div>
+            </div>
+              <!-- User Experience -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border-t-4 border-aptiv-orange-500">
+                <div class="h-48 bg-gradient-to-br from-gray-600 to-gray-800 relative flex items-center justify-center">
                     <img src="{{ asset('images/ux-icon.svg') }}" alt="UX Icon" class="w-24 h-24">
                 </div>                <div class="p-6">
                     <h3 class="text-xl font-semibold text-gray-900 mb-3">User Experience</h3>
@@ -76,7 +100,7 @@
 </section>
 
 <!-- Insights Section -->
-<section class="py-16 lg:py-24 bg-gray-50">
+<!-- <section class="py-16 lg:py-24 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
             <h2 class="text-4xl font-bold text-gray-900 mb-4">Insights</h2>
@@ -88,7 +112,7 @@
             </p>
         </div>
         
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">            <!-- Featured Insight -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">           
             <div class="bg-white rounded-lg shadow-lg overflow-hidden border-l-4 border-aptiv-orange-500">
                 <div class="h-64 bg-gradient-to-br from-gray-800 to-gray-900"></div>
                 <div class="p-6">
@@ -99,7 +123,7 @@
                 </div>
             </div>
             
-            <!-- Recent Insights -->
+          
             <div class="space-y-6">                <div class="bg-white rounded-lg shadow-md p-6 border-l-2 border-aptiv-orange-300">
                     <span class="inline-block px-3 py-1 text-xs font-semibold text-white bg-aptiv-orange-600 rounded-full mb-3">AUTONOMOUS DRIVING</span>
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">The Key to Truly Humanlike Driving</h3>
@@ -122,7 +146,7 @@
             </a>
         </div>
     </div>
-</section>
+</section> -->
 
 <!-- Aptiv Highlights Section -->
 <section class="py-16 lg:py-24 bg-white">

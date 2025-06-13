@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('processes', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('description');
             // $table->unsignedBigInteger('categories_id')->nullable();
             // $table->foreign('categories_id')->references('id')->on('categories')->onDelete('cascade');
             $table->date('create_at')->default(now());
