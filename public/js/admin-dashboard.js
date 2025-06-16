@@ -665,10 +665,10 @@ class AdminDashboard {
 
         try {
             const response = await fetch('/admin/api/formateurs');
-            const result = await response.json();
-
-            if (result.success) {
-                this.renderFormateurs(result.data);
+            const result = await response.json();            if (result.success) {
+                // Sort formateurs by identification in ascending order
+                const sortedFormateurs = result.data.sort((a, b) => a.identification - b.identification);
+                this.renderFormateurs(sortedFormateurs);
             } else {
                 this.showMessage('Erreur lors du chargement des formateurs', 'error');
             }
