@@ -13,7 +13,11 @@ class FormateurController extends Controller
      */
     public function index()
     {
-        //
+        $formateurs = formateur::all();
+        return response()->json([
+            'success' => true,
+            'data' => $formateurs
+        ]);
     }
 
     /**
@@ -29,7 +33,19 @@ class FormateurController extends Controller
      */
     public function store(StoreformateurRequest $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'identification' => 'required|numeric|unique:formateurs,identification',
+        ]);
+
+        $formateur = formateur::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Formateur créé avec succès',
+            'data' => $formateur
+        ]);
     }
 
     /**
@@ -53,7 +69,19 @@ class FormateurController extends Controller
      */
     public function update(UpdateformateurRequest $request, formateur $formateur)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'identification' => 'required|numeric|unique:formateurs,identification,' . $formateur->id,
+        ]);
+
+        $formateur->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Formateur mis à jour avec succès',
+            'data' => $formateur
+        ]);
     }
 
     /**
@@ -61,6 +89,11 @@ class FormateurController extends Controller
      */
     public function destroy(formateur $formateur)
     {
-        //
+        $formateur->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Formateur supprimé avec succès'
+        ]);
     }
 }

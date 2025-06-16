@@ -11,7 +11,7 @@ class StoreprocessRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check() && in_array(auth()->user()->role_id, [1, 2]); // Super admin or admin
     }
 
     /**
@@ -22,7 +22,8 @@ class StoreprocessRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string|max:255|unique:processes,title',
+            'description' => 'required|string|max:1000',
         ];
     }
 }

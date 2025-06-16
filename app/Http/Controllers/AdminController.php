@@ -44,9 +44,7 @@ class AdminController extends Controller
         return back()->withErrors([
             'identification' => 'Les informations d\'identification fournies ne correspondent pas à nos enregistrements.',
         ]);
-    }
-
-    /**
+    }    /**
      * Show the admin dashboard
      */
     public function dashboard()
@@ -58,10 +56,8 @@ class AdminController extends Controller
             return redirect()->route('admin.login');
         }
 
-        return view('admin.dashboard', compact('user'));
-    }
-
-    /**
+        return view('admin.enhanced-dashboard', compact('user'));
+    }/**
      * Handle admin logout
      */
     public function logout(Request $request)
@@ -70,6 +66,80 @@ class AdminController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         
-        return redirect()->route('admin.login')->with('success', 'Vous avez été déconnecté avec succès.');
+        return redirect()->route('admin.login')->with('success', 'Vous avez été déconnecté avec succès.');    }    /**
+     * Show admin profile
+     */
+    public function profile()
+    {
+        $user = Auth::user();
+        
+        // Additional security check
+        if (!$user || ($user->role_id != 1 && $user->role_id != 2)) {
+            return redirect()->route('admin.login');
+        }
+        
+        return view('admin.enhanced-dashboard', compact('user'))->with('activeSection', 'profile');
+    }
+
+    /**
+     * Update admin profile
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'identification' => 'required|numeric|unique:users,identification,' . $user->id,
+            'current_password' => 'nullable|string',
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        // Check current password if new password is provided
+        if ($validated['password']) {
+            if (!$validated['current_password'] || !Hash::check($validated['current_password'], $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Le mot de passe actuel est incorrect.'
+                ], 400);
+            }
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
+        }
+
+        unset($validated['current_password'], $validated['password_confirmation']);
+        
+        $user->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profil mis à jour avec succès',
+            'data' => $user
+        ]);
+    }
+
+    /**
+     * Get users for AJAX requests (for dropdowns)
+     */
+    public function ajaxUsers()
+    {
+        try {
+            $users = User::select('id', 'name', 'last_name', 'identification')
+                ->orderBy('name')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $users,
+                'message' => 'Utilisateurs récupérés avec succès'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des utilisateurs'
+            ], 500);
+        }
     }
 }

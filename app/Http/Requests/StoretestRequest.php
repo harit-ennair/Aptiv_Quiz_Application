@@ -11,7 +11,7 @@ class StoretestRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check() && in_array(auth()->user()->role_id, [1, 2]); // Super admin or admin
     }
 
     /**
@@ -22,7 +22,11 @@ class StoretestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => 'required|exists:users,id',
+            'description' => 'nullable|string|max:1000',
+            'formateur_id' => 'required|exists:formateurs,id',
+            'resultat' => 'required|integer|min:0|max:100',
+            'pourcentage' => 'required|integer|min:0|max:100',
         ];
     }
 }

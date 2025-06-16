@@ -18,6 +18,18 @@ class ProcessController extends Controller
     }
 
     /**
+     * Display a listing for admin dashboard (AJAX)
+     */
+    public function ajaxIndex()
+    {
+        $processes = process::withCount('categories')->with('categories')->get();
+        return response()->json([
+            'success' => true,
+            'data' => $processes
+        ]);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
@@ -30,7 +42,19 @@ class ProcessController extends Controller
      */
     public function store(StoreprocessRequest $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+        ]);
+
+        $validated['create_at'] = now();
+        $process = process::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Processus créé avec succès',
+            'data' => $process
+        ]);
     }
 
     /**
@@ -57,7 +81,18 @@ class ProcessController extends Controller
      */
     public function update(UpdateprocessRequest $request, process $process)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+        ]);
+
+        $process->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Processus mis à jour avec succès',
+            'data' => $process
+        ]);
     }
 
     /**
@@ -65,6 +100,11 @@ class ProcessController extends Controller
      */
     public function destroy(process $process)
     {
-        //
+        $process->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Processus supprimé avec succès'
+        ]);
     }
 }

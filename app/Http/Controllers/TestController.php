@@ -13,7 +13,11 @@ class TestController extends Controller
      */
     public function index()
     {
-        
+        $tests = test::with(['user', 'formateur'])->get();
+        return response()->json([
+            'success' => true,
+            'data' => $tests
+        ]);
     }
 
     /**
@@ -29,7 +33,21 @@ class TestController extends Controller
      */
     public function store(StoretestRequest $request)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'description' => 'nullable|string|max:1000',
+            'formateur_id' => 'required|exists:formateurs,id',
+            'resultat' => 'required|integer|min:0|max:100',
+            'pourcentage' => 'required|integer|min:0|max:100',
+        ]);
+
+        $test = test::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Test créé avec succès',
+            'data' => $test->load(['user', 'formateur'])
+        ]);
     }
 
     /**
@@ -53,7 +71,21 @@ class TestController extends Controller
      */
     public function update(UpdatetestRequest $request, test $test)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'description' => 'nullable|string|max:1000',
+            'formateur_id' => 'required|exists:formateurs,id',
+            'resultat' => 'required|integer|min:0|max:100',
+            'pourcentage' => 'required|integer|min:0|max:100',
+        ]);
+
+        $test->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Test mis à jour avec succès',
+            'data' => $test->load(['user', 'formateur'])
+        ]);
     }
 
     /**
@@ -61,6 +93,11 @@ class TestController extends Controller
      */
     public function destroy(test $test)
     {
-        //
+        $test->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Test supprimé avec succès'
+        ]);
     }
 }

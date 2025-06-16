@@ -13,7 +13,11 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        //
+        $categories = categories::with('process')->get();
+        return response()->json([
+            'success' => true,
+            'data' => $categories
+        ]);
     }
 
     /**
@@ -29,7 +33,19 @@ class CategoriesController extends Controller
      */
     public function store(StorecategoriesRequest $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'process_id' => 'required|exists:processes,id',
+        ]);
+
+        $validated['create_at'] = now();
+        $category = categories::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Catégorie créée avec succès',
+            'data' => $category->load('process')
+        ]);
     }
 
     /**
@@ -53,7 +69,18 @@ class CategoriesController extends Controller
      */
     public function update(UpdatecategoriesRequest $request, categories $categories)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'process_id' => 'required|exists:processes,id',
+        ]);
+
+        $categories->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Catégorie mise à jour avec succès',
+            'data' => $categories->load('process')
+        ]);
     }
 
     /**
@@ -61,6 +88,11 @@ class CategoriesController extends Controller
      */
     public function destroy(categories $categories)
     {
-        //
+        $categories->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Catégorie supprimée avec succès'
+        ]);
     }
 }

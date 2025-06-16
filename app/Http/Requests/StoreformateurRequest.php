@@ -11,7 +11,7 @@ class StoreformateurRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check() && in_array(auth()->user()->role_id, [1, 2]); // Super admin or admin
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreformateurRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'identification' => 'required|numeric|unique:formateurs,identification',
         ];
     }
 }

@@ -11,7 +11,7 @@ class UpdateprocessRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check() && in_array(auth()->user()->role_id, [1, 2]); // Super admin or admin
     }
 
     /**
@@ -21,8 +21,11 @@ class UpdateprocessRequest extends FormRequest
      */
     public function rules(): array
     {
+        $processId = $this->route('process')->id ?? null;
+        
         return [
-            //
+            'title' => 'required|string|max:255|unique:processes,title,' . $processId,
+            'description' => 'required|string|max:1000',
         ];
     }
 }
