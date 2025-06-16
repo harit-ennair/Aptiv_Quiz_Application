@@ -10,8 +10,8 @@ class formateur extends Model
     use HasFactory;
 
     protected $fillable = [
-        
         'name',
+        'last_name',
         'identification',
     ];
 

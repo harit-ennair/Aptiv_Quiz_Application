@@ -63,46 +63,4 @@
     </div>
 </section>
 
-<!-- Aptiv Highlights Section -->
-<section class="py-16 lg:py-24 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">Aptiv Highlights</h2>
-            <p class="text-xl text-gray-600">Going Beyond the Possibilities</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">            <!-- Sustainability -->
-            <div class="group cursor-pointer">
-                <div class="bg-gradient-to-br from-green-500 to-green-700 h-64 rounded-lg mb-6 group-hover:shadow-xl transition-shadow duration-300"></div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-3">Sustainability</h3>
-                <p class="text-gray-600">
-                    Sustainability starts with our product portfolio, helping to solve our customers' safe, green and connected challenges, 
-                    and extends to how we operate.
-                </p>                <a href="#" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 font-medium inline-block mt-3">Download the 2024 Report →</a>
-            </div>
-            
-            <!-- Partnership -->
-            <div class="group cursor-pointer">
-                <div class="bg-gradient-to-br from-aptiv-orange-500 to-aptiv-orange-700 h-64 rounded-lg mb-6 group-hover:shadow-xl transition-shadow duration-300"></div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-3">ServiceNow and Aptiv</h3>
-                <p class="text-gray-600">
-                    Driving intelligent automation and operational resilience across telco, automotive, enterprise and industrial sectors.
-                </p>
-                <a href="#" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 font-medium inline-block mt-3">Learn More →</a>
-            </div>
-            
-            <!-- Careers -->
-            <div class="group cursor-pointer">
-                <div class="bg-gradient-to-br from-gray-600 to-gray-800 h-64 rounded-lg mb-6 group-hover:shadow-xl transition-shadow duration-300"></div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-3">Join Our Growing Software Engineering Team</h3>
-                <p class="text-gray-600">
-                    Be part of the team that's shaping the future of mobility through innovative software solutions and cutting-edge technology.
-                </p>
-                <a href="#" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 font-medium inline-block mt-3">Explore Opportunities →</a>
-            </div>
-        </div>
-    </div>
-</section>
-
-
 @endsection
