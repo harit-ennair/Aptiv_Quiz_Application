@@ -11,7 +11,7 @@ class StorequzRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check() && in_array(auth()->user()->role_id, [1, 2]); // Super admin or admin
     }
 
     /**
@@ -22,7 +22,11 @@ class StorequzRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'question_text' => 'required|string|max:1000',
+            'categories_id' => 'required|exists:categories,id',
+            'answers' => 'required|array|min:2|max:6',
+            'answers.*.answer_text' => 'required|string|max:500',
+            'answers.*.is_correct' => 'boolean',
         ];
     }
 }

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sidebar Navigation</title>
+    <style>
+        .hidden { display: none !important; }
+        .section { 
+            padding: 20px; 
+            border: 2px solid #ccc; 
+            margin: 10px; 
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .nav-link { 
+            display: block; 
+            padding: 12px 16px; 
+            margin: 5px 0; 
+            background: #e5e7eb; 
+            text-decoration: none; 
+            color: #374151;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .nav-link:hover { 
+            background: #fef3e2; 
+            color: #ea580c; 
+        }
+        .nav-link.active { 
+            background: #fef3e2; 
+            color: #ea580c; 
+            font-weight: 600;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+        }
+        .sidebar {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        .content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 400px;
+        }
+        h1 {
+            text-align: center;
+            color: #374151;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #ea580c;
+            margin-bottom: 15px;
+        }
+        .status {
+            background: #dcfce7;
+            border: 1px solid #16a34a;
+            color: #15803d;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test de Navigation Sidebar</h1>
+        
+        <div class="status">
+            ✅ Cette page teste la fonctionnalité de navigation du sidebar administrateur
+        </div>
+        
+        <div class="layout">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h3>Navigation</h3>
+                <nav>
+                    <a href="#" onclick="showSection('dashboard')" class="nav-link active">
+                        📊 Tableau de bord
+                    </a>
+                    <a href="#" onclick="showSection('profile')" class="nav-link">
+                        👤 Mon Profil
+                    </a>
+                    <a href="#" onclick="showSection('processes')" class="nav-link">
+                        ⚙️ Processus
+                    </a>
+                    <a href="#" onclick="showSection('categories')" class="nav-link">
+                        🏷️ Catégories
+                    </a>
+                    <a href="#" onclick="showSection('questions')" class="nav-link">
+                        ❓ Questions
+                    </a>
+                    <a href="#" onclick="showSection('formateurs')" class="nav-link">
+                        👥 Formateurs
+                    </a>
+                    <a href="#" onclick="showSection('tests')" class="nav-link">
+                        📝 Tests
+                    </a>
+                </nav>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="section">
+                    <h2>📊 Tableau de Bord</h2>
+                    <p>Bienvenue sur le tableau de bord administrateur.</p>
+                    <ul>
+                        <li>Statistiques générales</li>
+                        <li>Activité récente</li>
+                        <li>Graphiques de performance</li>
+                    </ul>
+                </div>
+                
+                <!-- Profile Section -->
+                <div id="profile-section" class="section hidden">
+                    <h2>👤 Mon Profil</h2>
+                    <p>Gérez votre profil administrateur.</p>
+                    <ul>
+                        <li>Informations personnelles</li>
+                        <li>Paramètres de sécurité</li>
+                        <li>Préférences</li>
+                    </ul>
+                </div>
+                
+                <!-- Processes Section -->
+                <div id="processes-section" class="section hidden">
+                    <h2>⚙️ Gestion des Processus</h2>
+                    <p>Gérez les processus de formation.</p>
+                    <ul>
+                        <li>Créer nouveaux processus</li>
+                        <li>Modifier processus existants</li>
+                        <li>Supprimer processus</li>
+                    </ul>
+                </div>
+                
+                <!-- Categories Section -->
+                <div id="categories-section" class="section hidden">
+                    <h2>🏷️ Gestion des Catégories</h2>
+                    <p>Organisez les catégories de formation.</p>
+                    <ul>
+                        <li>Ajouter catégories</li>
+                        <li>Associer aux processus</li>
+                        <li>Gérer la hiérarchie</li>
+                    </ul>
+                </div>
+                
+                <!-- Questions Section -->
+                <div id="questions-section" class="section hidden">
+                    <h2>❓ Gestion des Questions</h2>
+                    <p>Créez et gérez les questions de quiz.</p>
+                    <ul>
+                        <li>Créer nouvelles questions</li>
+                        <li>Gérer les réponses</li>
+                        <li>Définir réponses correctes</li>
+                    </ul>
+                </div>
+                
+                <!-- Formateurs Section -->
+                <div id="formateurs-section" class="section hidden">
+                    <h2>👥 Gestion des Formateurs</h2>
+                    <p>Administrez les comptes formateurs.</p>
+                    <ul>
+                        <li>Ajouter formateurs</li>
+                        <li>Gérer permissions</li>
+                        <li>Suivi des performances</li>
+                    </ul>
+                </div>
+                
+                <!-- Tests Section -->
+                <div id="tests-section" class="section hidden">
+                    <h2>📝 Gestion des Tests</h2>
+                    <p>Organisez les tests et évaluations.</p>
+                    <ul>
+                        <li>Créer nouveaux tests</li>
+                        <li>Analyser résultats</li>
+                        <li>Générer rapports</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simplified navigation function for testing
+        function showSection(sectionName) {
+            console.log('Navigation vers:', sectionName);
+            
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected section
+            const targetSection = document.getElementById(`${sectionName}-section`);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+                console.log('✅ Section affichée:', sectionName);
+            } else {
+                console.error('❌ Section non trouvée:', sectionName);
+            }
+
+            // Add active class to current nav link
+            const activeLink = document.querySelector(`[onclick*="showSection('${sectionName}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+                console.log('✅ Lien activé:', sectionName);
+            } else {
+                console.error('❌ Lien non trouvé:', sectionName);
+            }
+            
+            return false; // Prevent default link behavior
+        }
+        
+        // Test function on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Page de test chargée - navigation prête');
+        });
+    </script>
+</body>
+</html>

@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\FormateurController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\QuzController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +61,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/tests', [TestController::class, 'store'])->name('tests.store');
             Route::put('/tests/{test}', [TestController::class, 'update'])->name('tests.update');
             Route::delete('/tests/{test}', [TestController::class, 'destroy'])->name('tests.destroy');
+            
+            // Questions (Quz)
+            Route::get('/questions', [QuzController::class, 'index'])->name('questions.index');
+            Route::post('/questions', [QuzController::class, 'store'])->name('questions.store');
+            Route::get('/questions/{quz}', [QuzController::class, 'show'])->name('questions.show');
+            Route::put('/questions/{quz}', [QuzController::class, 'update'])->name('questions.update');
+            Route::delete('/questions/{quz}', [QuzController::class, 'destroy'])->name('questions.destroy');
+            Route::get('/categories/{category}/questions', [QuzController::class, 'getByCategory'])->name('questions.by_category');
             
             // Users (for dropdowns)
             Route::get('/users', [AdminController::class, 'ajaxUsers'])->name('users.index');

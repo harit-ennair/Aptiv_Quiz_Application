@@ -10,7 +10,7 @@ class quz extends Model
     use HasFactory;
 
     protected $fillable = [
-        'description',
+        'question_text',
         'categories_id',
     ];
 

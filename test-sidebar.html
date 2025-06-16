@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidebar Test</title>
+    <style>
+        .hidden { display: none; }
+        .section { padding: 20px; border: 1px solid #ccc; margin: 10px; }
+        .nav-link { display: block; padding: 10px; margin: 5px; background: #f0f0f0; text-decoration: none; color: black; }
+        .nav-link.active { background: #007bff; color: white; }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Sidebar Test</h1>
+        
+        <!-- Navigation -->
+        <nav>
+            <a href="#" onclick="console.log('Dashboard clicked'); showSection('dashboard')" class="nav-link active">Dashboard</a>
+            <a href="#" onclick="console.log('Profile clicked'); showSection('profile')" class="nav-link">Profile</a>
+            <a href="#" onclick="console.log('Categories clicked'); showSection('categories')" class="nav-link">Categories</a>
+        </nav>
+        
+        <!-- Sections -->
+        <div id="dashboard-section" class="section">
+            <h2>Dashboard Section</h2>
+            <p>This is the dashboard content.</p>
+        </div>
+        
+        <div id="profile-section" class="section hidden">
+            <h2>Profile Section</h2>
+            <p>This is the profile content.</p>
+        </div>
+        
+        <div id="categories-section" class="section hidden">
+            <h2>Categories Section</h2>
+            <p>This is the categories content.</p>
+        </div>
+    </div>
+
+    <script>
+        // Simple test version of the function
+        function showSection(sectionName) {
+            console.log('showSection called with:', sectionName);
+            
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected section
+            const targetSection = document.getElementById(`${sectionName}-section`);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+                console.log(`Showing section: ${sectionName}-section`);
+            } else {
+                console.error(`Section not found: ${sectionName}-section`);
+            }
+
+            // Add active class to current nav link
+            const activeLink = document.querySelector(`[onclick*="showSection('${sectionName}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+                console.log(`Activated nav link for: ${sectionName}`);
+            } else {
+                console.error(`Nav link not found for: ${sectionName}`);
+            }
+        }
+    </script>
+</body>
+</html>

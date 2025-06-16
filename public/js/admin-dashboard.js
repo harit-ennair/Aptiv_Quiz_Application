@@ -102,9 +102,13 @@ class AdminDashboard {
                 e.preventDefault();
                 this.refreshCurrentSection();
             }
-        });        // Auto-refresh data every 30 seconds
+        });        // Auto-refresh data every 30 seconds (except when filters are active in questions section)
         setInterval(() => {
             if (this.currentSection !== 'dashboard' && this.currentSection !== 'profile') {
+                // Skip auto-refresh for questions section if filters are active
+                if (this.currentSection === 'questions' && this.hasActiveFilters()) {
+                    return;
+                }
                 this.refreshCurrentSection();
             }
         }, 30000);
@@ -172,6 +176,7 @@ class AdminDashboard {
             profile: 'Mon Profil',
             processes: 'Gestion des Processus',
             categories: 'Gestion des Catégories',
+            questions: 'Gestion des Questions',
             formateurs: 'Gestion des Formateurs',
             tests: 'Gestion des Tests'
         };
@@ -196,6 +201,11 @@ class AdminDashboard {
                 break;
             case 'categories':
                 this.loadCategories();
+                break;
+            case 'questions':
+                if (window.initQuestionsSection) {
+                    window.initQuestionsSection();
+                }
                 break;
             case 'formateurs':
                 this.loadFormateurs();
@@ -277,6 +287,11 @@ class AdminDashboard {
             case 'categories':
                 this.loadCategories();
                 break;
+            case 'questions':
+                if (window.initQuestionsSection) {
+                    window.initQuestionsSection();
+                }
+                break;
             case 'formateurs':
                 this.loadFormateurs();
                 break;
@@ -284,6 +299,19 @@ class AdminDashboard {
                 this.loadTests();
                 break;
         }
+    }
+
+    // Check if there are active filters in questions section
+    hasActiveFilters() {
+        if (this.currentSection !== 'questions') return false;
+        
+        const searchInput = document.getElementById('question-search');
+        const processFilter = document.getElementById('question-process-filter');
+        const categoryFilter = document.getElementById('question-category-filter');
+        
+        return (searchInput?.value.trim() !== '') || 
+               (processFilter?.value !== '') || 
+               (categoryFilter?.value !== '');
     }
 
     // Profile Management

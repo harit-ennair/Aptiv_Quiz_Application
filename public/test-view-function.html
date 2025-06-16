@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test View Question Function</title>
+</head>
+<body>
+    <h1>Testing View Question Function</h1>
+    <button onclick="testViewFunction()">Test View Question</button>
+    <div id="result"></div>
+
+    <script>
+    async function testViewFunction() {
+        try {
+            console.log('Testing view question function...');
+            const response = await fetch('/admin/api/questions/2');
+            const result = await response.json();
+            
+            console.log('Response:', result);
+            
+            if (result.success) {
+                const question = result.data;
+                console.log('Question:', question);
+                console.log('Category:', question.category);
+                console.log('Process:', question.category ? question.category.process : 'No category');
+                
+                document.getElementById('result').innerHTML = `
+                    <h2>Success!</h2>
+                    <p><strong>Question:</strong> ${question.question_text}</p>
+                    <p><strong>Category:</strong> ${question.category ? question.category.title : 'N/A'}</p>
+                    <p><strong>Process:</strong> ${question.category && question.category.process ? question.category.process.title : 'No process'}</p>
+                    <p><strong>Answers:</strong> ${question.repos ? question.repos.length : 0}</p>
+                `;
+            } else {
+                document.getElementById('result').innerHTML = '<p>Error: ' + result.message + '</p>';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('result').innerHTML = '<p>JavaScript Error: ' + error.message + '</p>';
+        }
+    }
+    </script>
+</body>
+</html>

@@ -10,11 +10,9 @@ class repo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
-        'description',
+        'answer_text',
         'quz_id',
-        'status',
-        'create_at',
+        'is_correct',
     ];
 
     // Relationships
