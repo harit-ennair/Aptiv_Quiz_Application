@@ -14,13 +14,12 @@
             <p class="text-xl text-gray-200 mb-8 leading-relaxed">
                 With our deep domain expertise, Aptiv is developing solutions that solve our customers' toughest challenges. 
                 We are enabling the transition to software-defined vehicles supported by electrified and intelligently connected architectures.
-            </p>            
-            <div class="flex flex-col sm:flex-row gap-4">
+            </p>              <div class="flex flex-col sm:flex-row gap-4">
                 <a href="https://www.aptiv.com/en/solutions" class="btn-primary inline-block text-center">
                     READ MORE
                 </a>
-                <a href="#" class="btn-orange-outline inline-block text-center">
-                    ADMEN PORTEL
+                <a href="{{ route('admin.login') }}" class="btn-orange-outline inline-block text-center">
+                    ADMIN PORTAL
                 </a>
             </div>
         </div>

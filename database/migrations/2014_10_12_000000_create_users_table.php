@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('last_name');
             $table->bigInteger('identification')->unique();
+            $table->string('password');
             $table->unsignedBigInteger('role_id');
             $table->rememberToken();
             $table->timestamps();
-            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
         });
     }
 

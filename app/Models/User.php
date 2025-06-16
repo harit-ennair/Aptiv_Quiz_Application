@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'last_name',
         'identification',
+        'password',
         'role_id',
     ];
 
@@ -43,6 +44,26 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the name of the unique identifier for the user.
+     *
+     * @return string
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'identification';
+    }
+
+    /**
+     * Get the username used for authentication.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        return 'identification';
+    }
 
     // Relationships
     public function role()
