@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('quzs', function (Blueprint $table) {
-            $table->string('image_path')->nullable()->after('question_text');
-            $table->text('question_text')->nullable()->change(); // Allow nullable text for image-only questions
+            $table->text('question_text')->nullable()->change();
         });
     }
 
@@ -23,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('quzs', function (Blueprint $table) {
-            $table->dropColumn('image_path');
-            $table->string('question_text')->nullable(false)->change(); // Revert back to required
+            $table->text('question_text')->nullable(false)->change();
         });
     }
 };

@@ -596,19 +596,70 @@
         <form id="question-form" class="space-y-4">
             <input type="hidden" id="question-id">
             
-            <div class="p-4 space-y-4">
-                <!-- Question Text Section -->
+            <div class="p-4 space-y-4">                <!-- Question Text Section -->
                 <div class="form-section">
                     <h4 class="font-medium text-gray-900 mb-3">
                         <svg class="w-4 h-4 inline mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        Question <span class="required-indicator">*</span>
+                        Question
                     </h4>
-                    <label for="question-text" class="form-label">Texte de la question</label>
-                    <textarea id="question-text" name="question_text" rows="3" required 
-                              class="form-input form-textarea"
-                              placeholder="Saisissez votre question ici..."></textarea>
+                    
+                    <!-- Question Text -->
+                    <div class="mb-4">
+                        <label for="question-text" class="form-label">Texte de la question (optionnel si image fournie)</label>
+                        <textarea id="question-text" name="question_text" rows="3" 
+                                  class="form-input form-textarea"
+                                  placeholder="Saisissez votre question ici..."></textarea>
+                    </div>
+                    
+                    <!-- Question Image -->
+                    <div class="mb-4">
+                        <label for="question-image" class="form-label">Image de la question (optionnel si texte fourni)</label>
+                        <div class="mt-1">
+                            <input type="file" id="question-image" name="image" accept="image/*" 
+                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            <p class="mt-1 text-xs text-gray-500">PNG, JPG, GIF jusqu'à 2MB</p>
+                        </div>
+                        
+                        <!-- Image Preview -->
+                        <div id="image-preview-container" class="mt-3 hidden">
+                            <div class="relative inline-block">
+                                <img id="image-preview" src="" alt="Prévisualisation" class="max-w-full h-48 object-contain border border-gray-300 rounded-lg">
+                                <button type="button" id="remove-image" class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Current Image (for editing) -->
+                        <div id="current-image-container" class="mt-3 hidden">
+                            <p class="text-sm text-gray-600 mb-2">Image actuelle:</p>
+                            <div class="relative inline-block">
+                                <img id="current-image" src="" alt="Image actuelle" class="max-w-full h-48 object-contain border border-gray-300 rounded-lg">
+                                <button type="button" id="delete-current-image" class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Note about question requirements -->
+                    <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-start">
+                            <svg class="w-4 h-4 text-blue-600 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div class="text-xs text-blue-700">
+                                <p class="font-medium">Important:</p>
+                                <p class="mt-1">Au moins un texte ou une image est requis pour la question</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Category Selection Section -->
@@ -1025,9 +1076,18 @@ function renderQuestions() {
             return `
                 <div class="question-card ${gradientClass} slide-in p-6 flex flex-col justify-between">
                     <div class="question-number">#${index + 1}</div>
-                    
-                    <div class="flex-1 mb-4">
-                        <h3 class="question-text mb-4">${question.question_text}</h3>
+                      <div class="flex-1 mb-4">
+                        ${question.question_text ? `<h3 class="question-text mb-4">${question.question_text}</h3>` : ''}
+                        
+                        ${question.image_url ? `
+                            <div class="mb-4">
+                                <img src="${question.image_url}" alt="Question image" class="w-full h-32 object-cover rounded-lg border border-white border-opacity-30">
+                            </div>
+                        ` : ''}
+                        
+                        ${!question.question_text && !question.image_url ? `
+                            <h3 class="question-text mb-4 italic opacity-75">Question sans contenu</h3>
+                        ` : ''}
                         
                         <div class="space-y-2">
                             <div class="question-meta inline-block">
@@ -1087,11 +1147,17 @@ function openQuestionModal(questionId = null) {
         form.reset();
         document.getElementById('question-id').value = '';
         
+        // Reset image form
+        resetImageForm();
+        
         // Pre-select category based on current filters
         setupQuestionCategoryFromFilters();
         
         initializeAnswers();
     }
+    
+    // Setup image handlers
+    setupImageHandlers();
     
     showElement(modal);
 }
@@ -1241,19 +1307,16 @@ async function handleQuestionSubmit(e) {
     e.preventDefault();
     
     try {
-        const formData = new FormData(e.target);
         const questionId = document.getElementById('question-id')?.value;
         const isEdit = !!questionId;
         
-        // Validate question text
-        const questionText = formData.get('question_text')?.trim();
-        if (!questionText) {
-            showMessage('Le texte de la question est requis', 'error');
+        // Validate question content (text or image required)
+        if (!validateQuestionContent()) {
             return;
         }
         
         // Validate category
-        const categoryId = formData.get('categories_id');
+        const categoryId = document.getElementById('question-category')?.value;
         if (!categoryId) {
             showMessage('Une catégorie doit être sélectionnée', 'error');
             return;
@@ -1293,29 +1356,63 @@ async function handleQuestionSubmit(e) {
             showMessage('Exactement une réponse doit être marquée comme correcte', 'error');
             return;
         }
+          // Prepare FormData for file upload
+        const formData = new FormData();
+        const questionText = document.getElementById('question-text')?.value?.trim();
         
-        const data = {
-            question_text: questionText,
-            categories_id: categoryId,
-            answers: answers
-        };
+        if (questionText) {
+            formData.append('question_text', questionText);
+        }
+        
+        formData.append('categories_id', categoryId);        // Add answers as individual form fields instead of JSON
+        answers.forEach((answer, index) => {
+            formData.append(`answers[${index}][answer_text]`, answer.answer_text);
+            formData.append(`answers[${index}][is_correct]`, answer.is_correct ? '1' : '0');
+        });
+        
+        // Add image if selected
+        const imageInput = document.getElementById('question-image');
+        if (imageInput?.files?.length > 0) {
+            formData.append('image', imageInput.files[0]);
+        }
+        
+        // Add method for Laravel's method spoofing (for PUT requests)
+        if (isEdit) {
+            formData.append('_method', 'PUT');
+        }
         
         const url = isEdit ? `/admin/api/questions/${questionId}` : '/admin/api/questions';
-        const method = isEdit ? 'PUT' : 'POST';
+        const method = 'POST'; // Always POST with FormData (Laravel method spoofing handles PUT)
         
         showLoading();
-        
-        const response = await fetch(url, {
+          const response = await fetch(url, {
             method: method,
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                'Content-Type': 'application/json',
+                // Don't set Content-Type header - let browser set it for FormData
             },
-            body: JSON.stringify(data)
+            body: formData
         });
 
+        console.log('Response status:', response.status);
+        
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // Try to get error details from response
+            const errorText = await response.text();
+            console.error('Server response:', errorText);
+            try {
+                const errorData = JSON.parse(errorText);
+                if (errorData.errors) {
+                    // Laravel validation errors
+                    const errorMessages = Object.values(errorData.errors).flat().join(', ');
+                    showMessage('Erreurs de validation: ' + errorMessages, 'error');
+                } else {
+                    showMessage(errorData.message || 'Erreur du serveur', 'error');
+                }
+            } catch (e) {
+                showMessage('Erreur du serveur (Status: ' + response.status + ')', 'error');
+            }
+            return;
         }
 
         const result = await response.json();
@@ -1345,12 +1442,21 @@ async function loadQuestionForEdit(questionId) {
             const question = result.data;
             
             document.getElementById('question-id').value = question.id;
-            document.getElementById('question-text').value = question.question_text;
+            document.getElementById('question-text').value = question.question_text || '';
             document.getElementById('question-category').value = question.categories_id;
-              // Populate answers
+            
+            // Reset image form first
+            resetImageForm();
+            
+            // Show current image if exists
+            if (question.image_url) {
+                showCurrentImage(question.image_url);
+            }
+            
+            // Populate answers
             const container = document.getElementById('answers-container');
             container.innerHTML = '';
-              question.repos.forEach((answer, index) => {
+            question.repos.forEach((answer, index) => {
                 const answerDiv = document.createElement('div');
                 answerDiv.className = 'answer-input-group';
                 answerDiv.innerHTML = `
@@ -1494,6 +1600,142 @@ function showMessage(message, type = 'success') {
             }
         }, 4000);
     }
+}
+
+// Image handling functions
+function setupImageHandlers() {
+    const imageInput = document.getElementById('question-image');
+    const previewContainer = document.getElementById('image-preview-container');
+    const previewImage = document.getElementById('image-preview');
+    const removeImageBtn = document.getElementById('remove-image');
+    const currentImageContainer = document.getElementById('current-image-container');
+    const deleteCurrentImageBtn = document.getElementById('delete-current-image');
+    
+    // Handle image file selection
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            
+            if (file) {
+                // Validate file size (2MB max)
+                if (file.size > 2 * 1024 * 1024) {
+                    showMessage('L\'image doit faire moins de 2MB', 'error');
+                    this.value = '';
+                    return;
+                }
+                
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
+                if (!allowedTypes.includes(file.type)) {
+                    showMessage('Format d\'image non supporté. Utilisez JPG, PNG, GIF ou SVG', 'error');
+                    this.value = '';
+                    return;
+                }
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.classList.remove('hidden');
+                    currentImageContainer.classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // No file selected, hide preview
+                previewContainer.classList.add('hidden');
+            }
+        });
+    }
+    
+    // Handle remove new image preview
+    if (removeImageBtn) {
+        removeImageBtn.addEventListener('click', function() {
+            imageInput.value = '';
+            previewContainer.classList.add('hidden');
+            
+            // Show current image again if editing
+            const questionId = document.getElementById('question-id')?.value;
+            if (questionId && currentImageContainer.querySelector('#current-image').src) {
+                currentImageContainer.classList.remove('hidden');
+            }
+        });
+    }
+    
+    // Handle delete current image (for editing)
+    if (deleteCurrentImageBtn) {
+        deleteCurrentImageBtn.addEventListener('click', async function() {
+            const questionId = document.getElementById('question-id')?.value;
+            if (!questionId) return;
+            
+            if (!confirm('Êtes-vous sûr de vouloir supprimer l\'image actuelle ?')) {
+                return;
+            }
+            
+            try {
+                showLoading();
+                
+                const response = await fetch(`/admin/api/questions/${questionId}/image`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentImageContainer.classList.add('hidden');
+                    showMessage('Image supprimée avec succès');
+                } else {
+                    showMessage(result.message || 'Erreur lors de la suppression de l\'image', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting image:', error);
+                showMessage('Erreur lors de la suppression de l\'image', 'error');
+            } finally {
+                hideLoading();
+            }
+        });
+    }
+}
+
+// Reset image form when opening modal
+function resetImageForm() {
+    const imageInput = document.getElementById('question-image');
+    const previewContainer = document.getElementById('image-preview-container');
+    const currentImageContainer = document.getElementById('current-image-container');
+    
+    if (imageInput) imageInput.value = '';
+    if (previewContainer) previewContainer.classList.add('hidden');
+    if (currentImageContainer) currentImageContainer.classList.add('hidden');
+}
+
+// Show current image when editing
+function showCurrentImage(imageUrl) {
+    const currentImageContainer = document.getElementById('current-image-container');
+    const currentImage = document.getElementById('current-image');
+    
+    if (imageUrl && currentImage && currentImageContainer) {
+        currentImage.src = imageUrl;
+        currentImageContainer.classList.remove('hidden');
+    }
+}
+
+// Validate question content (text or image required)
+function validateQuestionContent() {
+    const questionText = document.getElementById('question-text')?.value?.trim();
+    const imageInput = document.getElementById('question-image');
+    const hasNewImage = imageInput?.files?.length > 0;
+    const currentImage = document.getElementById('current-image');
+    const currentImageContainer = document.getElementById('current-image-container');
+    const hasCurrentImage = currentImage && !currentImageContainer.classList.contains('hidden') && currentImage.src;
+    
+    if (!questionText && !hasNewImage && !hasCurrentImage) {
+        showMessage('Au moins un texte ou une image est requis pour la question', 'error');
+        return false;
+    }
+    
+    return true;
 }
 
 // Export functions to global scope for external access

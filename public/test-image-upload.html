@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Upload Images - Questions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .answers {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .answer-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .answer-item input[type="text"] {
+            flex: 1;
+            margin-right: 10px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .preview {
+            margin-top: 10px;
+        }
+        .preview img {
+            max-width: 300px;
+            max-height: 200px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Upload Images pour Questions</h1>
+    
+    <form id="questionForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="question_text">Texte de la question (optionnel si image fournie):</label>
+            <textarea id="question_text" name="question_text" rows="3" placeholder="Entrez le texte de la question..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="image">Image de la question (optionnel si texte fourni):</label>
+            <input type="file" id="image" name="image" accept="image/*">
+            <div id="imagePreview" class="preview"></div>
+        </div>
+        
+        <div class="form-group">
+            <label for="categories_id">Catégorie:</label>
+            <select id="categories_id" name="categories_id" required>
+                <option value="">Sélectionnez une catégorie</option>
+                <option value="1">Catégorie 1</option>
+                <option value="2">Catégorie 2</option>
+                <option value="3">Catégorie 3</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Réponses (minimum 2, maximum 6):</label>
+            <div class="answers" id="answersContainer">
+                <div class="answer-item">
+                    <input type="text" name="answers[0][answer_text]" placeholder="Réponse 1" required>
+                    <label><input type="radio" name="correct_answer" value="0" required> Correcte</label>
+                </div>
+                <div class="answer-item">
+                    <input type="text" name="answers[1][answer_text]" placeholder="Réponse 2" required>
+                    <label><input type="radio" name="correct_answer" value="1"> Correcte</label>
+                </div>
+            </div>
+            <button type="button" onclick="addAnswer()">Ajouter une réponse</button>
+            <button type="button" onclick="removeAnswer()">Supprimer une réponse</button>
+        </div>
+        
+        <button type="submit">Créer la question</button>
+    </form>
+    
+    <div id="result"></div>
+    
+    <h2>Questions existantes</h2>
+    <div id="questionsList"></div>
+
+    <script>
+        let answerCount = 2;
+        
+        // Prévisualisation de l'image
+        document.getElementById('image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('imagePreview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Prévisualisation">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.innerHTML = '';
+            }
+        });
+        
+        function addAnswer() {
+            if (answerCount >= 6) {
+                alert('Maximum 6 réponses autorisées');
+                return;
+            }
+            
+            const container = document.getElementById('answersContainer');
+            const answerDiv = document.createElement('div');
+            answerDiv.className = 'answer-item';
+            answerDiv.innerHTML = `
+                <input type="text" name="answers[${answerCount}][answer_text]" placeholder="Réponse ${answerCount + 1}" required>
+                <label><input type="radio" name="correct_answer" value="${answerCount}"> Correcte</label>
+            `;
+            container.appendChild(answerDiv);
+            answerCount++;
+        }
+        
+        function removeAnswer() {
+            if (answerCount <= 2) {
+                alert('Minimum 2 réponses requises');
+                return;
+            }
+            
+            const container = document.getElementById('answersContainer');
+            container.removeChild(container.lastElementChild);
+            answerCount--;
+        }
+        
+        // Soumission du formulaire
+        document.getElementById('questionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const questionText = document.getElementById('question_text').value;
+            const imageFile = document.getElementById('image').files[0];
+            const categoryId = document.getElementById('categories_id').value;
+            const correctAnswer = document.querySelector('input[name="correct_answer"]:checked');
+            
+            // Validation
+            if (!questionText && !imageFile) {
+                showResult('Erreur: Vous devez fournir soit un texte soit une image pour la question.', 'error');
+                return;
+            }
+            
+            if (!correctAnswer) {
+                showResult('Erreur: Vous devez sélectionner une réponse correcte.', 'error');
+                return;
+            }
+            
+            // Préparer les données
+            if (questionText) formData.append('question_text', questionText);
+            if (imageFile) formData.append('image', imageFile);
+            formData.append('categories_id', categoryId);
+            
+            // Préparer les réponses
+            const answers = [];
+            const answerInputs = document.querySelectorAll('input[name*="answer_text"]');
+            answerInputs.forEach((input, index) => {
+                if (input.value.trim()) {
+                    answers.push({
+                        answer_text: input.value.trim(),
+                        is_correct: correctAnswer.value == index
+                    });
+                }
+            });
+            
+            formData.append('answers', JSON.stringify(answers));            try {
+                const response = await fetch('http://127.0.0.1:8000/api/test/questions', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('Question créée avec succès!', 'success');
+                    document.getElementById('questionForm').reset();
+                    document.getElementById('imagePreview').innerHTML = '';
+                    loadQuestions();
+                } else {
+                    showResult('Erreur: ' + (result.message || 'Erreur inconnue'), 'error');
+                }
+            } catch (error) {
+                showResult('Erreur de connexion: ' + error.message, 'error');
+            }
+        });
+        
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="${type}">${message}</div>`;
+        }        // Charger les questions existantes
+        async function loadQuestions() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/test/questions');
+                const result = await response.json();
+                
+                if (result.success) {
+                    const questionsHtml = result.data.map(question => `
+                        <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 4px;">
+                            <h4>Question ID: ${question.id}</h4>
+                            <p><strong>Texte:</strong> ${question.question_text || 'Aucun texte'}</p>
+                            <p><strong>Image:</strong> ${question.image_path ? `<img src="${question.image_url}" style="max-width: 200px;">` : 'Aucune image'}</p>
+                            <p><strong>Catégorie:</strong> ${question.category ? question.category.title : 'N/A'}</p>
+                            <p><strong>Réponses:</strong></p>
+                            <ul>
+                                ${question.repos.map(answer => `
+                                    <li>${answer.answer_text} ${answer.is_correct ? '(Correcte)' : ''}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('questionsList').innerHTML = questionsHtml;
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des questions:', error);
+            }
+        }
+        
+        // Charger les questions au chargement de la page
+        loadQuestions();
+    </script>
+</body>
+</html>

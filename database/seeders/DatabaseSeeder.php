@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
             RolesSeeder::class,
             ProcessSeeder::class,
             CategoriesSeeder::class,
+            QuzSeeder::class,
+            RepoSeeder::class,
             UserSeeder::class,
         ]);
 

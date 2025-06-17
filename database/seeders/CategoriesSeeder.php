@@ -40,6 +40,7 @@ class CategoriesSeeder extends Seeder
             'Rework',
             'Vissage',
             'Contention',
+            'Réparation',
             'Réparation ROB',
             'Outpining Machine',
         ];

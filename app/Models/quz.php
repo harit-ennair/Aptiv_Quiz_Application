@@ -11,8 +11,17 @@ class quz extends Model
 
     protected $fillable = [
         'question_text',
+        'image_path',
         'categories_id',
     ];
+
+    protected $appends = ['image_url'];
+
+    // Accessor for image URL
+    public function getImageUrlAttribute()
+    {
+        return $this->image_path ? asset('storage/questions/' . $this->image_path) : null;
+    }
 
     // Relationships
     public function category()
