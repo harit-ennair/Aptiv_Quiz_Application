@@ -151,6 +151,14 @@ class RepoSeeder extends Seeder
             return;
         }
 
+        // Find the Ultra-sonic Welding category
+        $ultrasonicWeldingCategory = categories::where('title', 'Ultra-sonic Welding')->first();
+        
+        if (!$ultrasonicWeldingCategory) {
+            $this->command->error('Ultra-sonic Welding category not found! Please run CategoriesSeeder first.');
+            return;
+        }
+
         // Get all questions for Contrôle Molettes
         $molettesQuestions = quz::where('categories_id', $molettesCategory->id)->get();
 
@@ -287,6 +295,14 @@ class RepoSeeder extends Seeder
             return;
         }
 
+        // Get all questions for Ultra-sonic Welding
+        $ultrasonicWeldingQuestions = quz::where('categories_id', $ultrasonicWeldingCategory->id)->get();
+
+        if ($ultrasonicWeldingQuestions->isEmpty()) {
+            $this->command->error('No questions found for Ultra-sonic Welding! Please run QuzSeeder first.');
+            return;
+        }
+
         // Define answers for each question
         $molettesQuestionAnswers = [
             // Question 1: Quelle est le rôle de Molettes dans le cablage?
@@ -315,93 +331,6 @@ class RepoSeeder extends Seeder
                 ['text' => 'Chaque jour avant le début du travail', 'correct' => true],
                 ['text' => 'Une fois par semaine', 'correct' => false],
                 ['text' => 'Seulement quand il y a un problème', 'correct' => false],
-            ],
-            
-            // Question 5: Quelle est la documentation utilisée dans votre poste de travail?
-            'Quelle est la documentation utilisée dans votre poste de travail?' => [
-                ['text' => 'mode Opératoire, check-liste de maintenence 1er niveau, les aides visuels,Sos', 'correct' => true],
-                ['text' => 'Feuille de prise de donnée; la fiche technique, mode Opératoire,étiquette,', 'correct' => false],
-                ['text' => 'Check-liste de maintenence 1er niveau, les aides visuels; suivi de production chaque 2 heures', 'correct' => false],
-            ],
-            
-            // Question 6: Choisir la définition exacte du <<Mode Opératoire>> :
-            'Choisir la définition exacte du <<Mode Opératoire>> :' => [
-                ['text' => 'C\'est la fiche technique d\'une chaîne de mantage', 'correct' => false],
-                ['text' => 'C\'est un document qui définit les opérations des opérateurs dans le poste de travail', 'correct' => true],
-                ['text' => 'C\'est une Aide visuelle pour le poste d\'encliquitage', 'correct' => false],
-            ],
-            
-            // Question 7: Choisir la définition exacte du <<Aide Visuelle>> :
-            'Choisir la définition exacte du <<Aide Visuelle>> :' => [
-                ['text' => 'C\'est le mode opératoire du poste', 'correct' => false],
-                ['text' => 'C\'est le check-liste de maintenance premier niveau', 'correct' => false],
-                ['text' => 'C\'est un document qui donne des informations visuelle sur la qualité d\'un état ou produit', 'correct' => true],
-            ],
-            
-            // Question 8: La définition exacte de la politique de qualité est :
-            'La définition exacte de la politique de qualité est :' => [
-                ['text' => 'Satisfaire les besoins du client en minimisant les coûts de la qualité', 'correct' => false],
-                ['text' => 'Satisfaire les besoins du client avec 0 défaut et dépasser ses attentes', 'correct' => true],
-                ['text' => 'Etre exegents avec les fournisseurs pour assurer la qualité du produit', 'correct' => false],
-            ],
-            
-            // Question 9: La définition exacte de la politique d'environnement:
-            'La définition exacte de la politique d\'environnement:' => [
-                ['text' => 'La protection de la santé du personnel,Le respet de l\'ordre et propreté du poste de travail,La séparation des déchets et le traitement du résidus toxique', 'correct' => true],
-                ['text' => 'Le respet de l\'ordre et propreté du poste de travail', 'correct' => false],
-                ['text' => 'La séparation des déchets et le traitement du résidus toxique', 'correct' => false],
-            ],
-            
-            // Question 10: Cocher les trois consignes de sécurité:
-            'Cocher les trois consignes de sécurité:' => [
-                ['text' => 'Interdit le port des bijoux ,interdit de macher le chwingum,interdit de porter les casquettes', 'correct' => true],
-                ['text' => 'Interdit de manger ,interdit de porter les chaussures fermé,le port des bijoux obligatoir', 'correct' => false],
-                ['text' => 'Interdit le port des bijoux ,acher le chwingum obligatoire ,interdit de porter les casquettes', 'correct' => false],
-            ],
-            
-            // Question 11: Citer les 5S?
-            'Citer les 5S?' => [
-                ['text' => 'Débarasser; ranger nettoyer, ordre,rigeur', 'correct' => true],
-                ['text' => 'Débarasser;Jouer, ranger nettoyer, ordre,enrubannage', 'correct' => false],
-                ['text' => 'Courir, ranger, nettoyer, ordre,enrubannage', 'correct' => false],
-            ],
-            
-            // Question 12: Cocher les Valeurs d'APTIV:
-            'Cocher les Valeurs d\'APTIV:' => [
-                ['text' => 'Jouer pour gagner, ,penser et agir en entrepreneur, Agir avec retardement, vouloir atteindre ses objectifs,,agir avec respet', 'correct' => false],
-                ['text' => 'Jouer pour gagner, une équipe ,penser et agir en entrepreneur, Agir avec le sens de l\'urgence, vouloir atteindre ses objectifs,,agir avec respet', 'correct' => true],
-                ['text' => 'Jouer pour gagner, penser et agir comme un joueur, Agir avec retardement, vouloir atteindre ses objectifs,,agir avec respet', 'correct' => false],
-            ],
-        ];
-
-        // Define answers for Contrôle Électrique questions
-        $controleElectriqueQuestionAnswers = [
-            // Question 1: Quelle est le rôle de Molettes dans le cablage?
-            'Quelle est le rôle de Molettes dans le cablage?' => [
-                ['text' => 'La protection du cable contre les agression mécanique', 'correct' => true],
-                ['text' => 'La fixation du câble avec la voiture', 'correct' => false],
-                ['text' => 'Pour la protection contre l\'inflitration des liquides', 'correct' => false],
-            ],
-            
-            // Question 2: Quelles sont les déférents type de Molettes:
-            'Quelles sont les déférents type de Molettes:' => [
-                ['text' => 'Réglette, soufanou, PVC, passe fil, molette,', 'correct' => false],
-                ['text' => 'molette, réglette, soufanou ,soufanou coudé, passe-fil, canal,', 'correct' => true],
-                ['text' => 'molette, réglette, funda ,textil, passe-fil, canal,', 'correct' => false],
-            ],
-            
-            // Question 3: Quelles sont les matériels et les moyens utilisée dans le poste de Molettes :
-            'Quelles sont les matériels et les moyens utilisée dans le poste de Molettes :' => [
-                ['text' => 'Tableau de montage,Pistolet, analyseur, imprimante', 'correct' => false],
-                ['text' => 'Rob,Tableau de montage,les outils de retouche,Pistolet, imprimante', 'correct' => true],
-                ['text' => 'les relais,Tableau de montage,les fusibles ,Pistolet, imprimante', 'correct' => false],
-            ],
-            
-            // Question 4: Quand les interventions de maintenance de 1er niveau doivent-elles être effectuées et enregistrées ?
-            'Quand les interventions de maintenance de 1er niveau doivent-elles être effectuées et enregistrées ?' => [
-                ['text' => 'Chaque jour avant le début du travail', 'correct' => true],
-                ['text' => 'Une fois par semaine', 'correct' => false],
-                ['text' => 'Seulement en cas de problème', 'correct' => false],
             ],
             
             // Question 5: Quelle est la documentation utilisée dans votre poste de travail?
@@ -1097,6 +1026,203 @@ class RepoSeeder extends Seeder
             ],
         ];
 
+        // Define answers for Ultra-sonic Welding questions
+        $ultrasonicWeldingQuestionAnswers = [
+            // Question 1: Qu'est-ce qu'une épissure USW ?
+            'Qu\'est-ce qu\'une épissure USW ?' => [
+                ['text' => 'Une union multi-fils, utilisant le soudage par ultrasons avec un équipement spécifique.', 'correct' => true],
+                ['text' => 'Une jonction de fils par soudage.', 'correct' => false],
+                ['text' => 'Une union d\'isolement entre plusieurs fils.', 'correct' => false],
+            ],
+            
+            // Question 2: La longueur dépouillée des fils pour cette épissure doit :
+            'La longueur dépouillée des fils pour cette épissure doit :' => [
+                ['text' => 'Être de 16 mm de long sans brins coupés pour répondre aux spécifications.', 'correct' => true],
+                ['text' => 'Les fils de ces épissures ne sont pas dénudés.', 'correct' => false],
+                ['text' => 'Être la taille correcte en fonction de l\'équipement sans brins coupés pour répondre aux spécifications.', 'correct' => false],
+            ],
+            
+            // Question 3: Quelles précautions devez-vous prendre avec les parties dépouillées de ces fils ?
+            'Quelles précautions devez-vous prendre avec les parties dépouillées de ces fils ?' => [
+                ['text' => 'Les empêcher d\'obtenir Pour tout type de saleté ou d\'humidité, gardez-les toujours bien rangés.', 'correct' => true],
+                ['text' => 'Ne retirez jamais l\'isolement des extrémités du fil (protection contre le décapage).', 'correct' => false],
+            ],
+            
+            // Question 4: Comment les pièces dépouillées doivent-elles être placées dans la machine ?
+            'Comment les pièces dépouillées doivent-elles être placées dans la machine ?' => [
+                ['text' => 'Du bon côté pour que ceux-là La plus grande section est toujours du côté droit et touche la sonotrode.', 'correct' => true],
+                ['text' => 'Toujours les « peigner ».', 'correct' => false],
+            ],
+            
+            // Question 5: Le chevauchement des parties dépouillées des fils doit :
+            'Le chevauchement des parties dépouillées des fils doit :' => [
+                ['text' => 'Assurez-vous que l\'extrémité des multi-fils est alignée avec la surface de la plaque de retouche (guide) et que le Avec la plus grande section sont en dessous de tous les autres.', 'correct' => true],
+                ['text' => 'Assurez le passage du courant électrique entre les fils.', 'correct' => false],
+                ['text' => 'Assurez-vous que l\'isolation des fils reste dans la zone de soudage.', 'correct' => false],
+            ],
+            
+            // Question 6: Dans la figure 1 (B), quelle est la distance entre une isolation ?
+            'Dans la figure 1 (B), quelle est la distance entre une isolation ?' => [
+                ['text' => 'Moins de 3 mm.', 'correct' => false],
+                ['text' => 'Entre 3 et 6 mm.', 'correct' => true],
+                ['text' => 'Plus de 3 mm', 'correct' => false],
+            ],
+            
+            // Question 7: La zone de soudage Splice doit :
+            'La zone de soudage Splice doit :' => [
+                ['text' => 'Être rectangulaire, avec la forme de la sonotrode et les brins', 'correct' => true],
+                ['text' => 'Être rectangulaire, lisse et avec les tringles bien soudées.', 'correct' => false],
+                ['text' => 'Gardez la plupart des brins soudés.', 'correct' => false],
+            ],
+            
+            // Question 8: L'épissure de la figure 2 est :
+            'L\'épissure de la figure 2 est :' => [
+                ['text' => 'Eh bien, parce qu\'il n\'y a pas de multi-fils lâches.', 'correct' => false],
+                ['text' => 'Incorrect, parce que les fils sont au-dessus de l\'isolation.', 'correct' => true],
+                ['text' => 'Plus ou moins, parce qu\'il y a des fils des deux côtés.', 'correct' => false],
+            ],
+            
+            // Question 9: L'épissure de la figure 3 est :
+            'L\'épissure de la figure 3 est :' => [
+                ['text' => 'Bien.', 'correct' => false],
+                ['text' => 'Incorrect, parce qu\'il a des brins détachés de la soudure.', 'correct' => true],
+                ['text' => 'Acceptable, parce qu\'il n\'y a que deux brins lâches', 'correct' => false],
+            ],
+            
+            // Question 10: Selon la figure 4, quelle est la fonctionnalité de la commande F2 ?
+            'Selon la figure 4, quelle est la fonctionnalité de la commande F2 ?' => [
+                ['text' => 'Aide - décrit la fonctionnalité de toutes les commandes de la machine', 'correct' => false],
+                ['text' => 'Vous permet de choisir l\'épissure spécifique à produire', 'correct' => true],
+                ['text' => 'Vous permet de choisir la séquence d\'épissure à produire', 'correct' => false],
+            ],
+            
+            // Question 11: Selon la figure 4, quelle est la fonctionnalité de la commande F4 ?
+            'Selon la figure 4, quelle est la fonctionnalité de la commande F4 ?' => [
+                ['text' => 'Aide - décrit la fonctionnalité de toutes les commandes de la machine', 'correct' => false],
+                ['text' => 'Vous permet de choisir l\'épissure spécifique à produire', 'correct' => false],
+                ['text' => 'Vous permet de choisir la séquence d\'épissure à produire', 'correct' => true],
+            ],
+            
+            // Question 12: Selon la figure 4, quelle est la fonctionnalité de la commande F5 ?
+            'Selon la figure 4, quelle est la fonctionnalité de la commande F5 ?' => [
+                ['text' => 'Permet d\'accéder à l\'enregistrement des statistiques du processus', 'correct' => false],
+                ['text' => 'Permet l\'accès aux compteurs de production et de qualité', 'correct' => false],
+                ['text' => 'Vous permet de choisir la séquence d\'épissure à produire', 'correct' => false],
+            ],
+            
+            // Question 13: Quand devriez-vous régler les compteurs sur "0" ?
+            'Quand devriez-vous régler les compteurs sur "0" ?' => [
+                ['text' => 'Au début du shift', 'correct' => false],
+                ['text' => 'À la fin du shift', 'correct' => false],
+                ['text' => 'Jamais', 'correct' => false],
+            ],
+            
+            // Question 14: Selon la figure 5, quelle est l'interprétation de l'erreur ?
+            'Selon la figure 5, quelle est l\'interprétation de l\'erreur ?' => [
+                ['text' => 'Erreur de avant soudage', 'correct' => false],
+                ['text' => 'Erreur de après soudage', 'correct' => false],
+                ['text' => 'Erreur de temps de soudage', 'correct' => false],
+            ],
+            
+            // Question 15: Quelles sont les causes possibles de cette erreur ?
+            'Quelles sont les causes possibles de cette erreur ?' => [
+                ['text' => 'filaments coupés, mauvaise section de fil, fils manquants ou en excès et/ou mauvais positionnement du fil', 'correct' => false],
+                               ['text' => 'filaments coupés.', 'correct' => false],
+                ['text' => 'Mauvaise section de fil', 'correct' => false],
+            ],
+            
+            // Question 16: Selon la figure 6, quelle est l'interprétation de l'erreur ?
+            'Selon la figure 6, quelle est l\'interprétation de l\'erreur ?' => [
+                ['text' => 'Erreur de avant soudage', 'correct' => false],
+                ['text' => 'Erreur de après soudage', 'correct' => false],
+                ['text' => 'Erreur de temps de soudage', 'correct' => false],
+            ],
+            
+            // Question 17: Selon la figure 7, quelle est l'interprétation de l'erreur ?
+            'Selon la figure 7, quelle est l\'interprétation de l\'erreur ?' => [
+                ['text' => 'Erreur de pré-hauteur', 'correct' => false],
+                ['text' => 'Erreur de hauteur finale', 'correct' => false],
+                ['text' => 'Erreur de temps de soudage', 'correct' => false],
+            ],
+            
+            // Question 18: Pourquoi l'utilisation de gants est-elle obligatoire lors de la production d'épissures à ultrasons ?
+            'Pourquoi l\'utilisation de gants est-elle obligatoire lors de la production d\'épissures à ultrasons ?' => [
+                ['text' => 'Pour réduire le risque de contamination des filaments', 'correct' => false],
+                ['text' => 'Pour protéger vos mains contre le risque d\'entorses', 'correct' => false],
+                ['text' => 'L\'utilisation de gants n\'est pas obligatoire', 'correct' => false],
+            ],
+            
+            // Question 19: Selon la figure 8, de combien de fils avons-nous besoin dans cette configuration ?
+            'Selon la figure 8, de combien de fils avons-nous besoin dans cette configuration ?' => [
+                ['text' => 'Nous avons besoin d\'un fil', 'correct' => false],
+                ['text' => 'Nous avons besoin de 2 fils', 'correct' => false],
+                ['text' => 'Nous avons besoin de 8 fils', 'correct' => false],
+            ],
+            
+            // Question 20: Selon la figure 8, quelle est la section transversale du fil abc-1 ?
+            'Selon la figure 8, quelle est la section transversale du fil abc-1 ?' => [
+                ['text' => '0,35', 'correct' => false],
+                ['text' => '1,50', 'correct' => false],
+                ['text' => '1,00', 'correct' => false],
+            ],
+            
+            // Question 21: Selon la figure 8, quel est le nom de l'épissure en cours de production ?
+            'Selon la figure 8, quel est le nom de l\'épissure en cours de production ?' => [
+                ['text' => 'ESC', 'correct' => false],
+                ['text' => 'GI3MxGIM', 'correct' => false],
+                ['text' => '16.00 mm2', 'correct' => false],
+            ],
+            
+            // Question 22: Que doit-on faire au cas d'une épissure défectueuse ?
+            'Que doit-on faire au cas d\'une épissure défectueuse ?' => [
+                ['text' => 'Utilisez des ciseaux et des pinces à bec d\'aiguille pour éviter d\'endommager les multi-fils.', 'correct' => false],
+                ['text' => 'Suivre les instructions de réparation de l\'épissure à ultrasons', 'correct' => false],
+                ['text' => 'identifier l\'épissure avec une etiquette rouge et le mettre au crochet rouge', 'correct' => false],
+            ],
+            
+            // Question 23: Avant d'isoler une épissure, vous devez :
+            'Avant d\'isoler une épissure, vous devez :' => [
+                ['text' => 'Pliez l\'épissure', 'correct' => false],
+                ['text' => 'Vérifiez l\'épissure et "Peignez" les filaments de l\'épissure pour éviter de déchirer l\'isolation.', 'correct' => false],
+                ['text' => 'Inspection visuelle des fils et de la zone de soudage pour être conforme aux exigences de qualité.', 'correct' => false],
+            ],
+            
+            // Question 24: Que signifie « vérification de l'épissure » ?
+            'Que signifie « vérification de l\'épissure » ?' => [
+                ['text' => 'Vérification de toutes les caractéristiques visuelles dans une épissure prête à être isolée.', 'correct' => false],
+                ['text' => 'Vérification de l\'état des filaments sur l\'ép', 'correct' => false],
+                ['text' => 'Inspection visuelle de l\'isolation des fils.', 'correct' => false],
+            ],
+            
+            // Question 25: Quel type d'isolation doit être placé sur chaque épissure ?
+            'Quel type d\'isolation doit être placé sur chaque épissure ?' => [
+                ['text' => 'Ce qu\'est le plus grand pour bien couvrir l\'épissure.', 'correct' => false],
+                ['text' => 'Comme indiqué dans l\'instruction de travail et la fiche technique', 'correct' => false],
+                ['text' => 'Ce qui est utilisé le plus souvent.', 'correct' => false],
+            ],
+            
+            // Question 26: Décrivez la légende de la figure 9 :
+            'Décrivez la légende de la figure 9 :' => [
+                ['text' => 'A-G.jaw / B-Anvil / C-Sonotrode / D-Anvil plate', 'correct' => false],
+                ['text' => 'A-Sonotrode / B-Anvil / C-G.jaw / D-Anvil plate', 'correct' => false],
+                ['text' => 'A-Anvil platte / B-Anvil / C- G.jaw / D-Sonotrode', 'correct' => false],
+            ],
+            
+            // Question 27: Combien de fois pouvez-vous refaire l'épissure en utilisant les mêmes fils ?
+            'Combien de fois pouvez-vous refaire l\'épissure en utilisant les mêmes fils ?' => [
+                ['text' => '1 Fois.', 'correct' => false],
+                ['text' => '2 fois', 'correct' => false],
+                ['text' => '3 fois', 'correct' => false],
+            ],
+            
+            // Question 28: Quand les interventions de maintenance de 1er niveau doivent-elles être effectuées et enregistrées ?
+            'Quand les interventions de maintenance de 1er niveau doivent-elles être effectuées et enregistrées ?' => [
+                ['text' => 'Au début de chaque shift de travail', 'correct' => false],
+                ['text' => 'À la fin du shift de travail', 'correct' => false],
+                ['text' => 'Pendant le shift de travail', 'correct' => false],
+            ],
+        ];
+
         $totalAnswers = 0;
 
         // Process Molettes questions
@@ -1119,11 +1245,9 @@ class RepoSeeder extends Seeder
         foreach ($controleElectriqueQuestions as $question) {
             $questionText = $question->question_text;
             
-            // Check first in controleElectriqueQuestionAnswers, then in molettesQuestionAnswers for shared questions
+            // Check in molettesQuestionAnswers for shared questions
             $answers = null;
-            if (isset($controleElectriqueQuestionAnswers[$questionText])) {
-                $answers = $controleElectriqueQuestionAnswers[$questionText];
-            } elseif (isset($molettesQuestionAnswers[$questionText])) {
+            if (isset($molettesQuestionAnswers[$questionText])) {
                 $answers = $molettesQuestionAnswers[$questionText];
             }
             
@@ -1499,6 +1623,30 @@ class RepoSeeder extends Seeder
             }
         }
 
-        $this->command->info('Created ' . $totalAnswers . ' answers for all categories: Contrôle Molettes, Contrôle Électrique, Contrôle Goulotte, Emballage, Epissure UCAB, Expander Machine, Sysème Led, Outpining Machine, Réparation, Réparation ROB, Ring terminal, Sealing, Térostat, Vision Machine, Vissage, Workman Machine, and Rework');
+        // Process Ultra-sonic Welding questions
+        foreach ($ultrasonicWeldingQuestions as $question) {
+            $questionText = $question->question_text;
+            
+            // Check first in ultrasonicWeldingQuestionAnswers, then in molettesQuestionAnswers for shared questions
+            $answers = null;
+            if (isset($ultrasonicWeldingQuestionAnswers[$questionText])) {
+                $answers = $ultrasonicWeldingQuestionAnswers[$questionText];
+            } elseif (isset($molettesQuestionAnswers[$questionText])) {
+                $answers = $molettesQuestionAnswers[$questionText];
+            }
+            
+            if ($answers) {
+                foreach ($answers as $answerData) {
+                    repo::create([
+                        'answer_text' => $answerData['text'],
+                        'quz_id' => $question->id,
+                        'is_correct' => $answerData['correct'],
+                    ]);
+                    $totalAnswers++;
+                }
+            }
+        }
+
+        $this->command->info('Created ' . $totalAnswers . ' answers for all categories: Contrôle Molettes, Contrôle Électrique, Contrôle Goulotte, Emballage, Epissure UCAB, Expander Machine, Sysème Led, Outpining Machine, Réparation, Réparation ROB, Ring terminal, Sealing, Térostat, Vision Machine, Vissage, Workman Machine, Rework, and Ultra-sonic Welding');
     }
 }

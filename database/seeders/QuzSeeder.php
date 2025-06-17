@@ -877,5 +877,55 @@ class QuzSeeder extends Seeder
         }
 
         $this->command->info('Created ' . count($reworkQuestions) . ' questions for Rework');
+
+        // Find the Ultra-sonic Welding category
+        $ultrasonicWeldingCategory = categories::where('title', 'Ultra-sonic Welding')->first();
+        
+        if (!$ultrasonicWeldingCategory) {
+            $this->command->error('Ultra-sonic Welding category not found! Please run CategoriesSeeder first.');
+            return;
+        }
+
+        // Questions for Ultra-sonic Welding
+        $ultrasonicWeldingQuestions = [
+            'Qu\'est-ce qu\'une épissure USW ?',
+            'La longueur dépouillée des fils pour cette épissure doit :',
+            'Quelles précautions devez-vous prendre avec les parties dépouillées de ces fils ?',
+            'Comment les pièces dépouillées doivent-elles être placées dans la machine ?',
+            'Le chevauchement des parties dépouillées des fils doit :',
+            'Dans la figure 1 (B), quelle est la distance entre une isolation ?',
+            'La zone de soudage Splice doit :',
+            'L\'épissure de la figure 2 est :',
+            'L\'épissure de la figure 3 est :',
+            'Selon la figure 4, quelle est la fonctionnalité de la commande F2 ?',
+            'Selon la figure 4, quelle est la fonctionnalité de la commande F4 ?',
+            'Selon la figure 4, quelle est la fonctionnalité de la commande F5 ?',
+            'Quand devriez-vous régler les compteurs sur "0" ?',
+            'Selon la figure 5, quelle est l\'interprétation de l\'erreur ?',
+            'Quelles sont les causes possibles de cette erreur ?',
+            'Selon la figure 6, quelle est l\'interprétation de l\'erreur ?',
+            'Selon la figure 7, quelle est l\'interprétation de l\'erreur ?',
+            'Pourquoi l\'utilisation de gants est-elle obligatoire lors de la production d\'épissures à ultrasons ?',
+            'Selon la figure 8, de combien de fils avons-nous besoin dans cette configuration ?',
+            'Selon la figure 8, quelle est la section transversale du fil abc-1 ?',
+            'Selon la figure 8, quel est le nom de l\'épissure en cours de production ?',
+            'Que doit-on faire au cas d\'une épissure défectueuse ?',
+            'Avant d\'isoler une épissure, vous devez :',
+            'Que signifie « vérification de l\'épissure » ?',
+            'Quel type d\'isolation doit être placé sur chaque épissure ?',
+            'Décrivez la légende de la figure 9 :',
+            'Combien de fois pouvez-vous refaire l\'épissure en utilisant les mêmes fils ?',
+            'Quand les interventions de maintenance de 1er niveau doivent-elles être effectuées et enregistrées ?',
+        ];
+
+        foreach ($ultrasonicWeldingQuestions as $questionText) {
+            quz::create([
+                'question_text' => $questionText,
+                'categories_id' => $ultrasonicWeldingCategory->id,
+                'image_path' => null,
+            ]);
+        }
+
+        $this->command->info('Created ' . count($ultrasonicWeldingQuestions) . ' questions for Ultra-sonic Welding');
     }
 }
