@@ -580,8 +580,20 @@
         <button onclick="clearFilters()" class="mt-3 bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white px-4 py-2 rounded-md transition-colors text-sm">
             Effacer les filtres
         </button>
-    </div>    <!-- Questions Cards Grid (Quizizz Style) -->
-    <div id="questions-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
+    </div>    <!-- Initial State - No Search Yet -->    <div id="questions-initial-state" class="px-6 py-12 text-center">        <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">Sélectionner une catégorie</h3>
+        <p class="mt-2 text-sm text-gray-500">Choisissez une catégorie dans le filtre ci-dessus pour afficher les questions.</p>
+        <div class="mt-4 flex flex-wrap justify-center gap-2 text-xs text-gray-400">
+            <span class="bg-blue-100 px-2 py-1 rounded text-blue-600">� Sélectionner un processus</span>
+            <span class="bg-green-100 px-2 py-1 rounded text-green-600">📁 Choisir une catégorie</span>
+            <span class="bg-purple-100 px-2 py-1 rounded text-purple-600">�️ Voir les questions</span>
+        </div>
+    </div>
+
+    <!-- Questions Cards Grid (Quizizz Style) -->
+    <div id="questions-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6 hidden">
         <!-- Question cards will be populated by JavaScript -->
     </div>
 </div>
@@ -811,10 +823,12 @@ async function loadQuestions() {
     const loadingEl = document.getElementById('questions-loading');
     const cardsEl = document.getElementById('questions-cards');
     const emptyEl = document.getElementById('questions-empty');
+    const initialStateEl = document.getElementById('questions-initial-state');
 
     showElement(loadingEl);
     hideElement(cardsEl);
     hideElement(emptyEl);
+    hideElement(initialStateEl);
 
     try {
         const response = await fetch('/admin/api/questions');
@@ -951,12 +965,12 @@ function filterQuestions() {
         
         const searchTerm = searchInput?.value.toLowerCase() || '';
         const processId = processFilter?.value || '';
-        const categoryId = categoryFilter?.value || '';
-
-        filteredQuestions = allQuestions.filter(question => {
-            if (!question || !question.question_text) return false;
+        const categoryId = categoryFilter?.value || '';        filteredQuestions = allQuestions.filter(question => {
+            if (!question) return false;
             
-            const searchMatch = question.question_text.toLowerCase().includes(searchTerm);
+            // Search in question text (if it exists)
+            const searchMatch = !searchTerm || 
+                (question.question_text && question.question_text.toLowerCase().includes(searchTerm));
             
             const categoryMatch = !categoryId || question.categories_id == categoryId;
             
@@ -970,6 +984,50 @@ function filterQuestions() {
     } catch (error) {
         console.error('Error filtering questions:', error);
         showMessage('Erreur lors du filtrage des questions', 'error');
+    }
+}
+
+// Helper functions to preserve filter state during operations
+function saveFilterState() {
+    const searchInput = document.getElementById('question-search');
+    const processFilter = document.getElementById('question-process-filter');
+    const categoryFilter = document.getElementById('question-category-filter');
+    
+    return {
+        search: searchInput?.value || '',
+        process: processFilter?.value || '',
+        category: categoryFilter?.value || ''
+    };
+}
+
+function restoreFilterState(filterState) {
+    if (!filterState) return;
+    
+    const searchInput = document.getElementById('question-search');
+    const processFilter = document.getElementById('question-process-filter');
+    const categoryFilter = document.getElementById('question-category-filter');
+    
+    if (searchInput && filterState.search) {
+        searchInput.value = filterState.search;
+    }
+    
+    if (processFilter && filterState.process) {
+        processFilter.value = filterState.process;
+        // Update category filter based on process
+        updateCategoryFilter(filterState.process);
+    }
+    
+    // Restore category after a small delay to ensure category filter is populated
+    if (categoryFilter && filterState.category) {
+        setTimeout(() => {
+            categoryFilter.value = filterState.category;
+            filterQuestions();
+        }, 100);
+    } else if (filterState.search || filterState.process) {
+        // Apply filters if search or process is set but no category
+        setTimeout(() => {
+            filterQuestions();
+        }, 100);
     }
 }
 
@@ -1002,10 +1060,8 @@ function clearFilters() {
     // Reset filtered questions to show all
     filteredQuestions = [...allQuestions];
     renderQuestions();
-    updateStatistics();
-    
-    // Show confirmation message
-    showMessage('Filtres effacés avec succès', 'success');
+    updateStatistics();      // Show confirmation message
+    showMessage('Filtres effacés avec succès - Sélectionnez une catégorie pour afficher les questions', 'success');
 }
 
 // Update statistics
@@ -1049,6 +1105,20 @@ function renderQuestions() {
     const cardsContainer = document.getElementById('questions-cards');
     const emptyEl = document.getElementById('questions-empty');
     const filteredEmptyEl = document.getElementById('questions-filtered-empty');
+    const initialStateEl = document.getElementById('questions-initial-state');    // Check if category is selected (required to show questions)
+    const categoryId = document.getElementById('question-category-filter')?.value || '';
+    
+    // If no category is selected, show initial state
+    if (!categoryId) {
+        hideElement(cardsContainer);
+        hideElement(emptyEl);
+        hideElement(filteredEmptyEl);
+        showElement(initialStateEl);
+        return;
+    }
+
+    // Hide initial state when category is selected
+    hideElement(initialStateEl);
 
     if (filteredQuestions.length === 0) {
         hideElement(cardsContainer);
@@ -1065,6 +1135,7 @@ function renderQuestions() {
 
     hideElement(emptyEl);
     hideElement(filteredEmptyEl);
+    showElement(cardsContainer);
 
     // Render Quizizz-style cards
     if (cardsContainer) {
@@ -1415,12 +1486,17 @@ async function handleQuestionSubmit(e) {
             return;
         }
 
-        const result = await response.json();
-
-        if (result.success) {
+        const result = await response.json();        if (result.success) {
             showMessage(result.message || 'Question sauvegardée avec succès');
             closeQuestionModal();
-            loadQuestions();
+            
+            // Save current filter state before reloading
+            const filterState = saveFilterState();
+            
+            loadQuestions().then(() => {
+                // Restore filters after questions are loaded
+                restoreFilterState(filterState);
+            });
         } else {
             showMessage(result.message || 'Une erreur est survenue', 'error');
         }
@@ -1505,11 +1581,16 @@ async function deleteQuestion(questionId) {
             }
         });
 
-        const result = await response.json();
-
-        if (result.success) {
+        const result = await response.json();        if (result.success) {
             showMessage(result.message);
-            loadQuestions();
+            
+            // Save current filter state before reloading
+            const filterState = saveFilterState();
+            
+            loadQuestions().then(() => {
+                // Restore filters after questions are loaded
+                restoreFilterState(filterState);
+            });
         } else {
             showMessage(result.message || 'Une erreur est survenue', 'error');
         }
@@ -1523,20 +1604,13 @@ async function deleteQuestion(questionId) {
 
 // Refresh questions
 function refreshQuestions() {
-    // Check if filters are active and give user the option to clear them
-    const hasFilters = document.getElementById('question-search')?.value.trim() !== '' ||
-                      document.getElementById('question-process-filter')?.value !== '' ||
-                      document.getElementById('question-category-filter')?.value !== '';
+    // Save current filter state before refreshing
+    const filterState = saveFilterState();
     
-    if (hasFilters) {
-        // Clear filters first, then reload
-        clearFilters();
-        setTimeout(() => {
-            loadQuestions();
-        }, 100);
-    } else {
-        loadQuestions();
-    }
+    loadQuestions().then(() => {
+        // Restore filters after questions are loaded
+        restoreFilterState(filterState);
+    });
 }
 
 // Utility functions
