@@ -71,6 +71,19 @@
         border-radius: 0 2px 2px 0;
     }
     
+    /* Ensure sidebar is always fixed on desktop */
+    @media (min-width: 1024px) {
+        #sidebar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            height: 100vh !important;
+            width: 16rem !important;
+            z-index: 40 !important;
+            overflow-y: auto !important;
+        }
+    }
+    
     /* Message animations */
     .message-enter {
         animation: slideInRight 0.3s ease-out;
@@ -157,6 +170,24 @@
     body {
         overflow-x: hidden;
     }
+    
+    /* Ensure sidebar stays fixed during scroll */
+    #sidebar {
+        will-change: transform;
+        backface-visibility: hidden;
+    }
+    
+    /* Fix any potential scroll interference */
+    @media (min-width: 1024px) {
+        .dashboard-layout {
+            position: relative;
+        }
+        
+        #sidebar {
+            position: fixed !important;
+            will-change: auto;
+        }
+    }
 
     /* Improve touch targets for mobile */
     .btn-touch {
@@ -170,21 +201,29 @@
         position: relative;
     }
     
+    /* Ensure content doesn't overlap with fixed sidebar */
+    @media (min-width: 1024px) {
+        .dashboard-layout {
+            padding-left: 0;
+        }
+    }
+    
     /* Sidebar positioning for desktop */
     @media (min-width: 1024px) {
         .sidebar-desktop {
-            position: fixed;
+            position: fixed !important;
             top: 0;
             left: 0;
             width: 16rem;
             height: 100vh;
             z-index: 40;
             overflow-y: auto;
+            transform: translateX(0) !important;
         }
         
         .main-content-desktop {
-            margin-left: 16rem;
-            width: calc(100% - 16rem);
+            margin-left: 16rem !important;
+            width: calc(100% - 16rem) !important;
             min-height: 100vh;
         }
     }
@@ -245,6 +284,14 @@
         flex-direction: column;
         overflow: hidden;
     }
+    
+    /* Ensure proper content positioning on desktop */
+    @media (min-width: 1024px) {
+        .content-area {
+            margin-left: 16rem !important;
+            width: calc(100% - 16rem) !important;
+        }
+    }
       .scrollable-content {
         flex: 1;
         overflow-y: auto;
@@ -287,6 +334,12 @@
     .z-sidebar { z-index: 40; }
     .z-header { z-index: 30; }
     .z-content { z-index: 10; }
+    
+    /* Footer should be above everything */
+    footer {
+        z-index: 100 !important;
+        position: relative !important;
+    }
     
     /* Force hide tables on mobile */
     @media (max-width: 1023px) {
