@@ -47,6 +47,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/profile', [AdminController::class, 'updateProfile'])->name('profile.update');
         Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
         
+        // User History
+        Route::get('/user-history', [AdminController::class, 'showUserHistory'])->name('user-history');
+        Route::post('/api/user-history', [AdminController::class, 'getUserHistory'])->name('api.user-history');
+        
         // AJAX API routes for CRUD operations
         Route::prefix('api')->name('api.')->group(function () {
             // Processes

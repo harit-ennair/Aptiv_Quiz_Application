@@ -142,4 +142,57 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Show user test history page in admin dashboard
+     */
+    public function showUserHistory()
+    {
+        return view('admin.user-history');
+    }
+
+    /**
+     * Get user test history via AJAX
+     */
+    public function getUserHistory(Request $request)
+    {
+        $request->validate([
+            'identification' => 'required|numeric'
+        ]);
+
+        $user = User::where('identification', $request->identification)
+                   ->with('role')
+                   ->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Aucun utilisateur trouvé avec ce numéro d\'identification.'
+            ]);
+        }
+
+        $tests = \App\Models\test::where('user_id', $user->id)
+                    ->with(['formateur', 'quzs'])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+        // Get category names for tests
+        $testsWithCategories = $tests->map(function($test) {
+            $category = null;
+            if ($test->quzs->isNotEmpty()) {
+                $firstQuestion = $test->quzs->first();
+                $category = \App\Models\categories::find($firstQuestion->categories_id);
+            }
+            
+            $test->category_name = $category ? $category->title : 'Catégorie inconnue';
+            $test->process_name = $category && $category->process ? $category->process->title : 'Processus inconnu';
+            return $test;
+        });
+
+        return response()->json([
+            'success' => true,
+            'user' => $user,
+            'tests' => $testsWithCategories
+        ]);
+    }
 }

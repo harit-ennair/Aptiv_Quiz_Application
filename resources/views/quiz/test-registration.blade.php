@@ -50,8 +50,7 @@
                         </svg>
                         Informations Personnelles
                     </h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
                                 Prénom <span class="text-red-500">*</span>
@@ -73,7 +72,7 @@
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="grid grid-cols-1 gap-6 mt-6">
                         <div>
                             <label for="identification" class="block text-sm font-medium text-gray-700 mb-2">
                                 Numéro d'identification <span class="text-red-500">*</span>
@@ -82,15 +81,6 @@
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-aptiv-orange-500 transition-colors"
                                    placeholder="Votre numéro d'identification"
                                    value="{{ old('identification') }}">
-                        </div>
-                        
-                        <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                                Mot de passe <span class="text-red-500">*</span>
-                            </label>
-                            <input type="password" name="password" id="password" required minlength="6"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-aptiv-orange-500 transition-colors"
-                                   placeholder="Minimum 6 caractères">
                         </div>
                     </div>
                 </div>
@@ -151,9 +141,7 @@
                     </button>
                 </div>
             </form>
-        </div>
-
-        <!-- Info Section -->
+        </div>        <!-- Info Section -->
         <div class="mt-8 bg-white/10 backdrop-blur-sm rounded-xl p-6 text-white">
             <h4 class="font-semibold mb-3 flex items-center">
                 <svg class="w-5 h-5 mr-2 text-aptiv-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,6 +154,7 @@
                 <li>• Le test sera automatiquement sauvegardé</li>
                 <li>• Les résultats seront calculés automatiquement</li>
                 <li>• Vous ne pouvez pas revenir en arrière une fois le test commencé</li>
+                <li>• <strong>Votre mot de passe sera automatiquement votre numéro d'identification</strong></li>
             </ul>
         </div>
     </div>

@@ -31,29 +31,38 @@ class UserTestController extends Controller
      * Register user and start test
      */
     public function registerAndStartTest(Request $request)
-    {
-        $request->validate([
+    {        $request->validate([
             'name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'identification' => 'required|integer|unique:users,identification',
-            'password' => 'required|string|min:6',
+            'identification' => 'required|integer',
             'category_id' => 'required|exists:categories,id',
             'formateur_id' => 'required|exists:formateurs,id',
-        ]);        // Get employee role (assuming role_id 2 is for employees)
+        ]);        // Get employee role (assuming role_id 3 is for employees)
         $employeeRole = roles::where('name', 'employee')->first();
         if (!$employeeRole) {
             // Create employee role if it doesn't exist
             $employeeRole = roles::create(['name' => 'employee']);
         }
 
-        // Create user
-        $user = User::create([
-            'name' => $request->name,
-            'last_name' => $request->last_name,
-            'identification' => $request->identification,
-            'password' => Hash::make($request->password),
-            'role_id' => $employeeRole->id,
-        ]);
+        // Check if user already exists, if not create new user
+        $user = User::where('identification', $request->identification)->first();
+        
+        if (!$user) {
+            // Create new user if doesn't exist
+            $user = User::create([
+                'name' => $request->name,
+                'last_name' => $request->last_name,
+                'identification' => $request->identification,
+                'password' => Hash::make($request->identification), // Use identification as password
+                'role_id' => $employeeRole->id,
+            ]);
+        } else {
+            // Update existing user information if needed
+            $user->update([
+                'name' => $request->name,
+                'last_name' => $request->last_name,
+            ]);
+        }
 
         // Create test record with automatic date
         $test = test::create([
@@ -160,5 +169,46 @@ class UserTestController extends Controller
             'success' => true,
             'questions' => $questions
         ]);
+    }
+
+    /**
+     * Show user's test history
+     */
+    public function testHistory(Request $request)
+    {
+        $identification = $request->get('identification');
+        
+        if (!$identification) {
+            return redirect()->route('quiz.start')->with('error', 'Veuillez entrer votre numéro d\'identification.');
+        }
+        
+        $user = User::where('identification', $identification)->first();
+        
+        if (!$user) {
+            return redirect()->route('quiz.start')->with('error', 'Aucun utilisateur trouvé avec ce numéro d\'identification.');
+        }
+        
+        $tests = test::where('user_id', $user->id)
+                    ->with(['formateur', 'quzs'])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+        
+        // Group tests by category
+        $testsByCategory = $tests->groupBy(function($test) {
+            return $test->description;
+        });
+        
+        $categories = categories::with('process')->get();
+        $formateurs = formateur::all();
+        
+        return view('quiz.test-history', compact('user', 'tests', 'testsByCategory', 'categories', 'formateurs'));
+    }
+
+    /**
+     * Show form to check test history
+     */
+    public function showHistoryForm()
+    {
+        return view('quiz.check-history');
     }
 }
