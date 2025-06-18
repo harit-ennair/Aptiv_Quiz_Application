@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\FormateurController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\QuzController;
+use App\Http\Controllers\UserTestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,16 @@ use App\Http\Controllers\QuzController;
 
 Route::get('/', [ProcessController::class, 'index'])->name('home');
 Route::get('/process/{process}/categories', [ProcessController::class, 'show'])->name('process.categories');
+
+// Quiz/Test routes for users
+Route::prefix('quiz')->name('quiz.')->group(function () {
+    Route::get('/start', [UserTestController::class, 'showTestForm'])->name('start');
+    Route::post('/register', [UserTestController::class, 'registerAndStartTest'])->name('register');
+    Route::get('/take', [UserTestController::class, 'takeQuiz'])->name('take');
+    Route::post('/submit', [UserTestController::class, 'submitQuiz'])->name('submit');
+    Route::get('/results/{test_id}', [UserTestController::class, 'showResults'])->name('results');
+    Route::get('/api/questions/{category_id}', [UserTestController::class, 'getQuestionsByCategory'])->name('api.questions');
+});
 
 // Admin routes
 Route::prefix('admin')->name('admin.')->group(function () {

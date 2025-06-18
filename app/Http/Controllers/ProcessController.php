@@ -62,8 +62,10 @@ class ProcessController extends Controller
      */
     public function show(process $process)
     {
-        // Load the process with its categories
-        $process->load('categories');
+        // Load the process with its categories and question counts
+        $process->load(['categories' => function($query) {
+            $query->withCount('quzs');
+        }]);
         
         return view('process.categories', compact('process'));
     }

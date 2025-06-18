@@ -63,18 +63,26 @@
                                 #{{ $category->id }}
                             </span>
                         </div>
-                        
-                        <h3 class="text-lg font-semibold text-gray-900 mb-3">
+                          <h3 class="text-lg font-semibold text-gray-900 mb-3">
                             {{ $category->title }}
                         </h3>
-                        
-                        <div class="flex items-center justify-between">
+                          <div class="mb-4">
+                            <span class="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+                                {{ $category->quzs_count ?? 0 }} questions disponibles
+                            </span>
+                        </div>                          <div class="flex items-center justify-between">
                             <span class="text-sm text-gray-500">
                                 Créé le {{ \Carbon\Carbon::parse($category->create_at)->format('d/m/Y') }}
                             </span>
-                            <a href="#" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 font-medium text-sm">
-                                Détails →
-                            </a>
+                            @if(($category->quzs_count ?? 0) > 0)
+                                <a href="{{ route('quiz.start', ['category_id' => $category->id]) }}" class="bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors">
+                                    Démarrer Test
+                                </a>
+                            @else
+                                <span class="bg-gray-400 text-white px-4 py-2 rounded-lg font-medium text-sm cursor-not-allowed">
+                                    Pas de questions
+                                </span>
+                            @endif
                         </div>
                     </div>
                 @endforeach
