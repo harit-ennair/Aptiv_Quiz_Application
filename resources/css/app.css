@@ -75,8 +75,46 @@
   .process-categories-content {
     @apply transition-all duration-300 ease-in-out;
   }
-
   .process-categories-content-mobile {
     @apply transition-all duration-300 ease-in-out;
+  }
+
+  /* Test Performance Styling */
+  .percentage-progress-bar {
+    @apply transition-all duration-500 ease-out;
+    animation: progressFill 1s ease-out;
+  }
+
+  .percentage-icon {
+    @apply transition-transform duration-300 hover:scale-110;
+  }
+
+  .performance-badge {
+    @apply transition-all duration-200 hover:shadow-sm;
+  }
+
+  @keyframes progressFill {
+    from {
+      width: 0%;
+    }
+    to {
+      width: var(--progress-width);
+    }
+  }
+
+  @keyframes iconBounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-3px);
+    }
+    60% {
+      transform: translateY(-2px);
+    }
+  }
+
+  .icon-bounce {
+    animation: iconBounce 0.6s ease-in-out;
   }
 }

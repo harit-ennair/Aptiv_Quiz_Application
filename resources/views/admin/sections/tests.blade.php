@@ -10,21 +10,26 @@
         </button>
     </div>
     
-    <div class="p-6">
-        <!-- Search and Filter -->
+    <div class="p-6">        <!-- Search and Filter -->
         <div class="mb-6">
             <div class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
                     <input type="text" id="test-search" placeholder="Rechercher un test..." 
                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-aptiv-orange-500">
                 </div>
-                <select id="formateur-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-aptiv-orange-500">
+                <select id="test-formateur-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-aptiv-orange-500">
                     <option value="">Tous les formateurs</option>
+                </select>
+                <select id="test-category-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-aptiv-orange-500">
+                    <option value="">Toutes les catégories</option>
                 </select>
                 <button onclick="loadTests()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors">
                     Actualiser
                 </button>
             </div>
+            
+            <!-- Performance Legend -->
+     
         </div>
           <!-- Mobile Cards View -->
         <div id="tests-mobile" class="block lg:hidden space-y-4">
@@ -37,7 +42,7 @@
                 <thead class="bg-gray-50">                    <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Formateur</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catégorie</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pourcentage</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>

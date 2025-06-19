@@ -92,7 +92,8 @@ class AdminDashboard {
             formateurSearch.addEventListener('input', () => this.filterFormateurs());
         }
 
-        const testSearch = document.getElementById('test-search');        if (testSearch) {
+        const testSearch = document.getElementById('test-search');
+        if (testSearch) {
             testSearch.addEventListener('input', () => this.filterTests());
         }
 
@@ -1058,8 +1059,8 @@ class AdminDashboard {
             tbody.innerHTML = tests.map(test => {
                 // Format categories
                 const categoriesText = test.categories && test.categories.length > 0 
-                    ? test.categories.map(c => c.title).join(', ')
-                    : 'N/A';
+                    ? test.categories.map(c => c.title || c.name).join(', ')
+                    : 'Aucune catégorie';
                 
                 // Determine row styling based on percentage
                 let rowClass, percentageClass;
@@ -1097,8 +1098,33 @@ class AdminDashboard {
                         <div class="text-sm text-gray-900">${categoriesText}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm ${percentageClass}">
-                            ${test.pourcentage === 100 ? '🏆 ' : ''}${test.pourcentage}%
+                        <div class="flex items-center space-x-2">
+                            <div class="text-lg percentage-icon icon-bounce">
+                                ${test.pourcentage === 100 ? '🏆' : 
+                                  test.pourcentage >= 90 ? '🌟' :
+                                  test.pourcentage >= 80 ? '⭐' :
+                                  test.pourcentage >= 70 ? '🎯' :
+                                  test.pourcentage >= 60 ? '👍' :
+                                  test.pourcentage >= 50 ? '📈' :
+                                  test.pourcentage >= 40 ? '⚠️' : '❌'}
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-sm ${percentageClass} font-bold mb-1">
+                                    ${test.pourcentage}%
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="percentage-progress-bar h-2 rounded-full ${
+                                        test.pourcentage === 100 ? 'bg-gradient-to-r from-purple-500 to-violet-600' :
+                                        test.pourcentage >= 90 ? 'bg-gradient-to-r from-yellow-400 to-yellow-500' :
+                                        test.pourcentage >= 80 ? 'bg-gradient-to-r from-green-400 to-green-500' :
+                                        test.pourcentage >= 70 ? 'bg-gradient-to-r from-blue-400 to-blue-500' :
+                                        test.pourcentage >= 60 ? 'bg-gradient-to-r from-indigo-400 to-indigo-500' :
+                                        test.pourcentage >= 50 ? 'bg-gradient-to-r from-orange-400 to-orange-500' :
+                                        test.pourcentage >= 40 ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
+                                        'bg-gradient-to-r from-red-400 to-red-500'
+                                    }" style="width: ${test.pourcentage}%; --progress-width: ${test.pourcentage}%"></div>
+                                </div>
+                            </div>
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -1122,8 +1148,8 @@ class AdminDashboard {
             mobileContainer.innerHTML = tests.map(test => {
                 // Format categories
                 const categoriesText = test.categories && test.categories.length > 0 
-                    ? test.categories.map(c => c.title).join(', ')
-                    : 'N/A';
+                    ? test.categories.map(c => c.title || c.name).join(', ')
+                    : 'Aucune catégorie';
                 
                 // Determine card styling based on percentage
                 let cardClass, percentageClass, dateBadgeClass, borderClass;
@@ -1168,11 +1194,40 @@ class AdminDashboard {
                             </p>
                         </div>
                         <div class="text-right flex-shrink-0 ml-3">
-                            <div class="text-lg font-bold ${percentageClass}">
-                                ${test.pourcentage === 100 ? '🏆 ' : ''}${test.pourcentage}%
+                            <div class="flex items-center justify-end space-x-2 mb-2">
+                                <div class="text-2xl percentage-icon icon-bounce">
+                                    ${test.pourcentage === 100 ? '🏆' : 
+                                      test.pourcentage >= 90 ? '🌟' :
+                                      test.pourcentage >= 80 ? '⭐' :
+                                      test.pourcentage >= 70 ? '🎯' :
+                                      test.pourcentage >= 60 ? '👍' :
+                                      test.pourcentage >= 50 ? '📈' :
+                                      test.pourcentage >= 40 ? '⚠️' : '❌'}
+                                </div>
+                                <div class="text-lg font-bold ${percentageClass}">
+                                    ${test.pourcentage}%
+                                </div>
                             </div>
-                            <div class="text-xs text-gray-600 mt-1">
-                                ${test.pourcentage === 100 ? 'Parfait!' : test.pourcentage > 75 ? 'Excellent' : test.pourcentage >= 50 ? 'Moyen' : 'Faible'}
+                            <div class="w-20 bg-gray-200 rounded-full h-2 mb-1">
+                                <div class="percentage-progress-bar h-2 rounded-full ${
+                                    test.pourcentage === 100 ? 'bg-gradient-to-r from-purple-500 to-violet-600' :
+                                    test.pourcentage >= 90 ? 'bg-gradient-to-r from-yellow-400 to-yellow-500' :
+                                    test.pourcentage >= 80 ? 'bg-gradient-to-r from-green-400 to-green-500' :
+                                    test.pourcentage >= 70 ? 'bg-gradient-to-r from-blue-400 to-blue-500' :
+                                    test.pourcentage >= 60 ? 'bg-gradient-to-r from-indigo-400 to-indigo-500' :
+                                    test.pourcentage >= 50 ? 'bg-gradient-to-r from-orange-400 to-orange-500' :
+                                    test.pourcentage >= 40 ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
+                                    'bg-gradient-to-r from-red-400 to-red-500'
+                                }" style="width: ${test.pourcentage}%; --progress-width: ${test.pourcentage}%"></div>
+                            </div>
+                            <div class="text-xs text-gray-600 mt-1 performance-badge">
+                                ${test.pourcentage === 100 ? 'Parfait!' : 
+                                  test.pourcentage >= 90 ? 'Exceptionnel' :
+                                  test.pourcentage >= 80 ? 'Excellent' : 
+                                  test.pourcentage >= 70 ? 'Très bien' :
+                                  test.pourcentage >= 60 ? 'Bien' :
+                                  test.pourcentage >= 50 ? 'Moyen' : 
+                                  test.pourcentage >= 40 ? 'Insuffisant' : 'Faible'}
                             </div>
                         </div>
                     </div>
@@ -1931,8 +1986,11 @@ class AdminDashboard {
         const processFilter = document.getElementById('test-process-filter')?.value || '';
         const categoryFilter = document.getElementById('test-category-filter')?.value || '';
         
+        console.log('Filtering tests with:', { searchTerm, formateurFilter, processFilter, categoryFilter });
+        
         // Store the original test data for filtering
         if (!this.originalTestsData) {
+            console.log('No original test data available for filtering');
             return; // No data to filter
         }
         
@@ -1953,6 +2011,8 @@ class AdminDashboard {
             
             return matchesSearch && matchesFormateur && matchesProcess && matchesCategory;
         });
+        
+        console.log(`Filtered ${filteredTests.length} tests from ${this.originalTestsData.length} total tests`);
         
         // Re-render the filtered data
         this.renderTests(filteredTests);

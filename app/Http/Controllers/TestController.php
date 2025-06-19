@@ -13,7 +13,18 @@ class TestController extends Controller
      */
     public function index()
     {
-        $tests = test::with(['user', 'formateur'])->get();
+        $tests = test::with(['user', 'formateur', 'quzs.category'])->get();
+        
+        // Transform the data to include categories at the top level
+        $tests = $tests->map(function ($test) {
+            $categories = $test->quzs->map(function ($quz) {
+                return $quz->category;
+            })->filter()->unique('id')->values();
+            
+            $test->categories = $categories;
+            return $test;
+        });
+        
         return response()->json([
             'success' => true,
             'data' => $tests
@@ -42,11 +53,19 @@ class TestController extends Controller
         ]);
 
         $test = test::create($validated);
+        $testWithRelations = $test->load(['user', 'formateur', 'quzs.category']);
+        
+        // Add categories at the top level
+        $categories = $testWithRelations->quzs->map(function ($quz) {
+            return $quz->category;
+        })->filter()->unique('id')->values();
+        
+        $testWithRelations->categories = $categories;
 
         return response()->json([
             'success' => true,
             'message' => 'Test créé avec succès',
-            'data' => $test->load(['user', 'formateur'])
+            'data' => $testWithRelations
         ]);
     }
 
@@ -55,7 +74,14 @@ class TestController extends Controller
      */
     public function show(test $test)
     {
-        $testWithRelations = $test->load(['user', 'formateur']);
+        $testWithRelations = $test->load(['user', 'formateur', 'quzs.category']);
+        
+        // Add categories at the top level
+        $categories = $testWithRelations->quzs->map(function ($quz) {
+            return $quz->category;
+        })->filter()->unique('id')->values();
+        
+        $testWithRelations->categories = $categories;
         
         return response()->json([
             'success' => true,
