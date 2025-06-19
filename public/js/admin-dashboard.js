@@ -1832,7 +1832,7 @@ class AdminDashboard {
                                                         </div>
                                                         <div class="ml-4">
                                                             <div class="text-sm font-medium text-gray-900">${user.name} ${user.last_name}</div>
-                                                            <div class="text-xs text-gray-500">${user.email || 'Pas d\'email'}</div>
+                                                            ${user.email ? `<div class="text-xs text-gray-500">${user.email}</div>` : ''}
                                                         </div>
                                                     </div>
                                                 </td>
