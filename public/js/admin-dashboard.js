@@ -602,12 +602,12 @@ class AdminDashboard {
     }    // Placeholder methods for other sections
     async loadCategories() {
         const loadingEl = document.getElementById('categories-loading');
-        const tableEl = document.getElementById('categories-table');
+        const desktopEl = document.getElementById('categories-desktop');
         const mobileEl = document.getElementById('categories-mobile');
         const emptyEl = document.getElementById('categories-empty');
 
         if (loadingEl) loadingEl.classList.remove('hidden');
-        if (tableEl) tableEl.classList.add('hidden');
+        if (desktopEl) desktopEl.classList.add('hidden');
         if (mobileEl) mobileEl.classList.add('hidden');
         if (emptyEl) emptyEl.classList.add('hidden');
 
@@ -628,10 +628,8 @@ class AdminDashboard {
     }
 
     renderCategories(categories) {
-        const tbody = document.getElementById('categories-tbody');
+        const desktopContainer = document.getElementById('categories-desktop');
         const mobileContainer = document.getElementById('categories-mobile');
-        const tableEl = document.getElementById('categories-table');
-        const mobileEl = document.getElementById('categories-mobile');
         const emptyEl = document.getElementById('categories-empty');
 
         if (categories.length === 0) {
@@ -639,57 +637,255 @@ class AdminDashboard {
             return;
         }
 
-        // Desktop table view
-        if (tbody) {
-            tbody.innerHTML = categories.map(category => `
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">${category.title}</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            ${category.process ? category.process.title : 'N/A'}
-                        </span>
-                    </td>                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        ${new Date(category.created_at || category.create_at).toLocaleDateString('fr-FR')}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="adminDashboard.editCategory(${category.id})" class="text-aptiv-orange-600 hover:text-aptiv-orange-900 mr-3">
-                            Modifier
-                        </button>
-                        <button onclick="adminDashboard.deleteCategory(${category.id})" class="text-red-600 hover:text-red-900">
-                            Supprimer
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-            
-            if (tableEl) tableEl.classList.remove('hidden');
-        }        // Mobile card view
+        // Group categories by process
+        const categoriesByProcess = this.groupCategoriesByProcess(categories);
+
+        // Render category statistics
+        this.renderCategoryStats(categoriesByProcess);
+
+        // Render desktop process-based view
+        if (desktopContainer) {
+            desktopContainer.innerHTML = this.renderDesktopProcessGroups(categoriesByProcess);
+            desktopContainer.classList.remove('hidden');
+        }
+
+        // Render mobile process-based view
         if (mobileContainer) {
-            mobileContainer.innerHTML = categories.map(category => `
-                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200 card-hover">
-                    <div class="flex justify-between items-start mb-3">
-                        <h3 class="font-semibold text-gray-900 text-base leading-tight">${category.title}</h3>
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 ml-2 flex-shrink-0">
-                            ${category.process ? category.process.title : 'N/A'}
-                        </span>
-                    </div>
-                    <div class="flex justify-between items-center pt-3 border-t border-gray-100">
-                        <span class="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-md">${new Date(category.created_at || category.create_at).toLocaleDateString('fr-FR')}</span>
-                        <div class="flex space-x-3">
-                            <button onclick="adminDashboard.editCategory(${category.id})" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 text-sm font-medium transition-colors btn-touch">
-                                Modifier
-                            </button>
-                            <button onclick="adminDashboard.deleteCategory(${category.id})" class="text-red-600 hover:text-red-700 text-sm font-medium transition-colors btn-touch">
-                                Supprimer
-                            </button>
+            mobileContainer.innerHTML = this.renderMobileProcessGroups(categoriesByProcess);
+            mobileContainer.classList.remove('hidden');
+        }
+    }
+
+    groupCategoriesByProcess(categories) {
+        const processGroups = {};
+
+        categories.forEach(category => {
+            const processTitle = category.process?.title || 'Sans Processus';
+            const processId = category.process?.id || 'no_process';
+            
+            if (!processGroups[processId]) {
+                processGroups[processId] = {
+                    process: category.process || { title: 'Sans Processus', id: 'no_process' },
+                    categories: []
+                };
+            }
+            processGroups[processId].categories.push(category);
+        });
+
+        return processGroups;
+    }
+
+    renderCategoryStats(categoriesByProcess) {
+        const statsContainer = document.getElementById('categories-stats');
+        if (!statsContainer) return;
+
+        const processColors = [
+            { bg: 'bg-blue-50', iconBg: 'bg-blue-100', text: 'text-blue-800', icon: '🔄' },
+            { bg: 'bg-green-50', iconBg: 'bg-green-100', text: 'text-green-800', icon: '⚡' },
+            { bg: 'bg-purple-50', iconBg: 'bg-purple-100', text: 'text-purple-800', icon: '🎯' },
+            { bg: 'bg-orange-50', iconBg: 'bg-orange-100', text: 'text-orange-800', icon: '🚀' },
+            { bg: 'bg-gray-50', iconBg: 'bg-gray-100', text: 'text-gray-800', icon: '📋' }
+        ];
+
+        const totalCategories = Object.values(categoriesByProcess).reduce((sum, group) => sum + group.categories.length, 0);
+
+        const statsHtml = Object.entries(categoriesByProcess)
+            .map(([processId, group], index) => {
+                const colorScheme = processColors[index % processColors.length];
+                const percentage = totalCategories > 0 ? Math.round((group.categories.length / totalCategories) * 100) : 0;
+                
+                return `
+                    <div class="stat-card ${colorScheme.bg} border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow duration-200">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="${colorScheme.iconBg} w-10 h-10 rounded-lg flex items-center justify-center">
+                                <span class="text-lg">${colorScheme.icon}</span>
+                            </div>
+                            <span class="text-xs ${colorScheme.text} font-medium">${percentage}%</span>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-gray-900 mb-1">${group.categories.length}</p>
+                            <p class="text-sm ${colorScheme.text} font-medium truncate" title="${group.process.title}">
+                                ${group.process.title}
+                            </p>
                         </div>
                     </div>
-                </div>
-            `).join('');
-            
-            if (mobileEl) mobileEl.classList.remove('hidden');
+                `;
+            }).join('');
+
+        statsContainer.innerHTML = statsHtml;
+        statsContainer.classList.remove('hidden');
+    }
+
+    renderDesktopProcessGroups(categoriesByProcess) {
+        const processColors = [
+            { bg: 'bg-blue-50', border: 'border-blue-200', header: 'bg-blue-100', text: 'text-blue-800', icon: '🔄' },
+            { bg: 'bg-green-50', border: 'border-green-200', header: 'bg-green-100', text: 'text-green-800', icon: '⚡' },
+            { bg: 'bg-purple-50', border: 'border-purple-200', header: 'bg-purple-100', text: 'text-purple-800', icon: '🎯' },
+            { bg: 'bg-orange-50', border: 'border-orange-200', header: 'bg-orange-100', text: 'text-orange-800', icon: '🚀' },
+            { bg: 'bg-gray-50', border: 'border-gray-200', header: 'bg-gray-100', text: 'text-gray-800', icon: '📋' }
+        ];
+
+        return Object.entries(categoriesByProcess)
+            .map(([processId, group], index) => {
+                const colorScheme = processColors[index % processColors.length];
+                return `
+                    <div class="process-group ${colorScheme.bg} ${colorScheme.border} border rounded-xl overflow-hidden shadow-sm" data-process="${processId}">
+                        <div class="${colorScheme.header} px-6 py-4 border-b ${colorScheme.border}">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-2xl">${colorScheme.icon}</span>
+                                    <div>
+                                        <h3 class="text-lg font-semibold ${colorScheme.text}">${group.process.title}</h3>
+                                        <p class="text-sm ${colorScheme.text} opacity-75">${group.categories.length} catégorie${group.categories.length > 1 ? 's' : ''}</p>
+                                    </div>
+                                </div>
+                                <button onclick="adminDashboard.toggleProcessGroup('${processId}')" class="text-sm ${colorScheme.text} hover:opacity-75 transition-opacity">
+                                    <span class="process-toggle-text">Réduire</span>
+                                    <svg class="process-toggle-icon w-4 h-4 ml-1 inline-block transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="process-categories-content bg-white">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titre</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de création</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        ${group.categories.map(category => `
+                                            <tr class="category-row hover:bg-gray-50" data-category-id="${category.id}">
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center">
+                                                        <div class="w-8 h-8 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-lg flex items-center justify-center">
+                                                            <span class="text-white font-bold text-xs">📂</span>
+                                                        </div>
+                                                        <div class="ml-4">
+                                                            <div class="text-sm font-medium text-gray-900">${category.title}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    ${new Date(category.created_at || category.create_at).toLocaleDateString('fr-FR')}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button onclick="adminDashboard.editCategory(${category.id})" 
+                                                            class="text-aptiv-orange-600 hover:text-aptiv-orange-900 transition-colors mr-3">
+                                                        Modifier
+                                                    </button>
+                                                    <button onclick="adminDashboard.deleteCategory(${category.id})" 
+                                                            class="text-red-600 hover:text-red-900 transition-colors">
+                                                        Supprimer
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+    }
+
+    renderMobileProcessGroups(categoriesByProcess) {
+        const processColors = [
+            { bg: 'bg-blue-50', border: 'border-blue-200', header: 'bg-blue-100', text: 'text-blue-800', icon: '🔄' },
+            { bg: 'bg-green-50', border: 'border-green-200', header: 'bg-green-100', text: 'text-green-800', icon: '⚡' },
+            { bg: 'bg-purple-50', border: 'border-purple-200', header: 'bg-purple-100', text: 'text-purple-800', icon: '🎯' },
+            { bg: 'bg-orange-50', border: 'border-orange-200', header: 'bg-orange-100', text: 'text-orange-800', icon: '🚀' },
+            { bg: 'bg-gray-50', border: 'border-gray-200', header: 'bg-gray-100', text: 'text-gray-800', icon: '📋' }
+        ];
+
+        return Object.entries(categoriesByProcess)
+            .map(([processId, group], index) => {
+                const colorScheme = processColors[index % processColors.length];
+                return `
+                    <div class="process-group-mobile ${colorScheme.bg} ${colorScheme.border} border rounded-xl overflow-hidden shadow-sm" data-process="${processId}">
+                        <div class="${colorScheme.header} px-4 py-3 border-b ${colorScheme.border}">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-lg">${colorScheme.icon}</span>
+                                    <div>
+                                        <h3 class="text-base font-semibold ${colorScheme.text}">${group.process.title}</h3>
+                                        <p class="text-xs ${colorScheme.text} opacity-75">${group.categories.length} catégorie${group.categories.length > 1 ? 's' : ''}</p>
+                                    </div>
+                                </div>
+                                <button onclick="adminDashboard.toggleProcessGroupMobile('${processId}')" class="text-sm ${colorScheme.text} hover:opacity-75 transition-opacity btn-touch">
+                                    <span class="process-toggle-text-mobile">Réduire</span>
+                                    <svg class="process-toggle-icon-mobile w-4 h-4 ml-1 inline-block transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="process-categories-content-mobile bg-white p-4 space-y-3">
+                            ${group.categories.map(category => `
+                                <div class="category-card bg-white border border-gray-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200" data-category-id="${category.id}">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-lg flex items-center justify-center">
+                                                <span class="text-white font-bold text-xs">📂</span>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h4 class="font-semibold text-gray-900 text-sm">${category.title}</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                                        <span class="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-md">
+                                            ${new Date(category.created_at || category.create_at).toLocaleDateString('fr-FR')}
+                                        </span>
+                                        <div class="flex space-x-2">
+                                            <button onclick="adminDashboard.editCategory(${category.id})" 
+                                                    class="text-aptiv-orange-600 hover:text-aptiv-orange-700 text-xs font-medium transition-colors btn-touch">
+                                                Modifier
+                                            </button>
+                                            <button onclick="adminDashboard.deleteCategory(${category.id})" 
+                                                    class="text-red-600 hover:text-red-700 text-xs font-medium transition-colors btn-touch">
+                                                Supprimer
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+    }
+
+    toggleProcessGroup(processId) {
+        const processGroup = document.querySelector(`[data-process="${processId}"]`);
+        const content = processGroup?.querySelector('.process-categories-content');
+        const toggleText = processGroup?.querySelector('.process-toggle-text');
+        const toggleIcon = processGroup?.querySelector('.process-toggle-icon');
+
+        if (content && toggleText && toggleIcon) {
+            const isHidden = content.style.display === 'none';
+            content.style.display = isHidden ? 'block' : 'none';
+            toggleText.textContent = isHidden ? 'Réduire' : 'Développer';
+            toggleIcon.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
+        }
+    }
+
+    toggleProcessGroupMobile(processId) {
+        const processGroup = document.querySelector(`[data-process="${processId}"].process-group-mobile`);
+        const content = processGroup?.querySelector('.process-categories-content-mobile');
+        const toggleText = processGroup?.querySelector('.process-toggle-text-mobile');
+        const toggleIcon = processGroup?.querySelector('.process-toggle-icon-mobile');
+
+        if (content && toggleText && toggleIcon) {
+            const isHidden = content.style.display === 'none';
+            content.style.display = isHidden ? 'block' : 'none';
+            toggleText.textContent = isHidden ? 'Réduire' : 'Développer';
+            toggleIcon.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
         }
     }
 
@@ -1338,23 +1534,40 @@ class AdminDashboard {
     filterCategories() {
         const searchTerm = document.getElementById('category-search')?.value.toLowerCase() || '';
         const processFilter = document.getElementById('process-filter')?.value || '';
-        const tableRows = document.querySelectorAll('#categories-tbody tr');
-        const mobileCards = document.querySelectorAll('#categories-mobile > div');
-
-        // Filter table rows
-        tableRows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            const processMatch = !processFilter || row.querySelector('span')?.textContent.includes(document.querySelector(`#process-filter option[value="${processFilter}"]`)?.textContent || '');
-            const searchMatch = text.includes(searchTerm);
-            row.style.display = (searchMatch && processMatch) ? '' : 'none';
-        });
-
-        // Filter mobile cards
-        mobileCards.forEach(card => {
-            const text = card.textContent.toLowerCase();
-            const processMatch = !processFilter || card.querySelector('span')?.textContent.includes(document.querySelector(`#process-filter option[value="${processFilter}"]`)?.textContent || '');
-            const searchMatch = text.includes(searchTerm);
-            card.style.display = (searchMatch && processMatch) ? '' : 'none';
+        
+        // Get all process groups
+        const processGroups = document.querySelectorAll('.process-group, .process-group-mobile');
+        
+        processGroups.forEach(group => {
+            const groupProcessId = group.getAttribute('data-process');
+            let groupHasVisibleCategories = false;
+            
+            // Check process filter
+            let processMatch = true;
+            if (processFilter) {
+                processMatch = groupProcessId === processFilter;
+            }
+            
+            if (processMatch) {
+                // Filter categories within this process group
+                const categoryRows = group.querySelectorAll('.category-row, .category-card');
+                
+                categoryRows.forEach(categoryElement => {
+                    const text = categoryElement.textContent.toLowerCase();
+                    const searchMatch = text.includes(searchTerm);
+                    
+                    categoryElement.style.display = searchMatch ? '' : 'none';
+                    if (searchMatch) {
+                        groupHasVisibleCategories = true;
+                    }
+                });
+                
+                // Show/hide the entire group based on whether it has visible categories
+                group.style.display = groupHasVisibleCategories ? '' : 'none';
+            } else {
+                // Hide the entire group if process doesn't match
+                group.style.display = 'none';
+            }
         });
     }
 
