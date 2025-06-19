@@ -67,6 +67,12 @@ class AdminDashboard {
             testForm.addEventListener('submit', (e) => this.handleTestSubmit(e));
         }
 
+        // Role form
+        const roleForm = document.getElementById('role-form');
+        if (roleForm) {
+            roleForm.addEventListener('submit', (e) => this.handleRoleSubmit(e));
+        }
+
         // Search functionality
         const processSearch = document.getElementById('process-search');
         if (processSearch) {
@@ -127,7 +133,7 @@ class AdminDashboard {
 
     // Close all modals
     closeAllModals() {
-        const modals = ['process-modal', 'category-modal', 'formateur-modal', 'test-modal'];
+        const modals = ['process-modal', 'category-modal', 'formateur-modal', 'test-modal', 'role-modal'];
         modals.forEach(modalId => {
             const modal = document.getElementById(modalId);
             if (modal && !modal.classList.contains('hidden')) {
@@ -174,6 +180,7 @@ class AdminDashboard {
         const titles = {
             dashboard: 'Tableau de Bord',
             profile: 'Mon Profil',
+            users: 'Gestion des Utilisateurs',
             processes: 'Gestion des Processus',
             categories: 'Gestion des Catégories',
             questions: 'Gestion des Questions',
@@ -196,6 +203,9 @@ class AdminDashboard {
 
         // Load section-specific data
         switch (sectionName) {
+            case 'users':
+                this.loadUsers();
+                break;
             case 'processes':
                 this.loadProcesses();
                 break;
@@ -281,6 +291,9 @@ class AdminDashboard {
     // Refresh current section data
     refreshCurrentSection() {
         switch (this.currentSection) {
+            case 'users':
+                this.loadUsers();
+                break;
             case 'processes':
                 this.loadProcesses();
                 break;
@@ -1380,6 +1393,246 @@ class AdminDashboard {
             card.style.display = text.includes(searchTerm) ? '' : 'none';
         });
     }
+
+    // Users Management (Super Admin only)
+    async loadUsers() {
+        const loadingEl = document.getElementById('users-loading');
+        const tableEl = document.getElementById('users-table');
+        const mobileEl = document.getElementById('users-mobile');
+        const emptyEl = document.getElementById('users-empty');
+
+        if (loadingEl) loadingEl.classList.remove('hidden');
+        if (tableEl) tableEl.classList.add('hidden');
+        if (mobileEl) mobileEl.classList.add('hidden');
+        if (emptyEl) emptyEl.classList.add('hidden');
+
+        try {
+            const response = await fetch('/admin/api/users/all');
+            const result = await response.json();
+
+            if (result.success) {
+                this.renderUsers(result.data);
+            } else {
+                this.showMessage('Erreur lors du chargement des utilisateurs', 'error');
+            }
+        } catch (error) {
+            this.showMessage('Une erreur est survenue', 'error');
+            console.error('Error:', error);
+        } finally {
+            if (loadingEl) loadingEl.classList.add('hidden');
+        }
+    }
+
+    renderUsers(users) {
+        const tbody = document.getElementById('users-tbody');
+        const mobileContainer = document.getElementById('users-mobile');
+        const tableEl = document.getElementById('users-table');
+        const mobileEl = document.getElementById('users-mobile');
+        const emptyEl = document.getElementById('users-empty');
+
+        if (users.length === 0) {
+            if (emptyEl) emptyEl.classList.remove('hidden');
+            return;
+        }
+
+        // Desktop table view
+        if (tbody) {
+            tbody.innerHTML = users.map(user => {
+                const roleColors = {
+                    'super admin': 'bg-purple-100 text-purple-800',
+                    'admin': 'bg-blue-100 text-blue-800',
+                    'employee': 'bg-green-100 text-green-800'
+                };
+                
+                const roleColor = roleColors[user.role?.name] || 'bg-gray-100 text-gray-800';
+                
+                return `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">${user.name.charAt(0)}</span>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">${user.name} ${user.last_name}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">${user.identification}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${roleColor}">
+                                ${user.role?.name || 'Aucun rôle'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            ${new Date(user.created_at).toLocaleDateString('fr-FR')}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="adminDashboard.changeUserRole(${user.id})" class="text-aptiv-orange-600 hover:text-aptiv-orange-900">
+                                Modifier le rôle
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            if (tableEl) tableEl.classList.remove('hidden');
+        }
+
+        // Mobile card view
+        if (mobileContainer) {
+            mobileContainer.innerHTML = users.map(user => {
+                const roleColors = {
+                    'super admin': 'bg-purple-100 text-purple-800',
+                    'admin': 'bg-blue-100 text-blue-800',
+                    'employee': 'bg-green-100 text-green-800'
+                };
+                
+                const roleColor = roleColors[user.role?.name] || 'bg-gray-100 text-gray-800';
+                
+                return `
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200 card-hover">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">${user.name.charAt(0)}</span>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="font-semibold text-gray-900 text-base">${user.name} ${user.last_name}</h3>
+                                    <p class="text-sm text-gray-600">ID: ${user.identification}</p>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${roleColor}">
+                                ${user.role?.name || 'Aucun rôle'}
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+                            <span class="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-md">${new Date(user.created_at).toLocaleDateString('fr-FR')}</span>
+                            <button onclick="adminDashboard.changeUserRole(${user.id})" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 text-sm font-medium transition-colors btn-touch">
+                                Modifier le rôle
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            if (mobileEl) mobileEl.classList.remove('hidden');
+        }
+    }
+
+    changeUserRole(userId) {
+        this.openRoleModal(userId);
+    }
+
+    async openRoleModal(userId) {
+        const modal = document.getElementById('role-modal');
+        const title = document.getElementById('role-modal-title');
+        const userInfo = document.getElementById('user-info');
+        
+        try {
+            // Fetch current user data
+            const response = await fetch('/admin/api/users/all');
+            const result = await response.json();
+            
+            if (result.success) {
+                const user = result.data.find(u => u.id == userId);
+                if (user) {
+                    document.getElementById('user-id').value = user.id;
+                    document.getElementById('new-role').value = user.role_id;
+                    userInfo.textContent = `${user.name} ${user.last_name} (ID: ${user.identification})`;
+                    
+                    title.textContent = 'Modifier le Rôle Utilisateur';
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            }
+        } catch (error) {
+            this.showMessage('Erreur lors du chargement des données utilisateur', 'error');
+            console.error('Error:', error);
+        }
+    }
+
+    closeRoleModal() {
+        const modal = document.getElementById('role-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    async handleRoleSubmit(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const userId = document.getElementById('user-id').value;
+        
+        try {
+            this.showLoading();
+            
+            const response = await fetch(`/admin/api/users/${userId}/role`, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showMessage(result.message);
+                this.closeRoleModal();
+                this.loadUsers();
+            } else {
+                this.showMessage(result.message, 'error');
+            }
+        } catch (error) {
+            this.showMessage('Une erreur est survenue', 'error');
+            console.error('Error:', error);
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    filterUsers() {
+        const searchTerm = document.getElementById('user-search')?.value.toLowerCase() || '';
+        const roleFilter = document.getElementById('role-filter')?.value || '';
+        const tableRows = document.querySelectorAll('#users-tbody tr');
+        const mobileCards = document.querySelectorAll('#users-mobile > div');
+
+        // Filter table rows
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            const roleSpan = row.querySelector('span[class*="rounded-full"]');
+            const userRole = roleSpan?.textContent.toLowerCase() || '';
+            
+            let roleMatch = true;
+            if (roleFilter) {
+                const roleNames = { '1': 'super admin', '2': 'admin', '3': 'employee' };
+                roleMatch = userRole.includes(roleNames[roleFilter]);
+            }
+            
+            const searchMatch = text.includes(searchTerm);
+            row.style.display = (searchMatch && roleMatch) ? '' : 'none';
+        });
+
+        // Filter mobile cards
+        mobileCards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            const roleSpan = card.querySelector('span[class*="rounded-full"]');
+            const userRole = roleSpan?.textContent.toLowerCase() || '';
+            
+            let roleMatch = true;
+            if (roleFilter) {
+                const roleNames = { '1': 'super admin', '2': 'admin', '3': 'employee' };
+                roleMatch = userRole.includes(roleNames[roleFilter]);
+            }
+            
+            const searchMatch = text.includes(searchTerm);
+            card.style.display = (searchMatch && roleMatch) ? '' : 'none';
+        });
+    }
 }
 
 // Initialize dashboard when DOM is loaded
@@ -1448,6 +1701,25 @@ function closeFormateurModal() {
 function loadFormateurs() {
     if (window.adminDashboard) {
         window.adminDashboard.loadFormateurs();
+    }
+}
+
+// User Management functions (Super Admin only)
+function loadUsers() {
+    if (window.adminDashboard) {
+        window.adminDashboard.loadUsers();
+    }
+}
+
+function changeUserRole(userId) {
+    if (window.adminDashboard) {
+        window.adminDashboard.changeUserRole(userId);
+    }
+}
+
+function closeRoleModal() {
+    if (window.adminDashboard) {
+        window.adminDashboard.closeRoleModal();
     }
 }
 

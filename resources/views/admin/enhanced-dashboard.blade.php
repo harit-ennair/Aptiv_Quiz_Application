@@ -402,6 +402,16 @@
                     <span class="truncate font-medium">Mon Profil</span>
                 </a>
                 
+                <!-- User Management - Only for Super Admin -->
+                @if($user->role_id == 1)
+                <a href="#" onclick="showSection('users')" class="nav-link flex items-center px-3 py-3 text-gray-700 hover:bg-aptiv-orange-50 hover:text-aptiv-orange-600 rounded-xl transition-all duration-200">
+                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"></path>
+                    </svg>
+                    <span class="truncate font-medium">Gestion Utilisateurs</span>
+                </a>
+                @endif
+                
                 <a href="#" onclick="showSection('processes')" class="nav-link flex items-center px-3 py-3 text-gray-700 hover:bg-aptiv-orange-50 hover:text-aptiv-orange-600 rounded-xl transition-all duration-200">
                     <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -484,6 +494,13 @@
                 @include('admin.sections.profile')
             </div>
             
+            <!-- Users Section - Only for Super Admin -->
+            @if($user->role_id == 1)
+            <div id="users-section" class="section hidden">
+                @include('admin.sections.users')
+            </div>
+            @endif
+            
             <!-- Processes Section -->
             <div id="processes-section" class="section hidden">
                 @include('admin.sections.processes')
@@ -538,7 +555,7 @@
         
         // Handle URL hash for direct section access
         const hash = window.location.hash.replace('#', '');
-        const validSections = ['dashboard', 'profile', 'processes', 'categories', 'questions', 'formateurs', 'tests'];
+        const validSections = ['dashboard', 'profile', 'users', 'processes', 'categories', 'questions', 'formateurs', 'tests'];
         
         if (hash && validSections.includes(hash)) {
             setTimeout(() => {

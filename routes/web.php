@@ -87,6 +87,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             
             // Users (for dropdowns)
             Route::get('/users', [AdminController::class, 'ajaxUsers'])->name('users.index');
+            
+            // User Management (Super Admin only)
+            Route::get('/users/all', [AdminController::class, 'getAllUsers'])->name('users.all');
+            Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('users.update_role');
         });
     });
 });

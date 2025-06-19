@@ -195,4 +195,76 @@ class AdminController extends Controller
             'tests' => $testsWithCategories
         ]);
     }
+
+    /**
+     * Get all users with roles for management (Super Admin only)
+     */
+    public function getAllUsers()
+    {
+        // Check if user is super admin
+        if (Auth::user()->role_id != 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Accès non autorisé'
+            ], 403);
+        }
+
+        try {
+            $users = User::with('role')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $users,
+                'message' => 'Utilisateurs récupérés avec succès'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des utilisateurs'
+            ], 500);
+        }
+    }
+
+    /**
+     * Update user role (Super Admin only)
+     */
+    public function updateUserRole(Request $request, User $user)
+    {
+        // Check if user is super admin
+        if (Auth::user()->role_id != 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Accès non autorisé'
+            ], 403);
+        }
+
+        $request->validate([
+            'role_id' => 'required|exists:roles,id|in:1,2,3'
+        ]);
+
+        try {
+            // Prevent super admin from demoting themselves
+            if ($user->id === Auth::user()->id && $request->role_id != 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Vous ne pouvez pas modifier votre propre rôle'
+                ], 400);
+            }
+
+            $user->update(['role_id' => $request->role_id]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Rôle utilisateur mis à jour avec succès',
+                'data' => $user->load('role')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour du rôle'
+            ], 500);
+        }
+    }
 }
