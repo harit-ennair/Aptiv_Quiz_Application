@@ -118,6 +118,11 @@ class AdminDashboard {
             testPercentageFilter.addEventListener('change', () => this.filterTests());
         }
 
+        const testDateSort = document.getElementById('test-date-sort');
+        if (testDateSort) {
+            testDateSort.addEventListener('change', () => this.filterTests());
+        }
+
         // Add keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             // Escape key to close modals
@@ -1048,6 +1053,13 @@ class AdminDashboard {
             this.populateTestFilters(tests);
         }
         
+        // Apply date sorting
+        const dateSortFilter = document.getElementById('test-date-sort');
+        const sortValue = dateSortFilter?.value || 'newest'; // Default to newest first
+        if (sortValue) {
+            tests = this.sortTestsByDate(tests, sortValue);
+        }
+        
         const tbody = document.getElementById('tests-tbody');
         const mobileContainer = document.getElementById('tests-mobile');
         const tableEl = document.getElementById('tests-table');
@@ -1265,6 +1277,20 @@ class AdminDashboard {
             
             if (mobileEl) mobileEl.classList.remove('hidden');
         }    }
+
+    sortTestsByDate(tests, sortOrder) {
+        return [...tests].sort((a, b) => {
+            const dateA = new Date(a.created_at || a.create_at);
+            const dateB = new Date(b.created_at || b.create_at);
+            
+            if (sortOrder === 'newest') {
+                return dateB - dateA; // Newest first (descending)
+            } else if (sortOrder === 'oldest') {
+                return dateA - dateB; // Oldest first (ascending)
+            }
+            return 0; // No sorting
+        });
+    }
 
     populateTestFilters(tests) {
         // Populate formateur filter
@@ -1991,8 +2017,9 @@ class AdminDashboard {
         const processFilter = document.getElementById('test-process-filter')?.value || '';
         const categoryFilter = document.getElementById('test-category-filter')?.value || '';
         const percentageFilter = document.getElementById('test-percentage-filter')?.value || '';
+        const dateSortFilter = document.getElementById('test-date-sort')?.value || '';
         
-        console.log('Filtering tests with:', { searchTerm, formateurFilter, processFilter, categoryFilter, percentageFilter });
+        console.log('Filtering tests with:', { searchTerm, formateurFilter, processFilter, categoryFilter, percentageFilter, dateSortFilter });
         
         // Store the original test data for filtering
         if (!this.originalTestsData) {

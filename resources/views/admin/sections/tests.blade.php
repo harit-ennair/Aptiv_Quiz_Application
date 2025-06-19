@@ -33,12 +33,15 @@
                 </select>
                 <select id="test-category-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
                     <option value="">Toutes les catégories</option>
-                </select>
-                <select id="test-percentage-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
+                </select>                <select id="test-percentage-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
                     <option value="">Tous les pourcentages</option>
                     <option value="75-100">🏆 Excellent (75% - 100%)</option>
                     <option value="50-74">📈 Moyen (50% - 74%)</option>
                     <option value="0-49">❌ Faible (0% - 49%)</option>
+                </select>                <select id="test-date-sort" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
+                    <option value="">Trier par date</option>
+                    <option value="newest" selected>📅 Plus récent en premier</option>
+                    <option value="oldest">🗓️ Plus ancien en premier</option>
                 </select>
                 <button onclick="loadTests()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors btn-touch">
                     Actualiser
