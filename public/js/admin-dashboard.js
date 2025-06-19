@@ -1397,12 +1397,12 @@ class AdminDashboard {
     // Users Management (Super Admin only)
     async loadUsers() {
         const loadingEl = document.getElementById('users-loading');
-        const tableEl = document.getElementById('users-table');
+        const desktopEl = document.getElementById('users-desktop');
         const mobileEl = document.getElementById('users-mobile');
         const emptyEl = document.getElementById('users-empty');
 
         if (loadingEl) loadingEl.classList.remove('hidden');
-        if (tableEl) tableEl.classList.add('hidden');
+        if (desktopEl) desktopEl.classList.add('hidden');
         if (mobileEl) mobileEl.classList.add('hidden');
         if (emptyEl) emptyEl.classList.add('hidden');
 
@@ -1424,10 +1424,8 @@ class AdminDashboard {
     }
 
     renderUsers(users) {
-        const tbody = document.getElementById('users-tbody');
+        const desktopContainer = document.getElementById('users-desktop');
         const mobileContainer = document.getElementById('users-mobile');
-        const tableEl = document.getElementById('users-table');
-        const mobileEl = document.getElementById('users-mobile');
         const emptyEl = document.getElementById('users-empty');
 
         if (users.length === 0) {
@@ -1435,90 +1433,338 @@ class AdminDashboard {
             return;
         }
 
-        // Desktop table view
-        if (tbody) {
-            tbody.innerHTML = users.map(user => {
-                const roleColors = {
-                    'super admin': 'bg-purple-100 text-purple-800',
-                    'admin': 'bg-blue-100 text-blue-800',
-                    'employee': 'bg-green-100 text-green-800'
-                };
-                
-                const roleColor = roleColors[user.role?.name] || 'bg-gray-100 text-gray-800';
-                
-                return `
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold text-sm">${user.name.charAt(0)}</span>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">${user.name} ${user.last_name}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">${user.identification}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${roleColor}">
-                                ${user.role?.name || 'Aucun rôle'}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            ${new Date(user.created_at).toLocaleDateString('fr-FR')}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button onclick="adminDashboard.changeUserRole(${user.id})" class="text-aptiv-orange-600 hover:text-aptiv-orange-900">
-                                Modifier le rôle
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-            
-            if (tableEl) tableEl.classList.remove('hidden');
+        // Group users by role
+        const usersByRole = this.groupUsersByRole(users);
+
+        // Render user statistics
+        this.renderUserStats(usersByRole);
+
+        // Render desktop role-based view
+        if (desktopContainer) {
+            desktopContainer.innerHTML = this.renderDesktopRoleGroups(usersByRole);
+            desktopContainer.classList.remove('hidden');
         }
 
-        // Mobile card view
+        // Render mobile role-based view
         if (mobileContainer) {
-            mobileContainer.innerHTML = users.map(user => {
-                const roleColors = {
-                    'super admin': 'bg-purple-100 text-purple-800',
-                    'admin': 'bg-blue-100 text-blue-800',
-                    'employee': 'bg-green-100 text-green-800'
-                };
-                
-                const roleColor = roleColors[user.role?.name] || 'bg-gray-100 text-gray-800';
+            mobileContainer.innerHTML = this.renderMobileRoleGroups(usersByRole);
+            mobileContainer.classList.remove('hidden');
+        }
+    }
+
+    renderUserStats(usersByRole) {
+        const statsContainer = document.getElementById('users-stats');
+        if (!statsContainer) return;
+
+        const roleConfig = {
+            'super admin': {
+                title: 'Super Admins',
+                icon: '👑',
+                bgColor: 'bg-purple-50',
+                iconBg: 'bg-purple-100',
+                textColor: 'text-purple-800'
+            },
+            'admin': {
+                title: 'Administrateurs',
+                icon: '🛡️',
+                bgColor: 'bg-blue-50',
+                iconBg: 'bg-blue-100',
+                textColor: 'text-blue-800'
+            },
+            'employee': {
+                title: 'Employés',
+                icon: '👤',
+                bgColor: 'bg-green-50',
+                iconBg: 'bg-green-100',
+                textColor: 'text-green-800'
+            },
+            'no_role': {
+                title: 'Sans Rôle',
+                icon: '❓',
+                bgColor: 'bg-gray-50',
+                iconBg: 'bg-gray-100',
+                textColor: 'text-gray-800'
+            }
+        };
+
+        const totalUsers = Object.values(usersByRole).reduce((sum, users) => sum + users.length, 0);
+
+        const statsHtml = Object.entries(usersByRole)
+            .filter(([role, users]) => users.length > 0)
+            .map(([role, users]) => {
+                const config = roleConfig[role];
+                const percentage = totalUsers > 0 ? Math.round((users.length / totalUsers) * 100) : 0;
                 
                 return `
-                    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200 card-hover">
+                    <div class="stat-card ${config.bgColor} border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow duration-200">
                         <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold text-sm">${user.name.charAt(0)}</span>
-                                </div>
-                                <div class="ml-3">
-                                    <h3 class="font-semibold text-gray-900 text-base">${user.name} ${user.last_name}</h3>
-                                    <p class="text-sm text-gray-600">ID: ${user.identification}</p>
-                                </div>
+                            <div class="${config.iconBg} w-10 h-10 rounded-lg flex items-center justify-center">
+                                <span class="text-lg">${config.icon}</span>
                             </div>
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${roleColor}">
-                                ${user.role?.name || 'Aucun rôle'}
-                            </span>
+                            <span class="text-xs ${config.textColor} font-medium">${percentage}%</span>
                         </div>
-                        <div class="flex justify-between items-center pt-3 border-t border-gray-100">
-                            <span class="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-md">${new Date(user.created_at).toLocaleDateString('fr-FR')}</span>
-                            <button onclick="adminDashboard.changeUserRole(${user.id})" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 text-sm font-medium transition-colors btn-touch">
-                                Modifier le rôle
-                            </button>
+                        <div>
+                            <p class="text-2xl font-bold text-gray-900 mb-1">${users.length}</p>
+                            <p class="text-sm ${config.textColor} font-medium">${config.title}</p>
                         </div>
                     </div>
                 `;
             }).join('');
-            
-            if (mobileEl) mobileEl.classList.remove('hidden');
+
+        statsContainer.innerHTML = statsHtml;
+        statsContainer.classList.remove('hidden');
+    }
+
+    groupUsersByRole(users) {
+        const roleGroups = {
+            'super admin': [],
+            'admin': [],
+            'employee': [],
+            'no_role': []
+        };
+
+        users.forEach(user => {
+            const roleName = user.role?.name?.toLowerCase() || 'no_role';
+            if (roleGroups[roleName]) {
+                roleGroups[roleName].push(user);
+            } else {
+                roleGroups['no_role'].push(user);
+            }
+        });
+
+        return roleGroups;
+    }
+
+    renderDesktopRoleGroups(usersByRole) {
+        const roleConfig = {
+            'super admin': {
+                title: 'Super Administrateurs',
+                icon: '👑',
+                bgColor: 'bg-purple-50',
+                borderColor: 'border-purple-200',
+                headerColor: 'bg-purple-100',
+                textColor: 'text-purple-800',
+                badgeColor: 'bg-purple-100 text-purple-800'
+            },
+            'admin': {
+                title: 'Administrateurs',
+                icon: '🛡️',
+                bgColor: 'bg-blue-50',
+                borderColor: 'border-blue-200',
+                headerColor: 'bg-blue-100',
+                textColor: 'text-blue-800',
+                badgeColor: 'bg-blue-100 text-blue-800'
+            },
+            'employee': {
+                title: 'Employés',
+                icon: '👤',
+                bgColor: 'bg-green-50',
+                borderColor: 'border-green-200',
+                headerColor: 'bg-green-100',
+                textColor: 'text-green-800',
+                badgeColor: 'bg-green-100 text-green-800'
+            },
+            'no_role': {
+                title: 'Sans Rôle',
+                icon: '❓',
+                bgColor: 'bg-gray-50',
+                borderColor: 'border-gray-200',
+                headerColor: 'bg-gray-100',
+                textColor: 'text-gray-800',
+                badgeColor: 'bg-gray-100 text-gray-800'
+            }
+        };
+
+        return Object.entries(usersByRole)
+            .filter(([role, users]) => users.length > 0)
+            .map(([role, users]) => {
+                const config = roleConfig[role];
+                return `
+                    <div class="role-group ${config.bgColor} ${config.borderColor} border rounded-xl overflow-hidden shadow-sm" data-role="${role}">
+                        <div class="${config.headerColor} px-6 py-4 border-b ${config.borderColor}">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-2xl">${config.icon}</span>
+                                    <div>
+                                        <h3 class="text-lg font-semibold ${config.textColor}">${config.title}</h3>
+                                        <p class="text-sm ${config.textColor} opacity-75">${users.length} utilisateur${users.length > 1 ? 's' : ''}</p>
+                                    </div>
+                                </div>
+                                <button onclick="adminDashboard.toggleRoleGroup('${role}')" class="text-sm ${config.textColor} hover:opacity-75 transition-opacity">
+                                    <span class="role-toggle-text">Réduire</span>
+                                    <svg class="role-toggle-icon w-4 h-4 ml-1 inline-block transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="role-users-content bg-white">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Identification</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date d'inscription</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        ${users.map(user => `
+                                            <tr class="user-row hover:bg-gray-50" data-user-id="${user.id}">
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center">
+                                                        <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center">
+                                                            <span class="text-white font-bold text-sm">${user.name.charAt(0)}</span>
+                                                        </div>
+                                                        <div class="ml-4">
+                                                            <div class="text-sm font-medium text-gray-900">${user.name} ${user.last_name}</div>
+                                                            <div class="text-xs text-gray-500">${user.email || 'Pas d\'email'}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm text-gray-900 font-mono">${user.identification}</div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    ${new Date(user.created_at).toLocaleDateString('fr-FR')}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button onclick="adminDashboard.changeUserRole(${user.id})" 
+                                                            class="text-aptiv-orange-600 hover:text-aptiv-orange-900 transition-colors">
+                                                        Modifier le rôle
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+    }
+
+    renderMobileRoleGroups(usersByRole) {
+        const roleConfig = {
+            'super admin': {
+                title: 'Super Administrateurs',
+                icon: '👑',
+                bgColor: 'bg-purple-50',
+                borderColor: 'border-purple-200',
+                headerColor: 'bg-purple-100',
+                textColor: 'text-purple-800',
+                badgeColor: 'bg-purple-100 text-purple-800'
+            },
+            'admin': {
+                title: 'Administrateurs',
+                icon: '🛡️',
+                bgColor: 'bg-blue-50',
+                borderColor: 'border-blue-200',
+                headerColor: 'bg-blue-100',
+                textColor: 'text-blue-800',
+                badgeColor: 'bg-blue-100 text-blue-800'
+            },
+            'employee': {
+                title: 'Employés',
+                icon: '👤',
+                bgColor: 'bg-green-50',
+                borderColor: 'border-green-200',
+                headerColor: 'bg-green-100',
+                textColor: 'text-green-800',
+                badgeColor: 'bg-green-100 text-green-800'
+            },
+            'no_role': {
+                title: 'Sans Rôle',
+                icon: '❓',
+                bgColor: 'bg-gray-50',
+                borderColor: 'border-gray-200',
+                headerColor: 'bg-gray-100',
+                textColor: 'text-gray-800',
+                badgeColor: 'bg-gray-100 text-gray-800'
+            }
+        };
+
+        return Object.entries(usersByRole)
+            .filter(([role, users]) => users.length > 0)
+            .map(([role, users]) => {
+                const config = roleConfig[role];
+                return `
+                    <div class="role-group-mobile ${config.bgColor} ${config.borderColor} border rounded-xl overflow-hidden shadow-sm" data-role="${role}">
+                        <div class="${config.headerColor} px-4 py-3 border-b ${config.borderColor}">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-lg">${config.icon}</span>
+                                    <div>
+                                        <h3 class="text-base font-semibold ${config.textColor}">${config.title}</h3>
+                                        <p class="text-xs ${config.textColor} opacity-75">${users.length} utilisateur${users.length > 1 ? 's' : ''}</p>
+                                    </div>
+                                </div>
+                                <button onclick="adminDashboard.toggleRoleGroupMobile('${role}')" class="text-sm ${config.textColor} hover:opacity-75 transition-opacity btn-touch">
+                                    <span class="role-toggle-text-mobile">Réduire</span>
+                                    <svg class="role-toggle-icon-mobile w-4 h-4 ml-1 inline-block transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="role-users-content-mobile bg-white p-4 space-y-3">
+                            ${users.map(user => `
+                                <div class="user-card bg-white border border-gray-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200" data-user-id="${user.id}">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center">
+                                                <span class="text-white font-bold text-xs">${user.name.charAt(0)}</span>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h4 class="font-semibold text-gray-900 text-sm">${user.name} ${user.last_name}</h4>
+                                                <p class="text-xs text-gray-600 font-mono">ID: ${user.identification}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                                        <span class="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-md">
+                                            ${new Date(user.created_at).toLocaleDateString('fr-FR')}
+                                        </span>
+                                        <button onclick="adminDashboard.changeUserRole(${user.id})" 
+                                                class="text-aptiv-orange-600 hover:text-aptiv-orange-700 text-xs font-medium transition-colors btn-touch">
+                                            Modifier le rôle
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+    }
+
+    toggleRoleGroup(role) {
+        const roleGroup = document.querySelector(`[data-role="${role}"]`);
+        const content = roleGroup?.querySelector('.role-users-content');
+        const toggleText = roleGroup?.querySelector('.role-toggle-text');
+        const toggleIcon = roleGroup?.querySelector('.role-toggle-icon');
+
+        if (content && toggleText && toggleIcon) {
+            const isHidden = content.style.display === 'none';
+            content.style.display = isHidden ? 'block' : 'none';
+            toggleText.textContent = isHidden ? 'Réduire' : 'Développer';
+            toggleIcon.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
+        }
+    }
+
+    toggleRoleGroupMobile(role) {
+        const roleGroup = document.querySelector(`[data-role="${role}"].role-group-mobile`);
+        const content = roleGroup?.querySelector('.role-users-content-mobile');
+        const toggleText = roleGroup?.querySelector('.role-toggle-text-mobile');
+        const toggleIcon = roleGroup?.querySelector('.role-toggle-icon-mobile');
+
+        if (content && toggleText && toggleIcon) {
+            const isHidden = content.style.display === 'none';
+            content.style.display = isHidden ? 'block' : 'none';
+            toggleText.textContent = isHidden ? 'Réduire' : 'Développer';
+            toggleIcon.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
         }
     }
 
@@ -1598,39 +1844,41 @@ class AdminDashboard {
     filterUsers() {
         const searchTerm = document.getElementById('user-search')?.value.toLowerCase() || '';
         const roleFilter = document.getElementById('role-filter')?.value || '';
-        const tableRows = document.querySelectorAll('#users-tbody tr');
-        const mobileCards = document.querySelectorAll('#users-mobile > div');
-
-        // Filter table rows
-        tableRows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            const roleSpan = row.querySelector('span[class*="rounded-full"]');
-            const userRole = roleSpan?.textContent.toLowerCase() || '';
+        
+        // Get all role groups
+        const roleGroups = document.querySelectorAll('.role-group, .role-group-mobile');
+        
+        roleGroups.forEach(group => {
+            const groupRole = group.getAttribute('data-role');
+            let groupHasVisibleUsers = false;
             
+            // Check role filter
             let roleMatch = true;
             if (roleFilter) {
                 const roleNames = { '1': 'super admin', '2': 'admin', '3': 'employee' };
-                roleMatch = userRole.includes(roleNames[roleFilter]);
+                roleMatch = groupRole === roleNames[roleFilter];
             }
             
-            const searchMatch = text.includes(searchTerm);
-            row.style.display = (searchMatch && roleMatch) ? '' : 'none';
-        });
-
-        // Filter mobile cards
-        mobileCards.forEach(card => {
-            const text = card.textContent.toLowerCase();
-            const roleSpan = card.querySelector('span[class*="rounded-full"]');
-            const userRole = roleSpan?.textContent.toLowerCase() || '';
-            
-            let roleMatch = true;
-            if (roleFilter) {
-                const roleNames = { '1': 'super admin', '2': 'admin', '3': 'employee' };
-                roleMatch = userRole.includes(roleNames[roleFilter]);
+            if (roleMatch) {
+                // Filter users within this role group
+                const userRows = group.querySelectorAll('.user-row, .user-card');
+                
+                userRows.forEach(userElement => {
+                    const text = userElement.textContent.toLowerCase();
+                    const searchMatch = text.includes(searchTerm);
+                    
+                    userElement.style.display = searchMatch ? '' : 'none';
+                    if (searchMatch) {
+                        groupHasVisibleUsers = true;
+                    }
+                });
+                
+                // Show/hide the entire group based on whether it has visible users
+                group.style.display = groupHasVisibleUsers ? '' : 'none';
+            } else {
+                // Hide the entire group if role doesn't match
+                group.style.display = 'none';
             }
-            
-            const searchMatch = text.includes(searchTerm);
-            card.style.display = (searchMatch && roleMatch) ? '' : 'none';
         });
     }
 }

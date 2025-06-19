@@ -14,4 +14,37 @@
   .btn-orange-outline {
     @apply border-2 border-aptiv-orange-600 text-aptiv-orange-600 hover:bg-aptiv-orange-600 hover:text-white font-semibold px-6 py-3 rounded transition-colors duration-200;
   }
+
+  /* Role Groups Styling */
+  .role-group {
+    @apply transition-all duration-200 hover:shadow-md;
+  }
+
+  .role-group-mobile {
+    @apply transition-all duration-200 hover:shadow-md;
+  }
+
+  .role-toggle-icon {
+    @apply transition-transform duration-200;
+  }
+
+  .role-toggle-icon-mobile {
+    @apply transition-transform duration-200;
+  }
+
+  .user-row {
+    @apply transition-colors duration-150;
+  }
+
+  .user-card {
+    @apply transition-all duration-200;
+  }
+
+  .role-users-content {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .role-users-content-mobile {
+    @apply transition-all duration-300 ease-in-out;
+  }
 }

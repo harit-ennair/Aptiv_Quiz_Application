@@ -1,6 +1,5 @@
 <!-- Users Management Section -->
-<div class="space-y-6">
-    <!-- Header -->
+<div class="space-y-6">    <!-- Header -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
@@ -25,6 +24,11 @@
         </div>
     </div>
 
+    <!-- Users Statistics -->
+    <div id="users-stats" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 hidden">
+        <!-- Stats cards will be populated here -->
+    </div>
+
     <!-- Loading State -->
     <div id="users-loading" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
         <div class="spinner mx-auto mb-4"></div>
@@ -38,31 +42,14 @@
         </svg>
         <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun utilisateur trouvé</h3>
         <p class="text-gray-500">Il n'y a pas d'utilisateurs dans le système.</p>
+    </div>    <!-- Desktop Role-based View -->
+    <div id="users-desktop" class="space-y-6 hidden lg:block">
+        <!-- Users will be grouped by role here -->
     </div>
 
-    <!-- Desktop Table View -->
-    <div id="users-table" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hidden lg:block">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 table-compact">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Identification</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle Actuel</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date d'inscription</th>
-                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="users-tbody" class="bg-white divide-y divide-gray-200">
-                    <!-- Users will be populated here -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Mobile Card View -->
-    <div id="users-mobile" class="space-y-4 lg:hidden hidden">
-        <!-- Mobile cards will be populated here -->
+    <!-- Mobile Role-based View -->
+    <div id="users-mobile" class="space-y-6 lg:hidden hidden">
+        <!-- Mobile role groups will be populated here -->
     </div>
 </div>
 
