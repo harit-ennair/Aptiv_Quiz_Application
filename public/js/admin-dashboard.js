@@ -96,6 +96,22 @@ class AdminDashboard {
             testSearch.addEventListener('input', () => this.filterTests());
         }
 
+        // Test filters
+        const testFormateurFilter = document.getElementById('test-formateur-filter');
+        if (testFormateurFilter) {
+            testFormateurFilter.addEventListener('change', () => this.filterTests());
+        }
+
+        const testProcessFilter = document.getElementById('test-process-filter');
+        if (testProcessFilter) {
+            testProcessFilter.addEventListener('change', () => this.filterTests());
+        }
+
+        const testCategoryFilter = document.getElementById('test-category-filter');
+        if (testCategoryFilter) {
+            testCategoryFilter.addEventListener('change', () => this.filterTests());
+        }
+
         // Add keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             // Escape key to close modals
@@ -1020,6 +1036,12 @@ class AdminDashboard {
     }
 
     renderTests(tests) {
+        // Store original data for filtering (only when loading all tests)
+        if (!this.originalTestsData || tests.length >= (this.originalTestsData?.length || 0)) {
+            this.originalTestsData = tests;
+            this.populateTestFilters(tests);
+        }
+        
         const tbody = document.getElementById('tests-tbody');
         const mobileContainer = document.getElementById('tests-mobile');
         const tableEl = document.getElementById('tests-table');
@@ -1033,8 +1055,34 @@ class AdminDashboard {
 
         // Desktop table view
         if (tbody) {
-            tbody.innerHTML = tests.map(test => `
-                <tr>
+            tbody.innerHTML = tests.map(test => {
+                // Format categories
+                const categoriesText = test.categories && test.categories.length > 0 
+                    ? test.categories.map(c => c.title).join(', ')
+                    : 'N/A';
+                
+                // Determine row styling based on percentage
+                let rowClass, percentageClass;
+                if (test.pourcentage === 100) {
+                    // Special styling for perfect score - Purple/Violet
+                    rowClass = 'bg-gradient-to-r from-purple-50 to-violet-50 hover:from-purple-100 hover:to-violet-100 border-l-4 border-purple-400';
+                    percentageClass = 'text-purple-700 font-bold';
+                } else if (test.pourcentage > 75) {
+                    // Green for high scores
+                    rowClass = 'bg-green-50 hover:bg-green-100';
+                    percentageClass = 'text-green-700 font-bold';
+                } else if (test.pourcentage >= 50) {
+                    // Yellow/Orange for medium scores
+                    rowClass = 'bg-orange-50 hover:bg-orange-100';
+                    percentageClass = 'text-orange-700 font-bold';
+                } else {
+                    // Red for low scores
+                    rowClass = 'bg-red-50 hover:bg-red-100';
+                    percentageClass = 'text-red-700 font-bold';
+                }
+                    
+                return `
+                <tr class="${rowClass}">
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm font-medium text-gray-900">
                             ${test.user ? `${test.user.name} ${test.user.last_name}` : 'N/A'}
@@ -1046,34 +1094,67 @@ class AdminDashboard {
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="text-sm text-gray-900">${test.description || 'N/A'}</div>
+                        <div class="text-sm text-gray-900">${categoriesText}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${test.resultat >= 70 ? 'bg-green-100 text-green-800' : test.resultat >= 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
-                            ${test.resultat}
-                        </span>
+                        <div class="text-sm ${percentageClass}">
+                            ${test.pourcentage === 100 ? '🏆 ' : ''}${test.pourcentage}%
+                        </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">${test.pourcentage}%</div>
-                    </td>                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         ${new Date(test.created_at || test.create_at).toLocaleDateString('fr-FR')}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="adminDashboard.editTest(${test.id})" class="text-aptiv-orange-600 hover:text-aptiv-orange-900 mr-3">
-                            Modifier
-                        </button>
-                        <button onclick="adminDashboard.deleteTest(${test.id})" class="text-red-600 hover:text-red-900">
-                            Supprimer
+                        <button onclick="adminDashboard.viewTest(${test.id})" class="text-blue-600 hover:text-blue-900" title="Voir les détails">
+                            <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
                         </button>
                     </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
             
             if (tableEl) tableEl.classList.remove('hidden');
         }        // Mobile card view
         if (mobileContainer) {
-            mobileContainer.innerHTML = tests.map(test => `
-                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200 card-hover">
+            mobileContainer.innerHTML = tests.map(test => {
+                // Format categories
+                const categoriesText = test.categories && test.categories.length > 0 
+                    ? test.categories.map(c => c.title).join(', ')
+                    : 'N/A';
+                
+                // Determine card styling based on percentage
+                let cardClass, percentageClass, dateBadgeClass, borderClass;
+                if (test.pourcentage === 100) {
+                    // Special styling for perfect score - Purple/Violet
+                    cardClass = 'bg-gradient-to-br from-purple-50 to-violet-50 border-purple-300 hover:from-purple-100 hover:to-violet-100 shadow-lg';
+                    percentageClass = 'text-purple-700';
+                    dateBadgeClass = 'bg-purple-100 text-purple-800';
+                    borderClass = 'border-purple-200';
+                } else if (test.pourcentage > 75) {
+                    // Green for high scores
+                    cardClass = 'bg-green-50 border-green-200 hover:bg-green-100';
+                    percentageClass = 'text-green-700';
+                    dateBadgeClass = 'bg-green-100 text-green-800';
+                    borderClass = 'border-green-200';
+                } else if (test.pourcentage >= 50) {
+                    // Orange for medium scores
+                    cardClass = 'bg-orange-50 border-orange-200 hover:bg-orange-100';
+                    percentageClass = 'text-orange-700';
+                    dateBadgeClass = 'bg-orange-100 text-orange-800';
+                    borderClass = 'border-orange-200';
+                } else {
+                    // Red for low scores
+                    cardClass = 'bg-red-50 border-red-200 hover:bg-red-100';
+                    percentageClass = 'text-red-700';
+                    dateBadgeClass = 'bg-red-100 text-red-800';
+                    borderClass = 'border-red-200';
+                }
+                
+                return `
+                <div class="${cardClass} border rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 card-hover">
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex-1">
                             <h3 class="font-semibold text-gray-900 text-base leading-tight">
@@ -1087,29 +1168,87 @@ class AdminDashboard {
                             </p>
                         </div>
                         <div class="text-right flex-shrink-0 ml-3">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${test.resultat >= 70 ? 'bg-green-100 text-green-800' : test.resultat >= 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
-                                ${test.resultat}
-                            </span>
-                            <div class="text-xs text-gray-600 mt-1 font-medium">${test.pourcentage}%</div>
+                            <div class="text-lg font-bold ${percentageClass}">
+                                ${test.pourcentage === 100 ? '🏆 ' : ''}${test.pourcentage}%
+                            </div>
+                            <div class="text-xs text-gray-600 mt-1">
+                                ${test.pourcentage === 100 ? 'Parfait!' : test.pourcentage > 75 ? 'Excellent' : test.pourcentage >= 50 ? 'Moyen' : 'Faible'}
+                            </div>
                         </div>
                     </div>
-                    ${test.description ? `<p class="text-sm text-gray-600 mb-3 leading-relaxed bg-gray-50 p-2 rounded-md">${test.description}</p>` : ''}
-                    <div class="flex justify-between items-center pt-3 border-t border-gray-100">
-                        <span class="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-md">${new Date(test.created_at || test.create_at).toLocaleDateString('fr-FR')}</span>
+                    
+                    <!-- Category Info -->
+                    <div class="mb-3">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                            </svg>
+                            Catégorie: <span class="font-medium">${categoriesText}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center pt-3 border-t ${borderClass}">
+                        <span class="text-xs font-medium ${dateBadgeClass} px-2 py-1 rounded-md">${new Date(test.created_at || test.create_at).toLocaleDateString('fr-FR')}</span>
                         <div class="flex space-x-3">
-                            <button onclick="adminDashboard.editTest(${test.id})" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 text-sm font-medium transition-colors btn-touch">
-                                Modifier
-                            </button>
-                            <button onclick="adminDashboard.deleteTest(${test.id})" class="text-red-600 hover:text-red-700 text-sm font-medium transition-colors btn-touch">
-                                Supprimer
+                            <button onclick="adminDashboard.viewTest(${test.id})" class="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors btn-touch" title="Voir les détails">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                                Voir
                             </button>
                         </div>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
             
             if (mobileEl) mobileEl.classList.remove('hidden');
         }    }
+
+    populateTestFilters(tests) {
+        // Populate formateur filter
+        const formateurFilter = document.getElementById('test-formateur-filter');
+        if (formateurFilter) {
+            const formateurs = [...new Map(tests.filter(t => t.formateur).map(t => [t.formateur.id, t.formateur])).values()];
+            formateurFilter.innerHTML = '<option value="">Tous les formateurs</option>' +
+                formateurs.map(f => `<option value="${f.id}">${f.name} ${f.last_name}</option>`).join('');
+        }
+
+        // Populate process filter
+        const processFilter = document.getElementById('test-process-filter');
+        if (processFilter) {
+            const processes = [];
+            tests.forEach(test => {
+                if (test.processes) {
+                    test.processes.forEach(process => {
+                        if (!processes.find(p => p.id === process.id)) {
+                            processes.push(process);
+                        }
+                    });
+                }
+            });
+            processFilter.innerHTML = '<option value="">Tous les processus</option>' +
+                processes.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
+        }
+
+        // Populate category filter
+        const categoryFilter = document.getElementById('test-category-filter');
+        if (categoryFilter) {
+            const categories = [];
+            tests.forEach(test => {
+                if (test.categories) {
+                    test.categories.forEach(category => {
+                        if (!categories.find(c => c.id === category.id)) {
+                            categories.push(category);
+                        }
+                    });
+                }
+            });
+            categoryFilter.innerHTML = '<option value="">Toutes les catégories</option>' +
+                categories.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+        }
+    }
 
     // Categories Management
     openCategoryModal(categoryId = null) {
@@ -1503,6 +1642,203 @@ class AdminDashboard {
         this.openTestModal(testId);
     }
 
+    async viewTest(testId) {
+        try {
+            // Get test details
+            const response = await fetch(`/admin/api/tests/${testId}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                this.showTestDetailsModal(result.data);
+            } else {
+                this.showMessage('Erreur lors du chargement des détails du test', 'error');
+            }
+        } catch (error) {
+            this.showMessage('Une erreur est survenue', 'error');
+            console.error('Error:', error);
+        }
+    }
+
+    showTestDetailsModal(test) {
+        // Create modal if it doesn't exist
+        let modal = document.getElementById('test-details-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'test-details-modal';
+            modal.className = 'modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="modal-body bg-white rounded-lg max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
+                    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="text-lg font-medium text-gray-900">Détails du Test</h3>
+                        <button onclick="adminDashboard.closeTestDetailsModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="test-details-content" class="p-6">
+                        <!-- Content will be populated dynamically -->
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Populate content
+        const content = document.getElementById('test-details-content');
+        content.innerHTML = `
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            Informations Utilisateur
+                        </h4>
+                        <div class="space-y-2">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Nom:</span>
+                                <span class="text-sm text-gray-900 ml-2">${test.user ? `${test.user.name} ${test.user.last_name}` : 'N/A'}</span>
+                            </div>
+                            ${test.user?.email ? `
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Email:</span>
+                                <span class="text-sm text-gray-900 ml-2">${test.user.email}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            Informations Formateur
+                        </h4>
+                        <div class="space-y-2">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Nom:</span>
+                                <span class="text-sm text-gray-900 ml-2">${test.formateur ? `${test.formateur.name} ${test.formateur.last_name}` : 'N/A'}</span>
+                            </div>
+                            ${test.formateur?.email ? `
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Email:</span>
+                                <span class="text-sm text-gray-900 ml-2">${test.formateur.email}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Process and Category Information -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                            Processus
+                        </h4>
+                        <div class="space-y-2">
+                            ${test.processes && test.processes.length > 0 ? 
+                                test.processes.map(process => `
+                                    <div class="bg-white p-3 rounded border-l-4 border-blue-500">
+                                        <div class="font-medium text-gray-900">${process.title}</div>
+                                        ${process.description ? `<div class="text-sm text-gray-600 mt-1">${process.description}</div>` : ''}
+                                    </div>
+                                `).join('') 
+                                : '<div class="text-sm text-gray-500 italic">Aucun processus associé</div>'
+                            }
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                            </svg>
+                            Catégories
+                        </h4>
+                        <div class="space-y-2">
+                            ${test.categories && test.categories.length > 0 ? 
+                                test.categories.map(category => `
+                                    <div class="bg-white p-3 rounded border-l-4 border-green-500">
+                                        <div class="font-medium text-gray-900">${category.title}</div>
+                                        ${category.process ? `<div class="text-sm text-gray-600 mt-1">Processus: ${category.process.title}</div>` : ''}
+                                    </div>
+                                `).join('') 
+                                : '<div class="text-sm text-gray-500 italic">Aucune catégorie associée</div>'
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Détails du Test
+                    </h4>
+                    <div class="space-y-3">
+                        ${test.description ? `
+                        <div>
+                            <span class="text-sm font-medium text-gray-700">Description:</span>
+                            <div class="text-sm text-gray-900 mt-1 p-3 bg-white rounded border">${test.description}</div>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="text-center p-3 bg-white rounded border">
+                                <div class="text-2xl font-bold ${test.resultat >= 70 ? 'text-green-600' : test.resultat >= 50 ? 'text-yellow-600' : 'text-red-600'}">${test.resultat}</div>
+                                <div class="text-sm text-gray-600">Résultat</div>
+                            </div>
+                            <div class="text-center p-3 bg-white rounded border">
+                                <div class="text-2xl font-bold text-blue-600">${test.pourcentage}%</div>
+                                <div class="text-sm text-gray-600">Pourcentage</div>
+                            </div>
+                            <div class="text-center p-3 bg-white rounded border">
+                                <div class="text-sm font-bold text-gray-900">${new Date(test.created_at || test.create_at).toLocaleDateString('fr-FR', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}</div>
+                                <div class="text-sm text-gray-600">Date du Test</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                    <button onclick="adminDashboard.editTest(${test.id}); adminDashboard.closeTestDetailsModal();" 
+                            class="bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white px-4 py-2 rounded-md transition-colors">
+                        Modifier ce Test
+                    </button>
+                    <button onclick="adminDashboard.closeTestDetailsModal()" 
+                            class="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Show modal
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    closeTestDetailsModal() {
+        const modal = document.getElementById('test-details-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    }
+
     async loadUsersAndFormateursForTest() {
         try {
             // Load users
@@ -1591,20 +1927,35 @@ class AdminDashboard {
 
     filterTests() {
         const searchTerm = document.getElementById('test-search')?.value.toLowerCase() || '';
-        const tableRows = document.querySelectorAll('#tests-tbody tr');
-        const mobileCards = document.querySelectorAll('#tests-mobile > div');
-
-        // Filter table rows
-        tableRows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        const formateurFilter = document.getElementById('test-formateur-filter')?.value || '';
+        const processFilter = document.getElementById('test-process-filter')?.value || '';
+        const categoryFilter = document.getElementById('test-category-filter')?.value || '';
+        
+        // Store the original test data for filtering
+        if (!this.originalTestsData) {
+            return; // No data to filter
+        }
+        
+        // Filter the original data
+        const filteredTests = this.originalTestsData.filter(test => {
+            // Search term filter
+            const searchText = `${test.user?.name || ''} ${test.user?.last_name || ''} ${test.formateur?.name || ''} ${test.formateur?.last_name || ''} ${test.description || ''}`.toLowerCase();
+            const matchesSearch = !searchTerm || searchText.includes(searchTerm);
+            
+            // Formateur filter
+            const matchesFormateur = !formateurFilter || (test.formateur && test.formateur.id.toString() === formateurFilter);
+            
+            // Process filter
+            const matchesProcess = !processFilter || (test.processes && test.processes.some(p => p.id.toString() === processFilter));
+            
+            // Category filter
+            const matchesCategory = !categoryFilter || (test.categories && test.categories.some(c => c.id.toString() === categoryFilter));
+            
+            return matchesSearch && matchesFormateur && matchesProcess && matchesCategory;
         });
-
-        // Filter mobile cards
-        mobileCards.forEach(card => {
-            const text = card.textContent.toLowerCase();
-            card.style.display = text.includes(searchTerm) ? '' : 'none';
-        });
+        
+        // Re-render the filtered data
+        this.renderTests(filteredTests);
     }
 
     // Users Management (Super Admin only)

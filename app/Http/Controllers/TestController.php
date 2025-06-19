@@ -55,7 +55,12 @@ class TestController extends Controller
      */
     public function show(test $test)
     {
-        //
+        $testWithRelations = $test->load(['user', 'formateur']);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $testWithRelations
+        ]);
     }
 
     /**

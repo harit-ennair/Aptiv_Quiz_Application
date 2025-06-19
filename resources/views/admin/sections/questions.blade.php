@@ -457,27 +457,28 @@
 </style>
 
 <!-- Questions Management Section -->
-<div class="bg-white rounded-lg shadow-sm">
+<div class="space-y-6">
     <!-- Header -->
-    <div class="px-6 py-4 border-b border-gray-200">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <h2 class="text-xl font-semibold text-gray-900">Gestion des Questions</h2>
-            <button onclick="openQuestionModal()" class="bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white px-4 py-2 rounded-md transition-colors btn-touch inline-flex items-center">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+                <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Questions</h2>
+                <p class="text-gray-600 text-sm lg:text-base mt-1">Gérer et organiser les questions par processus et catégorie</p>
+            </div>
+            <button onclick="openQuestionModal()" class="bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white px-4 py-2 rounded-lg transition-colors btn-touch inline-flex items-center text-sm font-medium">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
                 Ajouter une question
             </button>
         </div>
-    </div>
-
-    <!-- Filters Section -->
-    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+    </div>    <!-- Filters Section -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Process Filter -->
             <div>
                 <label for="question-process-filter" class="block text-sm font-medium text-gray-700 mb-2">Processus</label>
-                <select id="question-process-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-aptiv-orange-500">
+                <select id="question-process-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent">
                     <option value="">Tous les processus</option>
                 </select>
             </div>
@@ -485,7 +486,7 @@
             <!-- Category Filter -->
             <div>
                 <label for="question-category-filter" class="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
-                <select id="question-category-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-aptiv-orange-500" disabled>
+                <select id="question-category-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent" disabled>
                     <option value="">Sélectionner d'abord un processus</option>
                 </select>
             </div>
@@ -493,11 +494,18 @@
             <!-- Search -->
             <div>
                 <label for="question-search" class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
-                <input type="text" id="question-search" placeholder="Rechercher une question..." 
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-aptiv-orange-500">
+                <div class="relative">
+                    <input type="text" id="question-search" placeholder="Rechercher une question..." 
+                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent">
+                    <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
             </div>
-        </div>        <!-- Statistics Bar -->
-        <div id="questions-stats" class="mt-4 flex flex-wrap gap-4">
+        </div>
+
+        <!-- Statistics Bar -->
+        <div id="questions-stats" class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="stats-card orange rounded-lg px-4 py-3 shadow-lg">
                 <div class="flex items-center">
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -531,12 +539,14 @@
                     </div>
                 </div>
             </div>
-        </div>        <!-- Action Buttons -->
-        <div class="mt-4 flex flex-wrap gap-2">
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-6 flex flex-wrap gap-3">
             <button 
                 id="clear-filters-btn"
                 onclick="clearFilters()" 
-                class="bg-gray-400 cursor-not-allowed opacity-50 text-white px-4 py-2 rounded-md transition-colors text-sm font-medium"
+                class="bg-gray-400 cursor-not-allowed opacity-50 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium"
                 title="Aucun filtre actif"
                 disabled>
                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -544,56 +554,65 @@
                 </svg>
                 Effacer les filtres
             </button>
-            <button onclick="refreshQuestions()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors text-sm">
+            <button onclick="refreshQuestions()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium">
                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                 </svg>
                 Actualiser
             </button>
         </div>
-    </div>
-
-    <!-- Loading State -->
-    <div id="questions-loading" class="px-6 py-8 text-center">
-        <div class="inline-flex items-center">
-            <div class="spinner mr-3"></div>
-            <span class="text-gray-600">Chargement des questions...</span>
-        </div>
+    </div>    <!-- Loading State -->
+    <div id="questions-loading" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+        <div class="spinner mx-auto mb-4"></div>
+        <p class="text-gray-600">Chargement des questions...</p>
     </div>
 
     <!-- Empty State -->
-    <div id="questions-empty" class="px-6 py-12 text-center hidden">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div id="questions-empty" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center hidden">
+        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune question trouvée</h3>
-        <p class="mt-1 text-sm text-gray-500">Commencez par créer une nouvelle question.</p>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune question trouvée</h3>
+        <p class="text-gray-500">Commencez par créer une nouvelle question.</p>
     </div>
 
     <!-- Filtered Empty State -->
-    <div id="questions-filtered-empty" class="px-6 py-12 text-center hidden">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div id="questions-filtered-empty" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center hidden">
+        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun résultat trouvé</h3>
-        <p class="mt-1 text-sm text-gray-500">Essayez de modifier vos critères de recherche.</p>
-        <button onclick="clearFilters()" class="mt-3 bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white px-4 py-2 rounded-md transition-colors text-sm">
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun résultat trouvé</h3>
+        <p class="text-gray-500 mb-4">Essayez de modifier vos critères de recherche.</p>
+        <button onclick="clearFilters()" class="bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium">
             Effacer les filtres
-        </button>
-    </div>    <!-- Initial State - No Search Yet -->    <div id="questions-initial-state" class="px-6 py-12 text-center">        <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        </button>    </div>
+
+    <!-- Initial State - No Search Yet -->
+    <div id="questions-initial-state" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
         </svg>
-        <h3 class="mt-4 text-lg font-medium text-gray-900">Sélectionner une catégorie</h3>
-        <p class="mt-2 text-sm text-gray-500">Choisissez une catégorie dans le filtre ci-dessus pour afficher les questions.</p>
-        <div class="mt-4 flex flex-wrap justify-center gap-2 text-xs text-gray-400">
-            <span class="bg-blue-100 px-2 py-1 rounded text-blue-600">� Sélectionner un processus</span>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Sélectionner une catégorie</h3>
+        <p class="text-gray-500 mb-4">Choisissez une catégorie dans le filtre ci-dessus pour afficher les questions.</p>
+        <div class="flex flex-wrap justify-center gap-2 text-xs text-gray-400">
+            <span class="bg-blue-100 px-2 py-1 rounded text-blue-600">📋 Sélectionner un processus</span>
             <span class="bg-green-100 px-2 py-1 rounded text-green-600">📁 Choisir une catégorie</span>
-            <span class="bg-purple-100 px-2 py-1 rounded text-purple-600">�️ Voir les questions</span>
+            <span class="bg-purple-100 px-2 py-1 rounded text-purple-600">❓ Voir les questions</span>
         </div>
     </div>
 
+    <!-- Desktop Questions View -->
+    <div id="questions-desktop" class="space-y-6 hidden lg:block">
+        <!-- Questions will be grouped by category here -->
+    </div>
+
+    <!-- Mobile Questions View -->
+    <div id="questions-mobile" class="space-y-6 lg:hidden hidden">
+        <!-- Mobile question groups will be populated here -->
+    </div>
+
     <!-- Questions Cards Grid (Quizizz Style) -->
-    <div id="questions-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6 hidden">
+    <div id="questions-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 hidden">
         <!-- Question cards will be populated by JavaScript -->
     </div>
 </div>
