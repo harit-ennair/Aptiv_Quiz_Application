@@ -13,15 +13,20 @@ class TestController extends Controller
      */
     public function index()
     {
-        $tests = test::with(['user', 'formateur', 'quzs.category'])->get();
+        $tests = test::with(['user', 'formateur', 'quzs.category.process'])->get();
         
-        // Transform the data to include categories at the top level
+        // Transform the data to include categories and processes at the top level
         $tests = $tests->map(function ($test) {
             $categories = $test->quzs->map(function ($quz) {
                 return $quz->category;
             })->filter()->unique('id')->values();
             
+            $processes = $categories->map(function ($category) {
+                return $category->process;
+            })->filter()->unique('id')->values();
+            
             $test->categories = $categories;
+            $test->processes = $processes;
             return $test;
         });
         
@@ -53,14 +58,19 @@ class TestController extends Controller
         ]);
 
         $test = test::create($validated);
-        $testWithRelations = $test->load(['user', 'formateur', 'quzs.category']);
+        $testWithRelations = $test->load(['user', 'formateur', 'quzs.category.process']);
         
-        // Add categories at the top level
+        // Add categories and processes at the top level
         $categories = $testWithRelations->quzs->map(function ($quz) {
             return $quz->category;
         })->filter()->unique('id')->values();
         
+        $processes = $categories->map(function ($category) {
+            return $category->process;
+        })->filter()->unique('id')->values();
+        
         $testWithRelations->categories = $categories;
+        $testWithRelations->processes = $processes;
 
         return response()->json([
             'success' => true,
@@ -74,14 +84,19 @@ class TestController extends Controller
      */
     public function show(test $test)
     {
-        $testWithRelations = $test->load(['user', 'formateur', 'quzs.category']);
+        $testWithRelations = $test->load(['user', 'formateur', 'quzs.category.process']);
         
-        // Add categories at the top level
+        // Add categories and processes at the top level
         $categories = $testWithRelations->quzs->map(function ($quz) {
             return $quz->category;
         })->filter()->unique('id')->values();
         
+        $processes = $categories->map(function ($category) {
+            return $category->process;
+        })->filter()->unique('id')->values();
+        
         $testWithRelations->categories = $categories;
+        $testWithRelations->processes = $processes;
         
         return response()->json([
             'success' => true,

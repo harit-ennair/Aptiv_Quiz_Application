@@ -113,6 +113,11 @@ class AdminDashboard {
             testCategoryFilter.addEventListener('change', () => this.filterTests());
         }
 
+        const testPercentageFilter = document.getElementById('test-percentage-filter');
+        if (testPercentageFilter) {
+            testPercentageFilter.addEventListener('change', () => this.filterTests());
+        }
+
         // Add keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             // Escape key to close modals
@@ -1985,8 +1990,9 @@ class AdminDashboard {
         const formateurFilter = document.getElementById('test-formateur-filter')?.value || '';
         const processFilter = document.getElementById('test-process-filter')?.value || '';
         const categoryFilter = document.getElementById('test-category-filter')?.value || '';
+        const percentageFilter = document.getElementById('test-percentage-filter')?.value || '';
         
-        console.log('Filtering tests with:', { searchTerm, formateurFilter, processFilter, categoryFilter });
+        console.log('Filtering tests with:', { searchTerm, formateurFilter, processFilter, categoryFilter, percentageFilter });
         
         // Store the original test data for filtering
         if (!this.originalTestsData) {
@@ -2009,7 +2015,24 @@ class AdminDashboard {
             // Category filter
             const matchesCategory = !categoryFilter || (test.categories && test.categories.some(c => c.id.toString() === categoryFilter));
             
-            return matchesSearch && matchesFormateur && matchesProcess && matchesCategory;
+            // Percentage filter
+            let matchesPercentage = true;
+            if (percentageFilter) {
+                const percentage = test.pourcentage || 0;
+                switch (percentageFilter) {
+                    case '75-100':
+                        matchesPercentage = percentage >= 75 && percentage <= 100;
+                        break;
+                    case '50-74':
+                        matchesPercentage = percentage >= 50 && percentage <= 74;
+                        break;
+                    case '0-49':
+                        matchesPercentage = percentage >= 0 && percentage <= 49;
+                        break;
+                }
+            }
+            
+            return matchesSearch && matchesFormateur && matchesProcess && matchesCategory && matchesPercentage;
         });
         
         console.log(`Filtered ${filteredTests.length} tests from ${this.originalTestsData.length} total tests`);
