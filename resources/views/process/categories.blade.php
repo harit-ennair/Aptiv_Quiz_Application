@@ -39,71 +39,163 @@
     </div>
 </section>
 
-<!-- Categories Section -->
-<section class="py-16 lg:py-24 bg-gray-50">
+<!-- Categories Management Section -->
+<section class="py-8 lg:py-12 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">Catégories du processus</h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Explorez toutes les catégories spécialisées de notre {{ strtolower($process->title) }}
-            </p>
-        </div>
-
-        @if($process->categories->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                @foreach($process->categories as $category)
-                    <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-6 border-l-4 border-aptiv-orange-500">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-aptiv-orange-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-aptiv-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                #{{ $category->id }}
-                            </span>
+        <!-- Categories Section -->
+        <div class="space-y-6">
+            <!-- Header -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Catégories du Processus</h2>
+                        <p class="text-gray-600 text-sm lg:text-base mt-1">{{ $process->title }} - {{ $process->categories->count() }} catégories disponibles</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="relative">
+                            <input type="text" id="category-search" placeholder="Rechercher une catégorie..." 
+                                   class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
+                            <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
                         </div>
-                          <h3 class="text-lg font-semibold text-gray-900 mb-3">
-                            {{ $category->title }}
-                        </h3>
-                          <div class="mb-4">
-                            <span class="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
-                                {{ $category->quzs_count ?? 0 }} questions disponibles
-                            </span>
-                        </div>                          <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-500">
-                                Créé le {{ \Carbon\Carbon::parse($category->create_at)->format('d/m/Y') }}
-                            </span>
-                            @if(($category->quzs_count ?? 0) > 0)
-                                <a href="{{ route('quiz.start', ['category_id' => $category->id]) }}" class="bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors">
-                                    Démarrer Test
-                                </a>
-                            @else
-                                <span class="bg-gray-400 text-white px-4 py-2 rounded-lg font-medium text-sm cursor-not-allowed">
-                                    Pas de questions
-                                </span>
-                            @endif
+                        <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
+                            <option value="">Tous les statuts</option>
+                            <option value="active">Avec questions</option>
+                            <option value="empty">Sans questions</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Statistics -->
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-aptiv-orange-100 rounded-lg">
+                            <svg class="w-6 h-6 text-aptiv-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Total Catégories</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $process->categories->count() }}</p>
                         </div>
                     </div>
-                @endforeach
-            </div>
-        @else
-            <!-- Empty State -->
-            <div class="text-center py-16">
-                <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                    </svg>
                 </div>
-                <h3 class="text-2xl font-semibold text-gray-900 mb-2">Aucune catégorie disponible</h3>
-                <p class="text-gray-600 max-w-md mx-auto">
-                    Les catégories pour ce processus n'ont pas encore été configurées. Revenez bientôt !
-                </p>
-                <a href="{{ route('home') }}" class="mt-6 inline-block bg-aptiv-orange-600 text-white px-6 py-3 rounded-lg hover:bg-aptiv-orange-700 transition-colors">
-                    Retour à l'accueil
-                </a>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-green-100 rounded-lg">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Avec Questions</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $process->categories->where('quzs_count', '>', 0)->count() }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-yellow-100 rounded-lg">
+                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Sans Questions</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $process->categories->where('quzs_count', '<=', 0)->count() }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-blue-100 rounded-lg">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Total Questions</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $process->categories->sum('quzs_count') ?? 0 }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        @endif
+
+            @if($process->categories->count() > 0)
+                <!-- Categories Grid -->
+                <div id="categories-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    @foreach($process->categories as $category)
+                        <div class="category-card bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300 overflow-hidden" data-category-title="{{ strtolower($category->title) }}" data-status="{{ ($category->quzs_count ?? 0) > 0 ? 'active' : 'empty' }}">
+                            <!-- Card Header -->
+                            <div class="p-6 pb-4">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 bg-aptiv-orange-100 rounded-xl flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-aptiv-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full font-medium">
+                                        ID: {{ $category->id }}
+                                    </span>
+                                </div>
+                                
+                                <h3 class="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
+                                    {{ $category->title }}
+                                </h3>
+                                
+                                <div class="flex items-center space-x-2 mb-4">
+                                    @if(($category->quzs_count ?? 0) > 0)
+                                        <span class="text-sm text-green-700 bg-green-100 px-3 py-1 rounded-full font-medium">
+                                            {{ $category->quzs_count }} questions
+                                        </span>
+                                    @else
+                                        <span class="text-sm text-yellow-700 bg-yellow-100 px-3 py-1 rounded-full font-medium">
+                                            Aucune question
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            <!-- Card Footer -->
+                            <div class="px-6 pb-6 pt-2">
+                                <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                                    <span>Créé le {{ \Carbon\Carbon::parse($category->create_at)->format('d/m/Y') }}</span>
+                                </div>
+                                
+                                <div class="flex space-x-2">
+                                    @if(($category->quzs_count ?? 0) > 0)
+                                        <a href="{{ route('quiz.start', ['category_id' => $category->id]) }}" 
+                                           class="flex-1 bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors text-center">
+                                            Démarrer Test
+                                        </a>
+                                    @else
+                                        <button disabled 
+                                                class="flex-1 bg-gray-300 text-gray-500 px-4 py-2 rounded-lg font-medium text-sm cursor-not-allowed text-center">
+                                            Pas de questions
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <!-- Empty State -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune catégorie disponible</h3>
+                    <p class="text-gray-500 mb-4">Les catégories pour ce processus n'ont pas encore été configurées.</p>
+                    <a href="{{ route('home') }}" class="bg-aptiv-orange-600 text-white px-6 py-3 rounded-lg hover:bg-aptiv-orange-700 transition-colors font-medium">
+                        Retour à l'accueil
+                    </a>
+                </div>
+            @endif
+        </div>
     </div>
 </section>
 
@@ -120,4 +212,63 @@
         </div>
     </div>
 </section>
+
+<script>
+// Categories filtering functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySearch = document.getElementById('category-search');
+    const statusFilter = document.getElementById('status-filter');
+    
+    function filterCategories() {
+        const searchTerm = categorySearch.value.toLowerCase();
+        const statusValue = statusFilter.value;
+        const categoryCards = document.querySelectorAll('.category-card');
+        
+        categoryCards.forEach(card => {
+            const title = card.getAttribute('data-category-title');
+            const status = card.getAttribute('data-status');
+            
+            const matchesSearch = title.includes(searchTerm);
+            const matchesStatus = statusValue === '' || status === statusValue;
+            
+            if (matchesSearch && matchesStatus) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Check if any categories are visible
+        const visibleCards = document.querySelectorAll('.category-card[style="display: block"], .category-card:not([style*="display: none"])');
+        const grid = document.getElementById('categories-grid');
+        const emptyMessage = document.getElementById('no-results-message');
+        
+        if (visibleCards.length === 0 && grid) {
+            if (!emptyMessage) {
+                const messageDiv = document.createElement('div');
+                messageDiv.id = 'no-results-message';
+                messageDiv.className = 'col-span-full bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center';
+                messageDiv.innerHTML = `
+                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune catégorie trouvée</h3>
+                    <p class="text-gray-500">Essayez de modifier vos critères de recherche.</p>
+                `;
+                grid.appendChild(messageDiv);
+            }
+        } else if (emptyMessage) {
+            emptyMessage.remove();
+        }
+    }
+    
+    if (categorySearch) {
+        categorySearch.addEventListener('input', filterCategories);
+    }
+    
+    if (statusFilter) {
+        statusFilter.addEventListener('change', filterCategories);
+    }
+});
+</script>
 @endsection
