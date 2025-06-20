@@ -2,7 +2,7 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-200">
     <div class="p-6 border-b border-gray-200">
         <div>
-            <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Mon Profil</h2>
+            <!-- <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Mon Profil</h2> -->
             <p class="text-gray-600 text-sm lg:text-base mt-1">Gérer les informations de votre compte</p>
         </div>
     </div>

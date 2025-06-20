@@ -4,7 +4,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-                <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Processus</h2>
+                <!-- <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Processus</h2> -->
                 <p class="text-gray-600 text-sm lg:text-base mt-1">Gérer les processus et leurs catégories</p>
             </div>
             <div class="flex flex-col sm:flex-row gap-3">

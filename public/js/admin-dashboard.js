@@ -2480,6 +2480,78 @@ class AdminDashboard {
         modal.classList.remove('flex');
     }
 
+    openAddUserModal() {
+        const modal = document.getElementById('add-user-modal');
+        const form = document.getElementById('add-user-form');
+        
+        if (!modal) {
+            console.error('Add user modal not found!');
+            return;
+        }
+        
+        if (!form) {
+            console.error('Add user form not found!');
+            return;
+        }
+        
+        // Reset form
+        form.reset();
+        
+        // Show modal
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        // Setup form submission handler
+        if (!form.hasEventListener) {
+            form.addEventListener('submit', (e) => this.handleAddUserSubmit(e));
+            form.hasEventListener = true;
+        }
+    }
+
+    closeAddUserModal() {
+        const modal = document.getElementById('add-user-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    async handleAddUserSubmit(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const identification = formData.get('identification');
+        
+        // Set password to identification number
+        formData.set('password', identification);
+        
+        try {
+            this.showLoading();
+            
+            const response = await fetch('/admin/api/users', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showMessage(result.message || 'Utilisateur ajouté avec succès');
+                this.closeAddUserModal();
+                this.loadUsers();
+            } else {
+                this.showMessage(result.message || 'Erreur lors de l\'ajout de l\'utilisateur', 'error');
+            }
+        } catch (error) {
+            this.showMessage('Une erreur est survenue', 'error');
+            console.error('Error:', error);
+        } finally {
+            this.hideLoading();
+        }
+    }
+
     async handleRoleSubmit(e) {
         e.preventDefault();
         
@@ -2642,6 +2714,18 @@ function changeUserRole(userId) {
 function closeRoleModal() {
     if (window.adminDashboard) {
         window.adminDashboard.closeRoleModal();
+    }
+}
+
+function openAddUserModal() {
+    if (window.adminDashboard) {
+        window.adminDashboard.openAddUserModal();
+    }
+}
+
+function closeAddUserModal() {
+    if (window.adminDashboard) {
+        window.adminDashboard.closeAddUserModal();
     }
 }
 

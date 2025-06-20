@@ -37,7 +37,19 @@ class UserSeeder extends Seeder
             ]
         );
 
-        $this->command->info('Super Admin user created successfully.');
+        // Create Second Super Admin
+        User::updateOrCreate(
+            ['identification' => 2467],
+            [
+                'name' => 'nihad',
+                'last_name' => 'ktitu',
+                'identification' => 2467,
+                'password' => Hash::make('password123'),
+                'role_id' => $superAdminRole->id,
+            ]
+        );
+
+        $this->command->info('Super Admin users created successfully.');
 
         // Get all formateurs and create admin users for them
         $formateurs = formateur::all();

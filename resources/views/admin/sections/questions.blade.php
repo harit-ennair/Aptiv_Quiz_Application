@@ -462,7 +462,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-                <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Questions</h2>
+                <!-- <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Questions</h2> -->
                 <p class="text-gray-600 text-sm lg:text-base mt-1">Gérer et organiser les questions par processus et catégorie</p>
             </div>
             <button onclick="openQuestionModal()" class="bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white px-4 py-2 rounded-lg transition-colors btn-touch inline-flex items-center text-sm font-medium">

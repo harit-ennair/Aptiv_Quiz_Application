@@ -3,7 +3,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-                <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Utilisateurs</h2>
+                <!-- <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Utilisateurs</h2> -->
                 <p class="text-gray-600 text-sm lg:text-base mt-1">Gérer les rôles et permissions des utilisateurs</p>
             </div>
             <div class="flex flex-col sm:flex-row gap-3">                <div class="relative">
@@ -12,13 +12,20 @@
                     <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                </div>
-                <select id="role-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
+                </div>                <select id="role-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
                     <option value="">Tous les rôles</option>
                     <option value="1">Super Admin</option>
                     <option value="2">Admin</option>
                     <option value="3">Employee</option>
                 </select>
+                <button onclick="adminDashboard.openAddUserModal()" 
+                        class="px-4 py-2 bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Ajouter Utilisateur
+                </button>
+                
             </div>
         </div>
     </div>
@@ -106,6 +113,79 @@
                 <button type="submit" 
                         class="px-4 py-2 text-sm font-medium text-white bg-aptiv-orange-600 hover:bg-aptiv-orange-700 rounded-lg transition-colors btn-touch">
                     Modifier le Rôle
+                </button>
+            </div>        </form>
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div id="add-user-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-modal items-center justify-center hidden">
+    <div class="modal-body bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Ajouter un Nouvel Utilisateur</h3>
+                <button onclick="adminDashboard.closeAddUserModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <form id="add-user-form" class="p-6 space-y-4 form-mobile">
+            <div>
+                <label for="user-name" class="block text-sm font-medium text-gray-700 mb-2">Prénom <span class="text-red-500">*</span></label>
+                <input type="text" id="user-name" name="name" required 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent"
+                       placeholder="Entrez le prénom">
+            </div>
+            
+            <div>
+                <label for="user-last-name" class="block text-sm font-medium text-gray-700 mb-2">Nom de Famille <span class="text-red-500">*</span></label>
+                <input type="text" id="user-last-name" name="last_name" required 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent"
+                       placeholder="Entrez le nom de famille">
+            </div>
+            
+            <div>
+                <label for="user-identification" class="block text-sm font-medium text-gray-700 mb-2">Numéro d'Identification <span class="text-red-500">*</span></label>
+                <input type="text" id="user-identification" name="identification" required 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent"
+                       placeholder="Entrez le numéro d'identification">
+            </div>
+            
+            <div>
+                <label for="user-role" class="block text-sm font-medium text-gray-700 mb-2">Rôle <span class="text-red-500">*</span></label>
+                <select id="user-role" name="role_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent">
+                    <option value="">Sélectionner un rôle</option>
+                    <option value="1">Super Admin</option>
+                    <option value="2">Admin</option>
+                    <option value="3">Employee</option>
+                </select>
+            </div>
+            
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex">
+                    <svg class="flex-shrink-0 w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                    </svg>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-blue-800">Information</h3>
+                        <p class="text-sm text-blue-700 mt-1">
+                            Le mot de passe sera automatiquement défini comme le numéro d'identification.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                <button type="button" onclick="adminDashboard.closeAddUserModal()" 
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors btn-touch">
+                    Annuler
+                </button>
+                <button type="submit" 
+                        class="px-4 py-2 text-sm font-medium text-white bg-aptiv-orange-600 hover:bg-aptiv-orange-700 rounded-lg transition-colors btn-touch">
+                    Ajouter l'Utilisateur
                 </button>
             </div>
         </form>

@@ -267,4 +267,47 @@ class AdminController extends Controller
             ], 500);
         }
     }
+    
+    /**
+     * Create a new user (Super Admin only)
+     */
+    public function createUser(Request $request)
+    {
+        // Check if user is super admin
+        if (Auth::user()->role_id != 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Accès non autorisé'
+            ], 403);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'identification' => 'required|numeric|unique:users,identification',
+            'password' => 'required|string|min:1',
+            'role_id' => 'required|exists:roles,id|in:1,2,3'
+        ]);
+
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'last_name' => $request->last_name,
+                'identification' => $request->identification,
+                'password' => Hash::make($request->password),
+                'role_id' => $request->role_id,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Utilisateur créé avec succès',
+                'data' => $user->load('role')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la création de l\'utilisateur: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

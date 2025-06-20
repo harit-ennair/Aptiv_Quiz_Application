@@ -91,6 +91,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             
             // User Management (Super Admin only)
             Route::get('/users/all', [AdminController::class, 'getAllUsers'])->name('users.all');
+            Route::post('/users', [AdminController::class, 'createUser'])->name('users.create');
             Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('users.update_role');
         });
     });
