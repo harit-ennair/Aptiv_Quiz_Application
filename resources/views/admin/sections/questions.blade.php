@@ -599,15 +599,13 @@
             <span class="bg-green-100 px-2 py-1 rounded text-green-600">📁 Choisir une catégorie</span>
             <span class="bg-purple-100 px-2 py-1 rounded text-purple-600">❓ Voir les questions</span>
         </div>
-    </div>
-
-    <!-- Desktop Questions View -->
-    <div id="questions-desktop" class="space-y-6 hidden lg:block">
+    </div>    <!-- Desktop Questions View -->
+    <div id="questions-desktop" class="desktop-table space-y-6 hidden">
         <!-- Questions will be grouped by category here -->
     </div>
 
     <!-- Mobile Questions View -->
-    <div id="questions-mobile" class="space-y-6 lg:hidden hidden">
+    <div id="questions-mobile" class="mobile-view space-y-6 hidden">
         <!-- Mobile question groups will be populated here -->
     </div>
 

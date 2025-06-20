@@ -341,20 +341,80 @@
         position: relative !important;
     }
     
-    /* Force hide tables on mobile */
+    /* Mobile responsive tables - show mobile views on mobile, tables on desktop */
     @media (max-width: 1023px) {
-        #tests-table,
-        #formateurs-table,
-        #categories-table,
-        #processes-table {
+        /* Hide desktop tables on mobile */
+        .desktop-table {
             display: none !important;
         }
         
+        /* Show mobile views on mobile */
+        .mobile-view {
+            display: block !important;
+        }
+        
+        /* Ensure mobile containers are visible */
         #tests-mobile,
         #formateurs-mobile,
         #categories-mobile,
-        #processes-mobile {
+        #processes-mobile,
+        #users-mobile {
             display: block !important;
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        /* Show desktop tables on desktop */
+        .desktop-table {
+            display: block !important;
+        }
+        
+        /* Hide mobile views on desktop */
+        .mobile-view {
+            display: none !important;
+        }
+    }
+    
+    /* Additional mobile enhancements */
+    @media (max-width: 1023px) {
+        /* Ensure all mobile content is properly displayed */
+        .main-content-mobile {
+            padding: 0.5rem;
+        }
+        
+        /* Fix mobile card layouts */
+        .mobile-view .space-y-4 > * + * {
+            margin-top: 1rem;
+        }
+        
+        .mobile-view .space-y-6 > * + * {
+            margin-top: 1.5rem;
+        }
+        
+        /* Make sure buttons are touch-friendly */
+        .mobile-view button {
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        /* Better mobile table alternatives */
+        .mobile-view .bg-white {
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+    }
+    
+    /* Desktop optimization */
+    @media (min-width: 1024px) {
+        /* Show desktop elements properly */
+        .desktop-table {
+            display: block !important;
+        }
+        
+        /* Ensure proper spacing for desktop */
+        .main-content-desktop {
+            padding: 2rem;
         }
     }
 </style>

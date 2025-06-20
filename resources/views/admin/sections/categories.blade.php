@@ -49,12 +49,12 @@
     </div>
 
     <!-- Desktop Process-based View -->
-    <div id="categories-desktop" class="space-y-6 hidden lg:block">
+    <div id="categories-desktop" class="desktop-table space-y-6 hidden">
         <!-- Categories will be grouped by process here -->
     </div>
 
     <!-- Mobile Process-based View -->
-    <div id="categories-mobile" class="space-y-6 lg:hidden hidden">
+    <div id="categories-mobile" class="mobile-view space-y-6 hidden">
         <!-- Mobile process groups will be populated here -->
     </div>
 </div>

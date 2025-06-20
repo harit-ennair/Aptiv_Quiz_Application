@@ -49,12 +49,12 @@
         <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun utilisateur trouvé</h3>
         <p class="text-gray-500">Il n'y a pas d'utilisateurs dans le système.</p>
     </div>    <!-- Desktop Role-based View -->
-    <div id="users-desktop" class="space-y-6 hidden lg:block">
+    <div id="users-desktop" class="desktop-table space-y-6 hidden">
         <!-- Users will be grouped by role here -->
     </div>
 
     <!-- Mobile Role-based View -->
-    <div id="users-mobile" class="space-y-6 lg:hidden hidden">
+    <div id="users-mobile" class="mobile-view space-y-6 hidden">
         <!-- Mobile role groups will be populated here -->
     </div>
 </div>

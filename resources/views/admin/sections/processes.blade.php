@@ -36,10 +36,8 @@
         </svg>
         <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun processus trouvé</h3>
         <p class="text-gray-500">Il n'y a pas de processus dans le système.</p>
-    </div>
-
-    <!-- Desktop Table View -->
-    <div id="processes-table" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hidden lg:block">
+    </div>    <!-- Desktop Table View -->
+    <div id="processes-table" class="desktop-table bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
@@ -59,7 +57,7 @@
     </div>
 
     <!-- Mobile Cards View -->
-    <div id="processes-mobile" class="space-y-4 lg:hidden hidden">
+    <div id="processes-mobile" class="mobile-view space-y-4 hidden">
         <!-- Mobile cards will be populated by JavaScript -->
     </div>
 </div>
