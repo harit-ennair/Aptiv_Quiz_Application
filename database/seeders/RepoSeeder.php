@@ -562,11 +562,11 @@ class RepoSeeder extends Seeder
                 ['text' => 'Permet d\'ouvrir la passe fils et les terminaux', 'correct' => false],
             ],
             
-            // Question 2: Classer les étapes des opértions effectuer sur l'expander machine:
-            'Classer les étapes des opértions effectuer sur l\'expander machine:' => [
-                ['text' => '2 Enfiler la passe fils sur les fourches jusqu\'à que les fourches ouvres', 'correct' => false],
-                ['text' => '1 Mettre la passe fils sur la contre pièce métallique', 'correct' => true],
-                ['text' => '3 Enfiler la passe fils sur le câble et fermer la pince et retirer la passe fils', 'correct' => false],
+            // Question 2: Quelle est la deuxième étape ?:
+            'Quelle est la deuxième étape ?:' => [
+                ['text' => 'Enfiler la passe fils sur les fourches jusqu\'à que les fourches ouvres', 'correct' => false],
+                ['text' => 'Mettre la passe fils sur la contre pièce métallique', 'correct' => true],
+                ['text' => 'Enfiler la passe fils sur le câble et fermer la pince et retirer la passe fils', 'correct' => false],
             ],
         ];
 
@@ -603,11 +603,11 @@ class RepoSeeder extends Seeder
                 ['text' => 'le processus de soudage des trous pour les broches dans le connecteur électrique selon la spécification désignée', 'correct' => false],
             ],
             
-            // Question 2: Classer les étapes de processus outpining:
-            'Classer les étapes de processus outpining:' => [
-                ['text' => '2 Prend le connecteur de la boîte, vérifier la qualité avec l\'œil des connecteurs traités et iInsérez les connecteurs dans les supports et assurez-vous qu\'au moins une lumière passe au rouge', 'correct' => false],
-                ['text' => '1 Allumer la machine,connectez-vous en tant qu\'utilisateur approprié et scannez l\'ordre de fabrication', 'correct' => true],
-                ['text' => '3 Appuyez sur le bouton vert (start), pour que la table puisse ajuster sa position et après le bouton noir (validation) prend les connecteurs traités, mettre les nouveaux connecteurs et appuyez sur le bouton noir (validation)et mettre le Con dans la boite definit.', 'correct' => false],
+            // Question 2: Quelle est la deuxième étape ?
+            'Quelle est la deuxième étape:' => [
+                ['text' => ' Prend le connecteur de la boîte, vérifier la qualité avec l\'œil des connecteurs traités et iInsérez les connecteurs dans les supports et assurez-vous qu\'au moins une lumière passe au rouge', 'correct' => true],
+                ['text' => ' Allumer la machine,connectez-vous en tant qu\'utilisateur approprié et scannez l\'ordre de fabrication', 'correct' => false],
+                ['text' => ' Appuyez sur le bouton vert (start), pour que la table puisse ajuster sa position et après le bouton noir (validation) prend les connecteurs traités, mettre les nouveaux connecteurs et appuyez sur le bouton noir (validation)et mettre le Con dans la boite definit.', 'correct' => false],
             ],
         ];
 
