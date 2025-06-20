@@ -84,6 +84,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/questions/{quz}', [QuzController::class, 'show'])->name('questions.show');
             Route::put('/questions/{quz}', [QuzController::class, 'update'])->name('questions.update');
             Route::delete('/questions/{quz}', [QuzController::class, 'destroy'])->name('questions.destroy');
+            Route::delete('/questions/{quz}/image', [QuzController::class, 'removeImage'])->name('questions.delete_image');
             Route::get('/categories/{category}/questions', [QuzController::class, 'getByCategory'])->name('questions.by_category');
             
             // Users (for dropdowns)

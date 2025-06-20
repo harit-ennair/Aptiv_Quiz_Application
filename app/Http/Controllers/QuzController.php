@@ -206,4 +206,30 @@ class QuzController extends Controller
             'data' => $questions
         ]);
     }
+
+    /**
+     * Delete image from a question
+     */
+    public function removeImage(quz $quz)
+    {
+        try {
+            // Delete the physical file
+            if ($quz->image) {
+                $this->deleteImage($quz->image);
+            }
+
+            // Remove image reference from database
+            $quz->update(['image' => null]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Image supprimée avec succès'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression de l\'image: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
