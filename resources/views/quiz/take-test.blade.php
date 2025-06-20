@@ -3,19 +3,18 @@
 @section('title', 'Test - {{ $category->title }}')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-aptiv-orange-900">
-    <!-- Header -->
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-aptiv-orange-900">    <!-- Header -->
     <div class="bg-white/10 backdrop-blur-sm border-b border-white/20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-2xl font-bold text-white">{{ $category->title }}</h1>
-                    <p class="text-gray-300">{{ $category->process->title }}</p>
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                <div class="text-center lg:text-left">
+                    <h1 class="text-xl sm:text-2xl font-bold text-white">{{ $category->title }}</h1>
+                    <p class="text-gray-300 text-sm sm:text-base">{{ $category->process->title }}</p>
                 </div>
-                <div class="text-right text-white">
-                    <p class="text-sm text-gray-300">Candidat:</p>
-                    <p class="font-semibold">{{ $test->user->name }} {{ $test->user->last_name }}</p>
-                    <p class="text-sm text-gray-300">Formateur: {{ $test->formateur->name }} {{ $test->formateur->last_name }}</p>
+                <div class="text-center lg:text-right text-white">
+                    <p class="text-xs sm:text-sm text-gray-300">Candidat:</p>
+                    <p class="font-semibold text-sm sm:text-base">{{ $test->user->name }} {{ $test->user->last_name }}</p>
+                    <p class="text-xs sm:text-sm text-gray-300">Formateur: {{ $test->formateur->name }} {{ $test->formateur->last_name }}</p>
                 </div>
             </div>
         </div>
@@ -41,28 +40,25 @@
             <input type="hidden" name="test_id" value="{{ $test->id }}">
             
             <!-- Questions Container -->
-            <div id="questions-container">
-                @foreach($questions as $index => $question)
+            <div id="questions-container">                @foreach($questions as $index => $question)
                     <div class="question-slide {{ $index === 0 ? 'active' : 'hidden' }}" data-question="{{ $index + 1 }}">
-                        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                        <div class="bg-white rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden">
                             <!-- Question Header -->
-                            <div class="bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 px-6 py-4">
+                            <div class="bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 px-4 sm:px-6 py-3 sm:py-4">
                                 <div class="flex items-center justify-between">
-                                    <h3 class="text-lg font-semibold text-white">
+                                    <h3 class="text-base sm:text-lg font-semibold text-white">
                                         Question {{ $index + 1 }}
                                     </h3>
-                                    <div class="text-white/80 text-sm">
+                                    <div class="text-white/80 text-xs sm:text-sm">
                                         {{ $index + 1 }} / {{ $questions->count() }}
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Question Content -->
-                            <div class="p-8">
+                            </div><!-- Question Content -->
+                            <div class="p-4 sm:p-6 lg:p-8">
                                 <!-- Question Text -->
                                 @if($question->question_text)
                                     <div class="mb-6">
-                                        <h4 class="text-xl font-medium text-gray-800 leading-relaxed">
+                                        <h4 class="text-lg sm:text-xl font-medium text-gray-800 leading-relaxed">
                                             {{ $question->question_text }}
                                         </h4>
                                     </div>
@@ -73,12 +69,12 @@
                                     <div class="mb-6">
                                         <img src="{{ asset('storage/' . $question->image) }}" 
                                              alt="Question Image" 
-                                             class="max-w-full h-auto rounded-lg shadow-lg mx-auto max-h-96 object-contain">
+                                             class="max-w-full h-auto rounded-lg shadow-lg mx-auto max-h-64 sm:max-h-80 lg:max-h-96 object-contain">
                                     </div>
                                 @endif
 
                                 <!-- Answer Options -->
-                                <div class="space-y-4">
+                                <div class="space-y-3 sm:space-y-4">
                                     @foreach($question->repos as $repoIndex => $answer)
                                         <label class="answer-option block cursor-pointer">
                                             <input type="radio" 
@@ -86,14 +82,14 @@
                                                    value="{{ $answer->id }}" 
                                                    class="sr-only"
                                                    required>
-                                            <div class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-aptiv-orange-300 hover:bg-aptiv-orange-50 transition-all duration-200 group">
-                                                <div class="flex-shrink-0 w-8 h-8 mr-4">
+                                            <div class="flex items-center p-3 sm:p-4 border-2 border-gray-200 rounded-xl hover:border-aptiv-orange-300 hover:bg-aptiv-orange-50 transition-all duration-200 group">
+                                                <div class="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 mr-3 sm:mr-4">
                                                     <div class="w-full h-full rounded-full border-2 border-gray-300 group-hover:border-aptiv-orange-400 flex items-center justify-center transition-colors">
-                                                        <div class="w-4 h-4 rounded-full bg-aptiv-orange-500 opacity-0 group-hover:opacity-50 transition-opacity answer-indicator"></div>
+                                                        <div class="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-aptiv-orange-500 opacity-0 group-hover:opacity-50 transition-opacity answer-indicator"></div>
                                                     </div>
                                                 </div>
-                                                <div class="flex-1">
-                                                    <span class="text-lg text-gray-800 group-hover:text-aptiv-orange-700 transition-colors">
+                                                <div class="flex-1 min-w-0">
+                                                    <span class="text-sm sm:text-base lg:text-lg text-gray-800 group-hover:text-aptiv-orange-700 transition-colors break-words">
                                                         {{ chr(65 + $repoIndex) }}. {{ $answer->answer_text }}
                                                     </span>
                                                 </div>
@@ -105,54 +101,93 @@
                         </div>
                     </div>
                 @endforeach
-            </div>
+            </div>            <!-- Navigation Buttons -->
+            <div class="mt-6 sm:mt-8">
+                <!-- Mobile Layout -->
+                <div class="block sm:hidden space-y-4">
+                    <!-- Timer -->
+                    <div class="text-center">
+                        <div id="timer-mobile" class="text-white text-xl font-bold mb-1"></div>
+                        <div class="text-gray-300 text-sm">Temps écoulé</div>
+                    </div>
+                    
+                    <!-- Navigation Buttons -->
+                    <div class="flex justify-between">
+                        <button type="button" 
+                                id="prevBtn-mobile" 
+                                class="px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center"
+                                disabled>
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                            Précédent
+                        </button>
 
-            <!-- Navigation Buttons -->
-            <div class="mt-8 flex items-center justify-between">
-                <button type="button" 
-                        id="prevBtn" 
-                        class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled>
-                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    Précédent
-                </button>
+                        <button type="button" 
+                                id="nextBtn-mobile" 
+                                class="px-4 py-3 bg-aptiv-orange-500 text-white rounded-lg hover:bg-aptiv-orange-600 transition-colors text-sm flex items-center">
+                            Suivant
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </button>
 
-                <div class="text-center">
-                    <div id="timer" class="text-white text-xl font-bold mb-2"></div>
-                    <div class="text-gray-300 text-sm">Temps écoulé</div>
+                        <button type="submit" 
+                                id="submitBtn-mobile" 
+                                class="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors hidden text-sm flex items-center">
+                            Terminer
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
-                <button type="button" 
-                        id="nextBtn" 
-                        class="px-6 py-3 bg-aptiv-orange-500 text-white rounded-lg hover:bg-aptiv-orange-600 transition-colors">
-                    Suivant
-                    <svg class="w-5 h-5 ml-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                    </svg>
-                </button>
+                <!-- Desktop Layout -->
+                <div class="hidden sm:flex items-center justify-between">
+                    <button type="button" 
+                            id="prevBtn" 
+                            class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                        <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Précédent
+                    </button>
 
-                <button type="submit" 
-                        id="submitBtn" 
-                        class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors hidden">
-                    Terminer le Test
-                    <svg class="w-5 h-5 ml-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                </button>
+                    <div class="text-center">
+                        <div id="timer" class="text-white text-xl font-bold mb-2"></div>
+                        <div class="text-gray-300 text-sm">Temps écoulé</div>
+                    </div>
+
+                    <button type="button" 
+                            id="nextBtn" 
+                            class="px-6 py-3 bg-aptiv-orange-500 text-white rounded-lg hover:bg-aptiv-orange-600 transition-colors">
+                        Suivant
+                        <svg class="w-5 h-5 ml-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+                    </button>
+
+                    <button type="submit" 
+                            id="submitBtn" 
+                            class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors hidden">
+                        Terminer le Test
+                        <svg class="w-5 h-5 ml-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
-        </form>
-
-        <!-- Help Section -->
-        <div class="mt-8 bg-white/10 backdrop-blur-sm rounded-xl p-6 text-white">
-            <h4 class="font-semibold mb-3 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-aptiv-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        </form>        <!-- Help Section -->
+        <div class="mt-6 sm:mt-8 bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 text-white">
+            <h4 class="font-semibold mb-3 flex items-center text-sm sm:text-base">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-aptiv-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 Instructions
             </h4>
-            <ul class="space-y-2 text-sm text-gray-300">
+            <ul class="space-y-2 text-xs sm:text-sm text-gray-300">
                 <li>• Lisez attentivement chaque question avant de répondre</li>
                 <li>• Sélectionnez une seule réponse par question</li>
                 <li>• Vous pouvez naviguer entre les questions avec les boutons Précédent/Suivant</li>
@@ -174,8 +209,14 @@ function updateTimer() {
     const elapsed = Math.floor((now - startTime) / 1000);
     const minutes = Math.floor(elapsed / 60);
     const seconds = elapsed % 60;
-    document.getElementById('timer').textContent = 
-        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Update both desktop and mobile timers
+    const desktopTimer = document.getElementById('timer');
+    const mobileTimer = document.getElementById('timer-mobile');
+    
+    if (desktopTimer) desktopTimer.textContent = timeString;
+    if (mobileTimer) mobileTimer.textContent = timeString;
 }
 
 setInterval(updateTimer, 1000);
@@ -199,33 +240,63 @@ function showQuestion(index) {
     const progress = ((index + 1) / totalQuestions) * 100;
     document.getElementById('progress-bar').style.width = `${progress}%`;
     document.getElementById('progress-text').textContent = `Question ${index + 1} sur ${totalQuestions}`;
+      // Update navigation buttons
+    const prevBtns = [document.getElementById('prevBtn'), document.getElementById('prevBtn-mobile')];
+    const nextBtns = [document.getElementById('nextBtn'), document.getElementById('nextBtn-mobile')];
+    const submitBtns = [document.getElementById('submitBtn'), document.getElementById('submitBtn-mobile')];
     
-    // Update navigation buttons
-    document.getElementById('prevBtn').disabled = index === 0;
+    prevBtns.forEach(btn => {
+        if (btn) btn.disabled = index === 0;
+    });
     
     if (index === totalQuestions - 1) {
-        document.getElementById('nextBtn').classList.add('hidden');
-        document.getElementById('submitBtn').classList.remove('hidden');
+        nextBtns.forEach(btn => {
+            if (btn) btn.classList.add('hidden');
+        });
+        submitBtns.forEach(btn => {
+            if (btn) btn.classList.remove('hidden');
+        });
     } else {
-        document.getElementById('nextBtn').classList.remove('hidden');
-        document.getElementById('submitBtn').classList.add('hidden');
+        nextBtns.forEach(btn => {
+            if (btn) btn.classList.remove('hidden');
+        });
+        submitBtns.forEach(btn => {
+            if (btn) btn.classList.add('hidden');
+        });
     }
 }
 
-// Event listeners
-document.getElementById('nextBtn').addEventListener('click', function() {
-    if (currentQuestion < totalQuestions - 1) {
-        currentQuestion++;
-        showQuestion(currentQuestion);
-    }
-});
+// Event listeners for navigation
+function addNavigationListeners() {
+    // Next button handlers
+    const nextBtns = [document.getElementById('nextBtn'), document.getElementById('nextBtn-mobile')];
+    nextBtns.forEach(btn => {
+        if (btn) {
+            btn.addEventListener('click', function() {
+                if (currentQuestion < totalQuestions - 1) {
+                    currentQuestion++;
+                    showQuestion(currentQuestion);
+                }
+            });
+        }
+    });
 
-document.getElementById('prevBtn').addEventListener('click', function() {
-    if (currentQuestion > 0) {
-        currentQuestion--;
-        showQuestion(currentQuestion);
-    }
-});
+    // Previous button handlers
+    const prevBtns = [document.getElementById('prevBtn'), document.getElementById('prevBtn-mobile')];
+    prevBtns.forEach(btn => {
+        if (btn) {
+            btn.addEventListener('click', function() {
+                if (currentQuestion > 0) {
+                    currentQuestion--;
+                    showQuestion(currentQuestion);
+                }
+            });
+        }
+    });
+}
+
+// Call the function to add event listeners
+addNavigationListeners();
 
 // Answer selection styling
 document.querySelectorAll('.answer-option input[type="radio"]').forEach(radio => {
@@ -265,9 +336,15 @@ document.getElementById('quizForm').addEventListener('submit', function(e) {
     }
     
     if (confirm('Êtes-vous sûr de vouloir soumettre votre test ? Vous ne pourrez plus modifier vos réponses.')) {
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.innerHTML = 'Soumission en cours...';
-        submitBtn.disabled = true;
+        // Update both submit buttons
+        const submitBtns = [document.getElementById('submitBtn'), document.getElementById('submitBtn-mobile')];
+        submitBtns.forEach(btn => {
+            if (btn) {
+                btn.innerHTML = btn.classList.contains('text-sm') ? 
+                    'Soumission...' : 'Soumission en cours...';
+                btn.disabled = true;
+            }
+        });
         this.submit();
     }
 });
