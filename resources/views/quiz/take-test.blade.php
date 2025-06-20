@@ -68,16 +68,36 @@
                                             </p>
                                         @endif
                                     </div>
-                                @endif
-
-                                <!-- Question Image -->
-                                @if($question->image)
-                                    <div class="mb-6">
-                                        <img src="{{ asset('storage/' . $question->image) }}" 
-                                             alt="Question Image" 
-                                             class="max-w-full h-auto rounded-lg shadow-lg mx-auto max-h-64 sm:max-h-80 lg:max-h-96 object-contain">
+                                @endif                                <!-- Question Image -->
+                                @if($question->image_path)
+                                    <div class="mb-6 text-center">
+                                        <div class="inline-block bg-gray-50 rounded-lg p-4 shadow-inner">
+                                            @php
+                                                // Handle different image path formats
+                                                $imagePath = $question->image_path;
+                                                if (strpos($imagePath, 'images/') === 0) {
+                                                    // Full path starting with images/
+                                                    $assetPath = asset('storage/' . $imagePath);
+                                                } else {
+                                                    // Just filename - should be in questions folder
+                                                    $assetPath = asset('storage/questions/' . $imagePath);
+                                                }
+                                            @endphp                                            <img src="{{ $assetPath }}" 
+                                                 alt="Image de la question {{ $index + 1 }}" 
+                                                 class="max-w-full h-auto rounded-lg shadow-lg mx-auto max-h-64 sm:max-h-80 lg:max-h-96 object-contain question-image"
+                                                 data-image-path="{{ $question->image_path }}"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                                                 onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
+                                                 loading="lazy">
+                                            <div style="display: none;" class="text-gray-500 text-sm italic">
+                                                <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                </svg>
+                                                Image non disponible
+                                            </div>
+                                        </div>
                                     </div>
-                                @endif                                <!-- Answer Options -->
+                                @endif<!-- Answer Options -->
                                 <div class="space-y-3 sm:space-y-4">
                                     @foreach($question->repos as $repoIndex => $answer)
                                         <label class="answer-option block cursor-pointer">                                            @if($question->repos->where('is_correct', true)->count() > 1)
@@ -248,6 +268,22 @@ style.textContent = `
         padding: 2px 8px;
         border-radius: 12px;
         font-weight: 500;
+    }
+    .question-image {
+        transition: opacity 0.3s ease-in-out;
+    }
+    .question-image:hover {
+        transform: scale(1.02);
+        transition: transform 0.2s ease-in-out;
+    }
+    .image-loading {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+    }
+    @keyframes loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
     }
 `;
 document.head.appendChild(style);
@@ -449,5 +485,70 @@ document.getElementById('quizForm').addEventListener('submit', function(e) {
 
 // Initialize
 showQuestion(0);
+
+// Handle image loading
+document.addEventListener('DOMContentLoaded', function() {
+    // Add loading state to all question images
+    const images = document.querySelectorAll('.question-slide img');
+    images.forEach(img => {
+        // Add loading class initially
+        img.classList.add('image-loading');
+        
+        // Store original src and alternative paths
+        const originalSrc = img.src;
+        const imagePath = img.getAttribute('data-image-path') || img.src.split('/').pop();
+        
+        // Alternative paths to try
+        const altPaths = [
+            originalSrc,
+            '/storage/questions/' + imagePath,
+            '/storage/' + imagePath,
+            '/storage/images/questions/' + imagePath
+        ];
+        
+        let currentPathIndex = 0;
+        
+        function tryNextPath() {
+            if (currentPathIndex < altPaths.length) {
+                img.src = altPaths[currentPathIndex];
+                currentPathIndex++;
+            } else {
+                // All paths failed
+                img.style.display = 'none';
+                img.nextElementSibling.style.display = 'block';
+                img.classList.remove('image-loading');
+            }
+        }
+        
+        // Remove loading class when image loads
+        img.addEventListener('load', function() {
+            this.classList.remove('image-loading');
+            this.style.opacity = '1';
+            console.log('Image loaded successfully:', this.src);
+        });
+        
+        // Handle image error - try alternative paths
+        img.addEventListener('error', function() {
+            console.warn('Failed to load image:', this.src);
+            tryNextPath();
+        });
+        
+        // Start with the first path
+        if (currentPathIndex === 0) {
+            tryNextPath();
+        }
+    });
+    
+    // Preload images for better performance
+    const questionSlides = document.querySelectorAll('.question-slide');
+    questionSlides.forEach((slide, index) => {
+        const img = slide.querySelector('img');
+        if (img && index > 0) {
+            // Preload images for next questions
+            const tempImg = new Image();
+            tempImg.src = img.src;
+        }
+    });
+});
 </script>
 @endsection
