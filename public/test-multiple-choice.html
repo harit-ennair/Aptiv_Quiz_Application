@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Multiple Choice Questions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .answer-option input[type="checkbox"]:checked + div {
+            background-color: #fff7ed !important;
+            border-color: #f97316 !important;
+        }
+        .answer-option input[type="radio"]:checked + div {
+            background-color: #fff7ed !important;
+            border-color: #f97316 !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">Test Multiple Choice Questions</h1>
+        
+        <form id="testForm">
+            <!-- Single Choice Question -->
+            <div class="bg-white rounded-xl shadow-lg mb-8 overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-white">
+                        Question 1 (Choix unique)
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <h4 class="text-xl font-medium text-gray-800 mb-6">
+                        Quelle est la température recommandée pour le soudage?
+                    </h4>
+                    <div class="space-y-4">
+                        <label class="answer-option block cursor-pointer">
+                            <input type="radio" name="answers[1]" value="1" class="sr-only answer-radio">
+                            <div class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50 transition-all duration-200 group">
+                                <div class="flex-shrink-0 w-8 h-8 mr-4">
+                                    <div class="w-full h-full rounded-full border-2 border-gray-300 group-hover:border-orange-400 flex items-center justify-center transition-colors">
+                                        <div class="w-4 h-4 rounded-full bg-orange-500 opacity-0 group-hover:opacity-50 transition-opacity answer-indicator"></div>
+                                    </div>
+                                </div>
+                                <span class="text-lg text-gray-800 group-hover:text-orange-700 transition-colors">
+                                    A. 150°C
+                                </span>
+                            </div>
+                        </label>
+                        <label class="answer-option block cursor-pointer">
+                            <input type="radio" name="answers[1]" value="2" class="sr-only answer-radio">
+                            <div class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50 transition-all duration-200 group">
+                                <div class="flex-shrink-0 w-8 h-8 mr-4">
+                                    <div class="w-full h-full rounded-full border-2 border-gray-300 group-hover:border-orange-400 flex items-center justify-center transition-colors">
+                                        <div class="w-4 h-4 rounded-full bg-orange-500 opacity-0 group-hover:opacity-50 transition-opacity answer-indicator"></div>
+                                    </div>
+                                </div>
+                                <span class="text-lg text-gray-800 group-hover:text-orange-700 transition-colors">
+                                    B. 200°C (Correct)
+                                </span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multiple Choice Question -->
+            <div class="bg-white rounded-xl shadow-lg mb-8 overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-white">
+                        Question 2 <span class="text-sm font-normal text-white/80 ml-2">(Choix multiples)</span>
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <h4 class="text-xl font-medium text-gray-800 mb-2">
+                        Quelles sont les mesures de sécurité importantes dans l'atelier?
+                    </h4>
+                    <p class="text-sm text-orange-600 mb-6 font-medium">
+                        ℹ️ Plusieurs réponses sont attendues pour cette question
+                    </p>
+                    <div class="space-y-4">
+                        <label class="answer-option block cursor-pointer">
+                            <input type="checkbox" name="answers[2][]" value="1" class="sr-only answer-checkbox">
+                            <div class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50 transition-all duration-200 group">
+                                <div class="flex-shrink-0 w-8 h-8 mr-4">
+                                    <div class="w-full h-full border-2 border-gray-300 group-hover:border-orange-400 flex items-center justify-center transition-colors rounded">
+                                        <div class="w-4 h-4 bg-orange-500 opacity-0 group-hover:opacity-50 transition-opacity answer-indicator rounded-sm">
+                                            <svg class="w-full h-full text-white opacity-0" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-lg text-gray-800 group-hover:text-orange-700 transition-colors">
+                                    A. Porter des équipements de protection individuelle (Correct)
+                                </span>
+                            </div>
+                        </label>
+                        <label class="answer-option block cursor-pointer">
+                            <input type="checkbox" name="answers[2][]" value="2" class="sr-only answer-checkbox">
+                            <div class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50 transition-all duration-200 group">
+                                <div class="flex-shrink-0 w-8 h-8 mr-4">
+                                    <div class="w-full h-full border-2 border-gray-300 group-hover:border-orange-400 flex items-center justify-center transition-colors rounded">
+                                        <div class="w-4 h-4 bg-orange-500 opacity-0 group-hover:opacity-50 transition-opacity answer-indicator rounded-sm">
+                                            <svg class="w-full h-full text-white opacity-0" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-lg text-gray-800 group-hover:text-orange-700 transition-colors">
+                                    B. Maintenir un espace de travail propre (Correct)
+                                </span>
+                            </div>
+                        </label>
+                        <label class="answer-option block cursor-pointer">
+                            <input type="checkbox" name="answers[2][]" value="3" class="sr-only answer-checkbox">
+                            <div class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50 transition-all duration-200 group">
+                                <div class="flex-shrink-0 w-8 h-8 mr-4">
+                                    <div class="w-full h-full border-2 border-gray-300 group-hover:border-orange-400 flex items-center justify-center transition-colors rounded">
+                                        <div class="w-4 h-4 bg-orange-500 opacity-0 group-hover:opacity-50 transition-opacity answer-indicator rounded-sm">
+                                            <svg class="w-full h-full text-white opacity-0" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-lg text-gray-800 group-hover:text-orange-700 transition-colors">
+                                    C. Ignorer les panneaux de sécurité (Incorrect)
+                                </span>
+                            </div>
+                        </label>
+                        <label class="answer-option block cursor-pointer">
+                            <input type="checkbox" name="answers[2][]" value="4" class="sr-only answer-checkbox">
+                            <div class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50 transition-all duration-200 group">
+                                <div class="flex-shrink-0 w-8 h-8 mr-4">
+                                    <div class="w-full h-full border-2 border-gray-300 group-hover:border-orange-400 flex items-center justify-center transition-colors rounded">
+                                        <div class="w-4 h-4 bg-orange-500 opacity-0 group-hover:opacity-50 transition-opacity answer-indicator rounded-sm">
+                                            <svg class="w-full h-full text-white opacity-0" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-lg text-gray-800 group-hover:text-orange-700 transition-colors">
+                                    D. Suivre les procédures de sécurité (Correct)
+                                </span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors text-lg font-semibold">
+                Tester les Réponses
+            </button>
+        </form>
+
+        <div id="results" class="mt-8 p-6 bg-blue-50 rounded-lg hidden">
+            <h3 class="text-lg font-semibold text-blue-800 mb-4">Résultats du Test:</h3>
+            <div id="results-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // Answer selection styling
+        document.querySelectorAll('.answer-option input[type="radio"], .answer-option input[type="checkbox"]').forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.type === 'radio') {
+                    // Handle radio button selection
+                    const questionContainer = this.closest('.bg-white');
+                    questionContainer.querySelectorAll('.answer-option').forEach(option => {
+                        const border = option.querySelector('div');
+                        const indicator = option.querySelector('.answer-indicator');
+                        border.classList.remove('border-orange-500', 'bg-orange-100');
+                        border.classList.add('border-gray-200');
+                        indicator.classList.remove('opacity-100');
+                        indicator.classList.add('opacity-0');
+                    });
+                    
+                    // Highlight selected option
+                    const selectedOption = this.closest('.answer-option');
+                    const border = selectedOption.querySelector('div');
+                    const indicator = selectedOption.querySelector('.answer-indicator');
+                    border.classList.remove('border-gray-200');
+                    border.classList.add('border-orange-500', 'bg-orange-100');
+                    indicator.classList.remove('opacity-0');
+                    indicator.classList.add('opacity-100');
+                } else if (this.type === 'checkbox') {
+                    // Handle checkbox selection
+                    const selectedOption = this.closest('.answer-option');
+                    const border = selectedOption.querySelector('div');
+                    const indicator = selectedOption.querySelector('.answer-indicator');
+                    const checkIcon = selectedOption.querySelector('svg');
+                    
+                    if (this.checked) {
+                        border.classList.remove('border-gray-200');
+                        border.classList.add('border-orange-500', 'bg-orange-100');
+                        indicator.classList.remove('opacity-0');
+                        indicator.classList.add('opacity-100');
+                        if (checkIcon) {
+                            checkIcon.classList.remove('opacity-0');
+                            checkIcon.classList.add('opacity-100');
+                        }
+                    } else {
+                        border.classList.remove('border-orange-500', 'bg-orange-100');
+                        border.classList.add('border-gray-200');
+                        indicator.classList.remove('opacity-100');
+                        indicator.classList.add('opacity-0');
+                        if (checkIcon) {
+                            checkIcon.classList.remove('opacity-100');
+                            checkIcon.classList.add('opacity-0');
+                        }
+                    }
+                }
+            });
+        });
+
+        // Form submission test
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            let results = '<h4 class="font-semibold mb-2">Données envoyées:</h4><ul class="list-disc list-inside space-y-1">';
+            
+            for (let [key, value] of formData.entries()) {
+                results += `<li><strong>${key}:</strong> ${value}</li>`;
+            }
+            
+            results += '</ul>';
+            
+            // Check validation
+            const question1Answer = formData.get('answers[1]');
+            const question2Answers = formData.getAll('answers[2][]');
+            
+            results += '<h4 class="font-semibold mt-4 mb-2">Validation:</h4><ul class="list-disc list-inside space-y-1">';
+            results += `<li>Question 1 (radio): ${question1Answer ? '✅ Répondu' : '❌ Non répondu'}</li>`;
+            results += `<li>Question 2 (checkboxes): ${question2Answers.length > 0 ? '✅ Répondu (' + question2Answers.length + ' choix)' : '❌ Non répondu'}</li>`;
+            results += '</ul>';
+            
+            document.getElementById('results-content').innerHTML = results;
+            document.getElementById('results').classList.remove('hidden');
+            
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

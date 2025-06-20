@@ -733,7 +733,7 @@
                             </svg>
                             <div class="text-xs text-yellow-700">
                                 <p class="font-medium">Important:</p>
-                                <p class="mt-1">Une seule réponse correcte • Min 2, Max 6 réponses</p>
+                                <p class="mt-1">Au moins une réponse correcte • Min 2, Max 6 réponses</p>
                             </div>
                         </div>
                     </div>
@@ -1315,8 +1315,8 @@ function addAnswer(isCorrect = false) {
     answerDiv.className = 'answer-input-group';
     answerDiv.innerHTML = `
         <div class="flex items-center space-x-3">
-            <input type="radio" name="correct_answer" value="${answersCount}" ${isCorrect ? 'checked' : ''} 
-                   class="answer-radio" required>
+            <input type="checkbox" name="correct_answers[]" value="${answersCount}" ${isCorrect ? 'checked' : ''} 
+                   class="answer-checkbox">
             <input type="text" name="answers[${answersCount}][answer_text]" placeholder="Texte de la réponse" required
                    class="answer-text-input">
             <button type="button" onclick="removeAnswer(this)" class="remove-answer-btn">
@@ -1336,11 +1336,10 @@ function addAnswer(isCorrect = false) {
 function updateAnswerStyling() {
     const container = document.getElementById('answers-container');
     const answerGroups = container.querySelectorAll('.answer-input-group');
-    const correctRadio = document.querySelector('input[name="correct_answer"]:checked');
     
     answerGroups.forEach((group, index) => {
-        const radio = group.querySelector('input[type="radio"]');
-        if (radio && radio.checked) {
+        const checkbox = group.querySelector('input[type="checkbox"]');
+        if (checkbox && checkbox.checked) {
             group.classList.add('correct-answer');
         } else {
             group.classList.remove('correct-answer');
@@ -1348,9 +1347,9 @@ function updateAnswerStyling() {
     });
 }
 
-// Handle correct answer radio change
+// Handle correct answer checkbox change
 document.addEventListener('change', function(e) {
-    if (e.target.name === 'correct_answer') {
+    if (e.target.name === 'correct_answers[]') {
         updateAnswerStyling();
     }
 });
@@ -1375,10 +1374,10 @@ function reindexAnswers() {
     const answers = container.children;
     
     for (let i = 0; i < answers.length; i++) {
-        const radio = answers[i].querySelector('input[type="radio"]');
+        const checkbox = answers[i].querySelector('input[type="checkbox"]');
         const textInput = answers[i].querySelector('input[type="text"]');
         
-        radio.value = i;
+        checkbox.value = i;
         textInput.name = `answers[${i}][answer_text]`;
     }
 }
@@ -1409,26 +1408,25 @@ async function handleQuestionSubmit(e) {
             showMessage('Une catégorie doit être sélectionnée', 'error');
             return;
         }
-        
-        // Prepare answers data
+          // Prepare answers data
         const answers = [];
         const container = document.getElementById('answers-container');
         const answerInputs = container.querySelectorAll('input[type="text"]');
-        const correctAnswerRadio = document.querySelector('input[name="correct_answer"]:checked');
+        const correctAnswerCheckboxes = container.querySelectorAll('input[name="correct_answers[]"]:checked');
         
-        if (!correctAnswerRadio) {
-            showMessage('Une réponse correcte doit être sélectionnée', 'error');
+        if (correctAnswerCheckboxes.length === 0) {
+            showMessage('Au moins une réponse correcte doit être sélectionnée', 'error');
             return;
         }
         
-        const correctAnswerIndex = parseInt(correctAnswerRadio.value);
+        const correctIndices = Array.from(correctAnswerCheckboxes).map(cb => parseInt(cb.value));
         
         answerInputs.forEach((input, index) => {
             const answerText = input.value.trim();
             if (answerText) {
                 answers.push({
                     answer_text: answerText,
-                    is_correct: index === correctAnswerIndex
+                    is_correct: correctIndices.includes(index)
                 });
             }
         });
@@ -1438,10 +1436,10 @@ async function handleQuestionSubmit(e) {
             return;
         }
         
-        // Check if exactly one answer is marked as correct
+        // Check if at least one answer is marked as correct
         const correctAnswers = answers.filter(a => a.is_correct);
-        if (correctAnswers.length !== 1) {
-            showMessage('Exactement une réponse doit être marquée comme correcte', 'error');
+        if (correctAnswers.length < 1) {
+            showMessage('Au moins une réponse doit être marquée comme correcte', 'error');
             return;
         }
           // Prepare FormData for file upload
@@ -1545,8 +1543,7 @@ async function loadQuestionForEdit(questionId) {
             if (question.image_url) {
                 showCurrentImage(question.image_url);
             }
-            
-            // Populate answers
+              // Populate answers
             const container = document.getElementById('answers-container');
             container.innerHTML = '';
             question.repos.forEach((answer, index) => {
@@ -1554,8 +1551,8 @@ async function loadQuestionForEdit(questionId) {
                 answerDiv.className = 'answer-input-group';
                 answerDiv.innerHTML = `
                     <div class="flex items-center space-x-3">
-                        <input type="radio" name="correct_answer" value="${index}" ${answer.is_correct ? 'checked' : ''} 
-                               class="answer-radio" required>
+                        <input type="checkbox" name="correct_answers[]" value="${index}" ${answer.is_correct ? 'checked' : ''} 
+                               class="answer-checkbox">
                         <input type="text" name="answers[${index}][answer_text]" value="${answer.answer_text}" required
                                class="answer-text-input">
                         <button type="button" onclick="removeAnswer(this)" class="remove-answer-btn">

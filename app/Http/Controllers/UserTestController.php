@@ -105,15 +105,13 @@ class UserTestController extends Controller
         }
 
         return view('quiz.take-test', compact('test', 'category', 'questions'));
-    }
-
-    /**
+    }    /**
      * Submit quiz answers and calculate results
      */
     public function submitQuiz(Request $request)
     {
         $testId = $request->test_id;
-        $answers = $request->answers; // Array of question_id => answer_id
+        $answers = $request->answers; // Array of question_id => answer_id(s)
         
         $test = test::findOrFail($testId);
         
@@ -121,12 +119,28 @@ class UserTestController extends Controller
         $correctAnswers = 0;
         
         // Calculate score
-        foreach ($answers as $questionId => $selectedAnswerId) {
-            $correctAnswer = repo::where('quz_id', $questionId)
-                                ->where('is_correct', true)
-                                ->first();
+        foreach ($answers as $questionId => $selectedAnswers) {
+            // Get all correct answers for this question
+            $correctAnswerIds = repo::where('quz_id', $questionId)
+                                   ->where('is_correct', true)
+                                   ->pluck('id')
+                                   ->toArray();
             
-            if ($correctAnswer && $correctAnswer->id == $selectedAnswerId) {
+            // Ensure selectedAnswers is an array
+            if (!is_array($selectedAnswers)) {
+                $selectedAnswers = [$selectedAnswers];
+            }
+            
+            // Convert to integers for comparison
+            $selectedAnswers = array_map('intval', $selectedAnswers);
+            $correctAnswerIds = array_map('intval', $correctAnswerIds);
+            
+            // Sort both arrays for comparison
+            sort($selectedAnswers);
+            sort($correctAnswerIds);
+            
+            // Check if the selected answers exactly match the correct answers
+            if ($selectedAnswers === $correctAnswerIds) {
                 $correctAnswers++;
             }
         }

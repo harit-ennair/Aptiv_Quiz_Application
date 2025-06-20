@@ -42,25 +42,31 @@
             <!-- Questions Container -->
             <div id="questions-container">                @foreach($questions as $index => $question)
                     <div class="question-slide {{ $index === 0 ? 'active' : 'hidden' }}" data-question="{{ $index + 1 }}">
-                        <div class="bg-white rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden">
-                            <!-- Question Header -->
+                        <div class="bg-white rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden">                            <!-- Question Header -->
                             <div class="bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 px-4 sm:px-6 py-3 sm:py-4">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-base sm:text-lg font-semibold text-white">
                                         Question {{ $index + 1 }}
+                                        @if($question->repos->where('is_correct', true)->count() > 1)
+                                            <span class="text-xs sm:text-sm font-normal text-white/80 ml-2">(Choix multiples)</span>
+                                        @endif
                                     </h3>
                                     <div class="text-white/80 text-xs sm:text-sm">
                                         {{ $index + 1 }} / {{ $questions->count() }}
                                     </div>
                                 </div>
                             </div><!-- Question Content -->
-                            <div class="p-4 sm:p-6 lg:p-8">
-                                <!-- Question Text -->
+                            <div class="p-4 sm:p-6 lg:p-8">                                <!-- Question Text -->
                                 @if($question->question_text)
                                     <div class="mb-6">
                                         <h4 class="text-lg sm:text-xl font-medium text-gray-800 leading-relaxed">
                                             {{ $question->question_text }}
                                         </h4>
+                                        @if($question->repos->where('is_correct', true)->count() > 1)
+                                            <p class="text-sm text-aptiv-orange-600 mt-2 font-medium">
+                                                ℹ️ Plusieurs réponses sont attendues pour cette question
+                                            </p>
+                                        @endif
                                     </div>
                                 @endif
 
@@ -71,22 +77,43 @@
                                              alt="Question Image" 
                                              class="max-w-full h-auto rounded-lg shadow-lg mx-auto max-h-64 sm:max-h-80 lg:max-h-96 object-contain">
                                     </div>
-                                @endif
-
-                                <!-- Answer Options -->
+                                @endif                                <!-- Answer Options -->
                                 <div class="space-y-3 sm:space-y-4">
                                     @foreach($question->repos as $repoIndex => $answer)
-                                        <label class="answer-option block cursor-pointer">
-                                            <input type="radio" 
-                                                   name="answers[{{ $question->id }}]" 
-                                                   value="{{ $answer->id }}" 
-                                                   class="sr-only"
-                                                   required>
+                                        <label class="answer-option block cursor-pointer">                                            @if($question->repos->where('is_correct', true)->count() > 1)
+                                                <!-- Multiple correct answers - use checkboxes -->
+                                                <input type="checkbox" 
+                                                       name="answers[{{ $question->id }}][]" 
+                                                       value="{{ $answer->id }}" 
+                                                       class="sr-only answer-checkbox"
+                                                       data-question="{{ $question->id }}"
+                                                       data-question-type="multiple">
+                                            @else
+                                                <!-- Single correct answer - use radio buttons -->
+                                                <input type="radio" 
+                                                       name="answers[{{ $question->id }}]" 
+                                                       value="{{ $answer->id }}" 
+                                                       class="sr-only answer-radio"
+                                                       data-question-type="single"
+                                                       required>
+                                            @endif
                                             <div class="flex items-center p-3 sm:p-4 border-2 border-gray-200 rounded-xl hover:border-aptiv-orange-300 hover:bg-aptiv-orange-50 transition-all duration-200 group">
                                                 <div class="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 mr-3 sm:mr-4">
-                                                    <div class="w-full h-full rounded-full border-2 border-gray-300 group-hover:border-aptiv-orange-400 flex items-center justify-center transition-colors">
-                                                        <div class="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-aptiv-orange-500 opacity-0 group-hover:opacity-50 transition-opacity answer-indicator"></div>
-                                                    </div>
+                                                    @if($question->repos->where('is_correct', true)->count() > 1)
+                                                        <!-- Checkbox styling -->
+                                                        <div class="w-full h-full border-2 border-gray-300 group-hover:border-aptiv-orange-400 flex items-center justify-center transition-colors rounded">
+                                                            <div class="w-3 h-3 sm:w-4 sm:h-4 bg-aptiv-orange-500 opacity-0 group-hover:opacity-50 transition-opacity answer-indicator rounded-sm">
+                                                                <svg class="w-full h-full text-white opacity-0" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                    @else
+                                                        <!-- Radio button styling -->
+                                                        <div class="w-full h-full rounded-full border-2 border-gray-300 group-hover:border-aptiv-orange-400 flex items-center justify-center transition-colors">
+                                                            <div class="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-aptiv-orange-500 opacity-0 group-hover:opacity-50 transition-opacity answer-indicator"></div>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                                 <div class="flex-1 min-w-0">
                                                     <span class="text-sm sm:text-base lg:text-lg text-gray-800 group-hover:text-aptiv-orange-700 transition-colors break-words">
@@ -186,10 +213,10 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 Instructions
-            </h4>
-            <ul class="space-y-2 text-xs sm:text-sm text-gray-300">
+            </h4>            <ul class="space-y-2 text-xs sm:text-sm text-gray-300">
                 <li>• Lisez attentivement chaque question avant de répondre</li>
-                <li>• Sélectionnez une seule réponse par question</li>
+                <li>• Pour les questions à choix unique: sélectionnez une seule réponse</li>
+                <li>• Pour les questions à choix multiples: sélectionnez toutes les bonnes réponses</li>
                 <li>• Vous pouvez naviguer entre les questions avec les boutons Précédent/Suivant</li>
                 <li>• Cliquez sur "Terminer le Test" une fois toutes les questions répondues</li>
             </ul>
@@ -202,6 +229,28 @@
 let currentQuestion = 0;
 const totalQuestions = {{ $questions->count() }};
 let startTime = new Date();
+
+// Add custom styling for multiple choice questions
+const style = document.createElement('style');
+style.textContent = `
+    .answer-option input[type="checkbox"]:checked + div {
+        background-color: #fff7ed !important;
+        border-color: #f97316 !important;
+    }
+    .answer-option input[type="radio"]:checked + div {
+        background-color: #fff7ed !important;
+        border-color: #f97316 !important;
+    }
+    .multiple-choice-indicator {
+        background: linear-gradient(135deg, #f97316, #ea580c);
+        color: white;
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 500;
+    }
+`;
+document.head.appendChild(style);
 
 // Timer
 function updateTimer() {
@@ -299,27 +348,55 @@ function addNavigationListeners() {
 addNavigationListeners();
 
 // Answer selection styling
-document.querySelectorAll('.answer-option input[type="radio"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-        // Reset all options in this question
-        const questionSlide = this.closest('.question-slide');
-        questionSlide.querySelectorAll('.answer-option').forEach(option => {
-            const border = option.querySelector('div');
-            const indicator = option.querySelector('.answer-indicator');
-            border.classList.remove('border-aptiv-orange-500', 'bg-aptiv-orange-100');
-            border.classList.add('border-gray-200');
-            indicator.classList.remove('opacity-100');
-            indicator.classList.add('opacity-0');
-        });
-        
-        // Highlight selected option
-        const selectedOption = this.closest('.answer-option');
-        const border = selectedOption.querySelector('div');
-        const indicator = selectedOption.querySelector('.answer-indicator');
-        border.classList.remove('border-gray-200');
-        border.classList.add('border-aptiv-orange-500', 'bg-aptiv-orange-100');
-        indicator.classList.remove('opacity-0');
-        indicator.classList.add('opacity-100');
+document.querySelectorAll('.answer-option input[type="radio"], .answer-option input[type="checkbox"]').forEach(input => {
+    input.addEventListener('change', function() {
+        if (this.type === 'radio') {
+            // Handle radio button selection
+            const questionSlide = this.closest('.question-slide');
+            questionSlide.querySelectorAll('.answer-option').forEach(option => {
+                const border = option.querySelector('div');
+                const indicator = option.querySelector('.answer-indicator');
+                border.classList.remove('border-aptiv-orange-500', 'bg-aptiv-orange-100');
+                border.classList.add('border-gray-200');
+                indicator.classList.remove('opacity-100');
+                indicator.classList.add('opacity-0');
+            });
+            
+            // Highlight selected option
+            const selectedOption = this.closest('.answer-option');
+            const border = selectedOption.querySelector('div');
+            const indicator = selectedOption.querySelector('.answer-indicator');
+            border.classList.remove('border-gray-200');
+            border.classList.add('border-aptiv-orange-500', 'bg-aptiv-orange-100');
+            indicator.classList.remove('opacity-0');
+            indicator.classList.add('opacity-100');
+        } else if (this.type === 'checkbox') {
+            // Handle checkbox selection
+            const selectedOption = this.closest('.answer-option');
+            const border = selectedOption.querySelector('div');
+            const indicator = selectedOption.querySelector('.answer-indicator');
+            const checkIcon = selectedOption.querySelector('svg');
+            
+            if (this.checked) {
+                border.classList.remove('border-gray-200');
+                border.classList.add('border-aptiv-orange-500', 'bg-aptiv-orange-100');
+                indicator.classList.remove('opacity-0');
+                indicator.classList.add('opacity-100');
+                if (checkIcon) {
+                    checkIcon.classList.remove('opacity-0');
+                    checkIcon.classList.add('opacity-100');
+                }
+            } else {
+                border.classList.remove('border-aptiv-orange-500', 'bg-aptiv-orange-100');
+                border.classList.add('border-gray-200');
+                indicator.classList.remove('opacity-100');
+                indicator.classList.add('opacity-0');
+                if (checkIcon) {
+                    checkIcon.classList.remove('opacity-100');
+                    checkIcon.classList.add('opacity-0');
+                }
+            }
+        }
     });
 });
 
@@ -328,7 +405,28 @@ document.getElementById('quizForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     // Check if all questions are answered
-    const totalAnswered = document.querySelectorAll('input[type="radio"]:checked').length;
+    let totalAnswered = 0;
+    
+    // Go through each question slide and check if it's answered
+    const questionSlides = document.querySelectorAll('.question-slide');
+    questionSlides.forEach(questionSlide => {
+        const radioButtons = questionSlide.querySelectorAll('input[type="radio"]');
+        const checkboxes = questionSlide.querySelectorAll('input[type="checkbox"]');
+        
+        if (radioButtons.length > 0) {
+            // This is a radio button question
+            const checkedRadio = questionSlide.querySelector('input[type="radio"]:checked');
+            if (checkedRadio) {
+                totalAnswered++;
+            }
+        } else if (checkboxes.length > 0) {
+            // This is a checkbox question
+            const checkedBoxes = questionSlide.querySelectorAll('input[type="checkbox"]:checked');
+            if (checkedBoxes.length > 0) {
+                totalAnswered++;
+            }
+        }
+    });
     
     if (totalAnswered < totalQuestions) {
         alert(`Veuillez répondre à toutes les questions. Vous avez répondu à ${totalAnswered} sur ${totalQuestions} questions.`);

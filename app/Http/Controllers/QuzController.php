@@ -57,14 +57,14 @@ class QuzController extends Controller
             $validated = $request->validated();
             \Log::info('Question store validated data:', $validated);
 
-            // Ensure exactly one correct answer
+            // Ensure at least one correct answer
             $correctAnswers = collect($validated['answers'])->filter(function($answer) {
                 return in_array($answer['is_correct'], ['1', 'true', true], true);
             });
-            if ($correctAnswers->count() !== 1) {
+            if ($correctAnswers->count() < 1) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Il doit y avoir exactement une réponse correcte'
+                    'message' => 'Il doit y avoir au moins une réponse correcte'
                 ], 422);
             }
 
@@ -123,14 +123,14 @@ class QuzController extends Controller
         
         $validated = $request->validated();
 
-        // Ensure exactly one correct answer
+        // Ensure at least one correct answer
         $correctAnswers = collect($validated['answers'])->filter(function($answer) {
             return in_array($answer['is_correct'], ['1', 'true', true], true);
         });
-        if ($correctAnswers->count() !== 1) {
+        if ($correctAnswers->count() < 1) {
             return response()->json([
                 'success' => false,
-                'message' => 'Il doit y avoir exactement une réponse correcte'
+                'message' => 'Il doit y avoir au moins une réponse correcte'
             ], 422);
         }
 
