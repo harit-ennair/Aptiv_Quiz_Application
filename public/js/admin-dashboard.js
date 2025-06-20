@@ -2450,6 +2450,7 @@ class AdminDashboard {
         const modal = document.getElementById('role-modal');
         const title = document.getElementById('role-modal-title');
         const userInfo = document.getElementById('user-info');
+        const deleteBtn = document.getElementById('delete-user-btn');
         
         try {
             // Fetch current user data
@@ -2462,6 +2463,16 @@ class AdminDashboard {
                     document.getElementById('user-id').value = user.id;
                     document.getElementById('new-role').value = user.role_id;
                     userInfo.textContent = `${user.name} ${user.last_name} (ID: ${user.identification})`;
+                    
+                    // Show/hide delete button based on user role
+                    // Only show for Admin (role 2) and Employee (role 3)
+                    if (deleteBtn) {
+                        if (user.role_id == 2 || user.role_id == 3) {
+                            deleteBtn.classList.remove('hidden');
+                        } else {
+                            deleteBtn.classList.add('hidden');
+                        }
+                    }
                     
                     title.textContent = 'Modifier le Rôle Utilisateur';
                     modal.classList.remove('hidden');
@@ -2478,6 +2489,69 @@ class AdminDashboard {
         const modal = document.getElementById('role-modal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+    }
+
+    confirmDeleteUser() {
+        const userId = document.getElementById('user-id').value;
+        const userInfo = document.getElementById('user-info').textContent;
+        
+        if (userId && userInfo) {
+            this.currentUserForDeletion = { id: userId, info: userInfo };
+            
+            const deleteUserName = document.getElementById('delete-user-name');
+            if (deleteUserName) {
+                deleteUserName.textContent = userInfo;
+            }
+            
+            const deleteModal = document.getElementById('delete-user-modal');
+            if (deleteModal) {
+                deleteModal.classList.remove('hidden');
+                deleteModal.classList.add('flex');
+            }
+        }
+    }
+
+    closeDeleteUserModal() {
+        const deleteModal = document.getElementById('delete-user-modal');
+        if (deleteModal) {
+            deleteModal.classList.add('hidden');
+            deleteModal.classList.remove('flex');
+        }
+        this.currentUserForDeletion = null;
+    }
+
+    async deleteUser() {
+        if (!this.currentUserForDeletion) return;
+        
+        const userId = this.currentUserForDeletion.id;
+        
+        try {
+            this.showLoading();
+            
+            const response = await fetch(`/admin/api/users/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showMessage('Utilisateur supprimé avec succès', 'success');
+                this.closeDeleteUserModal();
+                this.closeRoleModal();
+                this.loadUsers();
+            } else {
+                this.showMessage(result.message || 'Erreur lors de la suppression', 'error');
+            }
+        } catch (error) {
+            console.error('Delete user error:', error);
+            this.showMessage('Erreur lors de la suppression de l\'utilisateur', 'error');
+        } finally {
+            this.hideLoading();
+        }
     }
 
     openAddUserModal() {
@@ -2726,6 +2800,24 @@ function openAddUserModal() {
 function closeAddUserModal() {
     if (window.adminDashboard) {
         window.adminDashboard.closeAddUserModal();
+    }
+}
+
+function confirmDeleteUser() {
+    if (window.adminDashboard) {
+        window.adminDashboard.confirmDeleteUser();
+    }
+}
+
+function closeDeleteUserModal() {
+    if (window.adminDashboard) {
+        window.adminDashboard.closeDeleteUserModal();
+    }
+}
+
+function deleteUser() {
+    if (window.adminDashboard) {
+        window.adminDashboard.deleteUser();
     }
 }
 

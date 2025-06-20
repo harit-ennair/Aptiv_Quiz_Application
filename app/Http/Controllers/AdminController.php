@@ -310,4 +310,52 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Delete a user (Super Admin only)
+     */
+    public function deleteUser(User $user)
+    {
+        // Check if user is super admin
+        if (Auth::user()->role_id != 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Accès non autorisé'
+            ], 403);
+        }
+
+        try {
+            // Prevent super admin from deleting themselves
+            if ($user->id === Auth::user()->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Vous ne pouvez pas supprimer votre propre compte'
+                ], 400);
+            }
+
+            // Prevent deletion of super admin users
+            if ($user->role_id == 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Les comptes Super Admin ne peuvent pas être supprimés'
+                ], 400);
+            }
+
+            // Store user info for response
+            $userName = $user->name . ' ' . $user->last_name;
+            
+            // Delete the user
+            $user->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => "L'utilisateur {$userName} a été supprimé avec succès"
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression de l\'utilisateur: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

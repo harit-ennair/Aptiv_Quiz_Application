@@ -104,17 +104,28 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                <button type="button" onclick="adminDashboard.closeRoleModal()" 
-                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors btn-touch">
-                    Annuler
+              <div class="flex justify-between pt-4 border-t border-gray-200">
+                <!-- Delete button (left side) -->
+                <button type="button" id="delete-user-btn" onclick="adminDashboard.confirmDeleteUser()" 
+                        class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors btn-touch hidden">
+                    <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Supprimer
                 </button>
-                <button type="submit" 
-                        class="px-4 py-2 text-sm font-medium text-white bg-aptiv-orange-600 hover:bg-aptiv-orange-700 rounded-lg transition-colors btn-touch">
-                    Modifier le Rôle
-                </button>
-            </div>        </form>
+                
+                <!-- Action buttons (right side) -->
+                <div class="flex space-x-3">
+                    <button type="button" onclick="adminDashboard.closeRoleModal()" 
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors btn-touch">
+                        Annuler
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 text-sm font-medium text-white bg-aptiv-orange-600 hover:bg-aptiv-orange-700 rounded-lg transition-colors btn-touch">
+                        Modifier le Rôle
+                    </button>
+                </div>
+            </div></form>
     </div>
 </div>
 
@@ -189,6 +200,64 @@
                 </button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Delete User Confirmation Modal -->
+<div id="delete-user-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-modal items-center justify-center hidden">
+    <div class="modal-body bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Confirmer la Suppression</h3>
+                <button onclick="adminDashboard.closeDeleteUserModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Êtes-vous sûr ?</h3>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Vous êtes sur le point de supprimer l'utilisateur <span id="delete-user-name" class="font-semibold"></span>. 
+                        Cette action est irréversible et supprimera définitivement toutes les données associées à cet utilisateur.
+                    </p>
+                    
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div class="flex">
+                            <svg class="flex-shrink-0 w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">Attention</h3>
+                                <p class="text-sm text-red-700 mt-1">
+                                    Cette action supprimera définitivement l'utilisateur et toutes ses données.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button type="button" onclick="adminDashboard.closeDeleteUserModal()" 
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors btn-touch">
+                    Annuler
+                </button>
+                <button type="button" onclick="adminDashboard.deleteUser()" 
+                        class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors btn-touch">
+                    Oui, Supprimer
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
