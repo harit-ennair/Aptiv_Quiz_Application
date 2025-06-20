@@ -579,11 +579,11 @@ class RepoSeeder extends Seeder
                 ['text' => 'Prévention des fils multicouleur et torsion inversée', 'correct' => false],
             ],
             
-            // Question 2: Classer les étapes des opérations Led System:
-            'Classer les étapes des opérations Led System:' => [
-                ['text' => '3 Brancher Le Terminal Dans Les Bonne Cavités et Libérer La Continuité Par Le Programme Et Redémarrer Avec Un Autre Terminal', 'correct' => false],
-                ['text' => '2 Toucher Le Terminal Dans La Zone De Sonde et fixer le terminal dans La Cavité Où La Lumière s\'est allumée', 'correct' => false],
-                ['text' => '1 Insérer LED Connecteur Dans Le Support et Insérer Tous Les Connecteurs Ayant Une Continuité Avec Le Connecteur LED', 'correct' => true],
+            // Question 2: Quelle est la deuxième étape ?:
+            'Quelle est la deuxième étape ?:' => [
+                ['text' => 'Brancher Le Terminal Dans Les Bonne Cavités et Libérer La Continuité Par Le Programme Et Redémarrer Avec Un Autre Terminal', 'correct' => false],
+                ['text' => 'Toucher Le Terminal Dans La Zone De Sonde et fixer le terminal dans La Cavité Où La Lumière s\'est allumée', 'correct' => true],
+                ['text' => 'Insérer LED Connecteur Dans Le Support et Insérer Tous Les Connecteurs Ayant Une Continuité Avec Le Connecteur LED', 'correct' => false],
             ],
             
             // Question 3: Quels sont les fonctions du Led System?
@@ -731,11 +731,11 @@ class RepoSeeder extends Seeder
                 ['text' => 'Les Griffes du PVC pliées correctement', 'correct' => false],
             ],
             
-            // Question 4: Classer les étapes de soudage Ring Terminal:
-            'Classer les étapes de soudage Ring Terminal:' => [
-                ['text' => '2 Taper sur la pédale pour la première fois a fin de fixer le terminal sur l\'enclume', 'correct' => false],
-                ['text' => '1 Choisir la configuration convenable en utilisant le contrôleur et placer le terminal sur l\'enclume .', 'correct' => true],
-                ['text' => '3 Insérer les fils en respectant le positionnement des fils et Taper une deuxième fois sur la pédale pour effectuer le sertissage', 'correct' => false],
+            // Question 4: Quelle est la deuxième étape ?:
+            'Quelle est la deuxième étape ?:' => [
+                ['text' => ' Taper sur la pédale pour la première fois a fin de fixer le terminal sur l\'enclume', 'correct' => true],
+                ['text' => ' Choisir la configuration convenable en utilisant le contrôleur et placer le terminal sur l\'enclume .', 'correct' => false],
+                ['text' => ' Insérer les fils en respectant le positionnement des fils et Taper une deuxième fois sur la pédale pour effectuer le sertissage', 'correct' => false],
             ],
         ];
 
@@ -899,11 +899,11 @@ class RepoSeeder extends Seeder
                 ['text' => 'Le passe-fil doit être fixé sur la branche avec du ruban,Les fils et le passe-fil ne doivent pas être endommagés', 'correct' => false],
             ],
             
-            // Question 4: Classer les étapes d'application du térostat
-            'Classer les étapes d\'application du térostat' => [
-                ['text' => '2 Il faut bien séparer les fils pour appliquer le TEROSTAT et combler tous les vides entre les fils et Appliquer le TEROSTAT entre les fils d\'une manière homogène et s\'assurer que tous les fils sont bien réunis par la matière afin de garantir une étanchéité maximale', 'correct' => false],
-                ['text' => '1 Positionner le passe-fil dans sa contre-pièce sur le tableau ou sur l\'outil défini de montage pour localiser la zone d\'application du Térostat, et faire une fixation avec le ruban PVC de chaque côté de la zone d\'application du Térostat (zone d\'étanchéité).', 'correct' => true],
-                ['text' => '3 Enrouler le TEROSTAT de façon à ce que la matière pénètre entre tous les fils, ensuite faire un enrubannage continu 2 fois dans les 2 sens (c\'est à dire 4 couches de PVC). Couvrir la partie impliquée dans le TEROSTAT à l\'aide de ruban PVC tout en enrubannant les deux extrémités des fils : l\'enrubannage doit se faire deux fois dans les deux sen, et Fixer l\'extrémité droite du Passe- fil avec le ruban PVC, continuer l\'enrubannage de la dérivation. L\'enrubannage doit être continu, serré et sans plis', 'correct' => false],
+            // Question 4: Quelle est la deuxième étape ?
+            'Quelle est la deuxième étape ?' => [
+                ['text' => ' Il faut bien séparer les fils pour appliquer le TEROSTAT et combler tous les vides entre les fils et Appliquer le TEROSTAT entre les fils d\'une manière homogène et s\'assurer que tous les fils sont bien réunis par la matière afin de garantir une étanchéité maximale', 'correct' => true],
+                ['text' => ' Positionner le passe-fil dans sa contre-pièce sur le tableau ou sur l\'outil défini de montage pour localiser la zone d\'application du Térostat, et faire une fixation avec le ruban PVC de chaque côté de la zone d\'application du Térostat (zone d\'étanchéité).', 'correct' => false],
+                ['text' => ' Enrouler le TEROSTAT de façon à ce que la matière pénètre entre tous les fils, ensuite faire un enrubannage continu 2 fois dans les 2 sens (c\'est à dire 4 couches de PVC). Couvrir la partie impliquée dans le TEROSTAT à l\'aide de ruban PVC tout en enrubannant les deux extrémités des fils : l\'enrubannage doit se faire deux fois dans les deux sen, et Fixer l\'extrémité droite du Passe- fil avec le ruban PVC, continuer l\'enrubannage de la dérivation. L\'enrubannage doit être continu, serré et sans plis', 'correct' => false],
             ],
         ];
 
