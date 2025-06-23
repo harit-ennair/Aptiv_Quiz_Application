@@ -2788,199 +2788,305 @@ class AdminDashboard {
             return;
         }
 
-        // Render employee statistics
-        this.renderEmployeeStats(employees);
+        // Group employees by role
+        const employeesByRole = this.groupEmployeesByRole(employees);
 
-        // Render desktop view - simple table since all are employees
+        // Render employee statistics
+        this.renderEmployeeStats(employeesByRole);
+
+        // Render desktop role-based view
         if (desktopContainer) {
-            desktopContainer.innerHTML = this.renderDesktopEmployeeTable(employees);
+            desktopContainer.innerHTML = this.renderDesktopEmployeeRoleGroups(employeesByRole);
             desktopContainer.classList.remove('hidden');
         }
 
-        // Render mobile view - simple cards since all are employees  
+        // Render mobile role-based view
         if (mobileContainer) {
-            mobileContainer.innerHTML = this.renderMobileEmployeeCards(employees);
+            mobileContainer.innerHTML = this.renderMobileEmployeeRoleGroups(employeesByRole);
             mobileContainer.classList.remove('hidden');
         }
     }
 
-    renderEmployeeStats(employees) {
+    renderEmployeeStats(employeesByRole) {
         const statsContainer = document.getElementById('employees-stats');
         if (!statsContainer) return;
 
-        const totalEmployees = employees.length;
-        const employeesWithTests = employees.filter(emp => emp.tests_count > 0).length;
-        const totalTests = employees.reduce((sum, emp) => sum + (emp.tests_count || 0), 0);
-        const averageTestsPerEmployee = totalEmployees > 0 ? Math.round(totalTests / totalEmployees * 10) / 10 : 0;
+        const roleConfig = {
+            'super admin': {
+                title: 'Super Admins',
+                icon: '👑',
+                bgColor: 'bg-purple-50',
+                iconBg: 'bg-purple-100',
+                textColor: 'text-purple-800'
+            },
+            'admin': {
+                title: 'Administrateurs',
+                icon: '🛡️',
+                bgColor: 'bg-blue-50',
+                iconBg: 'bg-blue-100',
+                textColor: 'text-blue-800'
+            },
+            'employee': {
+                title: 'Employés',
+                icon: '👤',
+                bgColor: 'bg-green-50',
+                iconBg: 'bg-green-100',
+                textColor: 'text-green-800'
+            },
+            'no_role': {
+                title: 'Sans Rôle',
+                icon: '❓',
+                bgColor: 'bg-gray-50',
+                iconBg: 'bg-gray-100',
+                textColor: 'text-gray-800'
+            }
+        };
 
-        let statsHtml = `
-            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                <div class="flex items-center">
-                    <div class="text-2xl mr-3">👥</div>
-                    <div>
-                        <h3 class="text-2xl font-bold text-green-600">${totalEmployees}</h3>
-                        <p class="text-gray-600">Total Employés</p>
+        const totalEmployees = Object.values(employeesByRole).reduce((sum, employees) => sum + employees.length, 0);
+
+        const statsHtml = Object.entries(employeesByRole)
+            .filter(([role, employees]) => employees.length > 0)
+            .map(([role, employees]) => {
+                const config = roleConfig[role];
+                const percentage = totalEmployees > 0 ? Math.round((employees.length / totalEmployees) * 100) : 0;
+                
+                return `
+                    <div class="stat-card ${config.bgColor} border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow duration-200">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="${config.iconBg} w-10 h-10 rounded-lg flex items-center justify-center">
+                                <span class="text-lg">${config.icon}</span>
+                            </div>
+                            <span class="text-xs ${config.textColor} font-medium">${percentage}%</span>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-gray-900 mb-1">${employees.length}</p>
+                            <p class="text-sm ${config.textColor} font-medium">${config.title}</p>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                <div class="flex items-center">
-                    <div class="text-2xl mr-3">✅</div>
-                    <div>
-                        <h3 class="text-2xl font-bold text-blue-600">${employeesWithTests}</h3>
-                        <p class="text-gray-600">Ont passé des tests</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                <div class="flex items-center">
-                    <div class="text-2xl mr-3">📝</div>
-                    <div>
-                        <h3 class="text-2xl font-bold text-purple-600">${totalTests}</h3>
-                        <p class="text-gray-600">Tests au total</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-gradient-to-r from-aptiv-orange-600 to-aptiv-orange-700 rounded-xl p-6 text-white">
-                <div class="flex items-center">
-                    <div class="text-2xl mr-3">📊</div>
-                    <div>
-                        <h3 class="text-2xl font-bold">${averageTestsPerEmployee}</h3>
-                        <p class="text-orange-100">Moyenne tests/employé</p>
-                    </div>
-                </div>
-            </div>
-        `;
+                `;
+            }).join('');
 
         statsContainer.innerHTML = statsHtml;
         statsContainer.classList.remove('hidden');
     }
 
-    renderDesktopEmployeeTable(employees) {
-        let html = `
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4">
-                    <div class="flex items-center text-white">
-                        <span class="text-xl mr-3">👥</span>
-                        <h3 class="text-lg font-semibold">Employés (${employees.length})</h3>
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employé</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Identification</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tests Effectués</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dernière Activité</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-        `;
+    groupEmployeesByRole(employees) {
+        const roleGroups = {
+            'super admin': [],
+            'admin': [],
+            'employee': [],
+            'no_role': []
+        };
 
         employees.forEach(employee => {
-            const testsCount = employee.tests_count || 0;
-            const lastActivity = employee.last_test_date ? new Date(employee.last_test_date).toLocaleDateString('fr-FR') : 'Aucune';
-            
-            html += `
-                <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
-                                ${employee.name.charAt(0).toUpperCase()}
-                            </div>
-                            <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900">${employee.name} ${employee.last_name}</div>
-                                <div class="text-sm text-gray-500">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Employé
-                                    </span>
+            const roleName = employee.role?.name?.toLowerCase() || 'no_role';
+            if (roleGroups[roleName]) {
+                roleGroups[roleName].push(employee);
+            } else {
+                roleGroups['no_role'].push(employee);
+            }
+        });
+
+        return roleGroups;
+    }
+
+    renderDesktopEmployeeRoleGroups(employeesByRole) {
+        const roleConfig = {
+            'super admin': {
+                title: 'Super Administrateurs',
+                icon: '👑',
+                bgColor: 'bg-purple-50',
+                borderColor: 'border-purple-200',
+                headerColor: 'bg-purple-100',
+                textColor: 'text-purple-800',
+                badgeColor: 'bg-purple-100 text-purple-800'
+            },
+            'admin': {
+                title: 'Administrateurs',
+                icon: '🛡️',
+                bgColor: 'bg-blue-50',
+                borderColor: 'border-blue-200',
+                headerColor: 'bg-blue-100',
+                textColor: 'text-blue-800',
+                badgeColor: 'bg-blue-100 text-blue-800'
+            },
+            'employee': {
+                title: 'Employés',
+                icon: '👤',
+                bgColor: 'bg-green-50',
+                borderColor: 'border-green-200',
+                headerColor: 'bg-green-100',
+                textColor: 'text-green-800',
+                badgeColor: 'bg-green-100 text-green-800'
+            },
+            'no_role': {
+                title: 'Sans Rôle',
+                icon: '❓',
+                bgColor: 'bg-gray-50',
+                borderColor: 'border-gray-200',
+                headerColor: 'bg-gray-100',
+                textColor: 'text-gray-800',
+                badgeColor: 'bg-gray-100 text-gray-800'
+            }
+        };
+
+        return Object.entries(employeesByRole)
+            .filter(([role, employees]) => employees.length > 0)
+            .map(([role, employees]) => {
+                const config = roleConfig[role];
+                
+                return `
+                    <div class="role-group ${config.bgColor} ${config.borderColor} border rounded-xl overflow-hidden" data-role="${role}">
+                        <div class="${config.headerColor} px-6 py-4 border-b ${config.borderColor}">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center ${config.textColor}">
+                                    <span class="text-xl mr-3">${config.icon}</span>
+                                    <h3 class="text-lg font-semibold">${config.title} (${employees.length})</h3>
                                 </div>
                             </div>
                         </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${employee.identification}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${testsCount > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                            ${testsCount} test${testsCount !== 1 ? 's' : ''}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${lastActivity}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="adminDashboard.showEmployeeDetails(${employee.id})" 
-                                class="text-aptiv-orange-600 hover:text-aptiv-orange-900 mr-3 transition-colors">
-                            Voir détails
-                        </button>
-                    </td>
-                </tr>
-            `;
-        });
-
-        html += `
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-
-        return html;
+                        <div class="bg-white">
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employé</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Identification</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tests Effectués</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dernière Activité</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        ${employees.map(employee => `
+                                            <tr class="employee-row hover:bg-gray-50 transition-colors" data-employee-name="${employee.name.toLowerCase()} ${employee.last_name.toLowerCase()}" data-role="${role}">
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center">
+                                                        <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
+                                                            ${employee.name.charAt(0).toUpperCase()}
+                                                        </div>
+                                                        <div class="ml-4">
+                                                            <div class="text-sm font-medium text-gray-900">${employee.name} ${employee.last_name}</div>
+                                                            <div class="text-sm text-gray-500">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${config.badgeColor}">
+                                                                    ${config.title.replace('s', '')}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${employee.identification}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${(employee.tests_count || 0) > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                                        ${employee.tests_count || 0} test${(employee.tests_count || 0) !== 1 ? 's' : ''}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${employee.last_test_date ? new Date(employee.last_test_date).toLocaleDateString('fr-FR') : 'Aucune'}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <button onclick="adminDashboard.showEmployeeDetails(${employee.id})" 
+                                                            class="text-aptiv-orange-600 hover:text-aptiv-orange-900 mr-3 transition-colors">
+                                                        Voir détails
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
     }
 
-    renderMobileEmployeeCards(employees) {
-        let html = `
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="bg-gradient-to-r from-green-600 to-green-700 px-4 py-3">
-                    <div class="flex items-center text-white">
-                        <span class="text-lg mr-2">👥</span>
-                        <h3 class="font-semibold">Employés (${employees.length})</h3>
-                    </div>
-                </div>
-                <div class="p-4 space-y-4">
-        `;
+    renderMobileEmployeeRoleGroups(employeesByRole) {
+        const roleConfig = {
+            'super admin': {
+                title: 'Super Administrateurs',
+                icon: '👑',
+                bgColor: 'bg-purple-50',
+                borderColor: 'border-purple-200',
+                headerColor: 'bg-purple-100',
+                textColor: 'text-purple-800',
+                badgeColor: 'bg-purple-100 text-purple-800'
+            },
+            'admin': {
+                title: 'Administrateurs',
+                icon: '🛡️',
+                bgColor: 'bg-blue-50',
+                borderColor: 'border-blue-200',
+                headerColor: 'bg-blue-100',
+                textColor: 'text-blue-800',
+                badgeColor: 'bg-blue-100 text-blue-800'
+            },
+            'employee': {
+                title: 'Employés',
+                icon: '👤',
+                bgColor: 'bg-green-50',
+                borderColor: 'border-green-200',
+                headerColor: 'bg-green-100',
+                textColor: 'text-green-800',
+                badgeColor: 'bg-green-100 text-green-800'
+            },
+            'no_role': {
+                title: 'Sans Rôle',
+                icon: '❓',
+                bgColor: 'bg-gray-50',
+                borderColor: 'border-gray-200',
+                headerColor: 'bg-gray-100',
+                textColor: 'text-gray-800',
+                badgeColor: 'bg-gray-100 text-gray-800'
+            }
+        };
 
-        employees.forEach(employee => {
-            const testsCount = employee.tests_count || 0;
-            const lastActivity = employee.last_test_date ? new Date(employee.last_test_date).toLocaleDateString('fr-FR') : 'Aucune';
-            
-            html += `
-                <div class="border border-gray-200 rounded-lg p-4">
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                ${employee.name.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-900">${employee.name} ${employee.last_name}</h4>
-                                <p class="text-sm text-gray-500">ID: ${employee.identification}</p>
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mt-1">
-                                    Employé
-                                </span>
+        return Object.entries(employeesByRole)
+            .filter(([role, employees]) => employees.length > 0)
+            .map(([role, employees]) => {
+                const config = roleConfig[role];
+                
+                return `
+                    <div class="role-group ${config.bgColor} ${config.borderColor} border rounded-xl overflow-hidden" data-role="${role}">
+                        <div class="${config.headerColor} px-4 py-3 border-b ${config.borderColor}">
+                            <div class="flex items-center ${config.textColor}">
+                                <span class="text-lg mr-2">${config.icon}</span>
+                                <h3 class="font-semibold">${config.title} (${employees.length})</h3>
                             </div>
                         </div>
-                    </div>
-                    <div class="mt-3 flex justify-between items-center">
-                        <div class="text-sm text-gray-600">
-                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${testsCount > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                ${testsCount} test${testsCount !== 1 ? 's' : ''}
-                            </span>
-                            <span class="ml-2">Dernière activité: ${lastActivity}</span>
+                        <div class="bg-white p-4 space-y-4">
+                            ${employees.map(employee => `
+                                <div class="employee-card border border-gray-200 rounded-lg p-4" data-employee-name="${employee.name.toLowerCase()} ${employee.last_name.toLowerCase()}" data-role="${role}">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                                ${employee.name.charAt(0).toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <h4 class="font-semibold text-gray-900">${employee.name} ${employee.last_name}</h4>
+                                                <p class="text-sm text-gray-500">ID: ${employee.identification}</p>
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${config.badgeColor} mt-1">
+                                                    ${config.title.replace('s', '')}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex justify-between items-center">
+                                        <div class="text-sm text-gray-600">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${(employee.tests_count || 0) > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                                ${employee.tests_count || 0} test${(employee.tests_count || 0) !== 1 ? 's' : ''}
+                                            </span>
+                                            <span class="ml-2">Dernière activité: ${employee.last_test_date ? new Date(employee.last_test_date).toLocaleDateString('fr-FR') : 'Aucune'}</span>
+                                        </div>
+                                        <button onclick="adminDashboard.showEmployeeDetails(${employee.id})" 
+                                                class="text-aptiv-orange-600 hover:text-aptiv-orange-900 text-sm font-medium transition-colors">
+                                            Voir détails
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
-                        <button onclick="adminDashboard.showEmployeeDetails(${employee.id})" 
-                                class="text-aptiv-orange-600 hover:text-aptiv-orange-900 text-sm font-medium transition-colors">
-                            Voir détails
-                        </button>
                     </div>
-                </div>
-            `;
-        });
-
-        html += `
-                </div>
-            </div>
-        `;
-
-        return html;
+                `;
+            }).join('');
     }
 
     setupEmployeeSearch() {
@@ -2993,28 +3099,49 @@ class AdminDashboard {
 
     filterEmployees() {
         const searchQuery = document.getElementById('employee-search')?.value.toLowerCase() || '';
+        const roleFilter = document.getElementById('employee-role-filter')?.value || '';
         
         // Filter employee rows in desktop view
-        const desktopRows = document.querySelectorAll('#employees-desktop tbody tr');
+        const desktopRows = document.querySelectorAll('#employees-desktop .employee-row');
         desktopRows.forEach(row => {
-            const name = row.querySelector('td:first-child .text-gray-900')?.textContent.toLowerCase() || '';
-            const identification = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+            const name = row.getAttribute('data-employee-name') || '';
+            const role = row.getAttribute('data-role') || '';
             
-            const matchesSearch = name.includes(searchQuery) || identification.includes(searchQuery);
+            const matchesSearch = name.includes(searchQuery);
+            const matchesRole = !roleFilter || this.getRoleId(role) === roleFilter;
             
-            row.style.display = matchesSearch ? '' : 'none';
+            const shouldShow = matchesSearch && matchesRole;
+            row.style.display = shouldShow ? '' : 'none';
         });
         
         // Filter employee cards in mobile view
-        const mobileCards = document.querySelectorAll('#employees-mobile .border-gray-200');
+        const mobileCards = document.querySelectorAll('#employees-mobile .employee-card');
         mobileCards.forEach(card => {
-            const name = card.querySelector('.font-semibold')?.textContent.toLowerCase() || '';
-            const identification = card.querySelector('.text-gray-500')?.textContent.toLowerCase() || '';
+            const name = card.getAttribute('data-employee-name') || '';
+            const role = card.getAttribute('data-role') || '';
             
-            const matchesSearch = name.includes(searchQuery) || identification.includes(searchQuery);
+            const matchesSearch = name.includes(searchQuery);
+            const matchesRole = !roleFilter || this.getRoleId(role) === roleFilter;
             
-            card.style.display = matchesSearch ? '' : 'none';
+            const shouldShow = matchesSearch && matchesRole;
+            card.style.display = shouldShow ? '' : 'none';
         });
+
+        // Hide/show role groups if all employees in that group are hidden
+        const roleGroups = document.querySelectorAll('#employees-desktop .role-group, #employees-mobile .role-group');
+        roleGroups.forEach(group => {
+            const visibleEmployees = group.querySelectorAll('.employee-row:not([style*="display: none"]), .employee-card:not([style*="display: none"])');
+            group.style.display = visibleEmployees.length > 0 ? '' : 'none';
+        });
+    }
+
+    getRoleId(roleName) {
+        const roleIds = {
+            'super admin': '1',
+            'admin': '2',
+            'employee': '3'
+        };
+        return roleIds[roleName] || '';
     }
 
     getRoleName(roleId) {

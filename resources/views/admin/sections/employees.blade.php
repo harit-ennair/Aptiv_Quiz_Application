@@ -1,11 +1,13 @@
 <!-- Employees Management Section -->
 <div class="space-y-6">
     <!-- Header -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-                <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Employés</h2>
+                <!-- <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Employés</h2> -->
                 <p class="text-gray-600 text-sm lg:text-base mt-1">Consulter tous les employés et leur historique de tests</p>
-            </div>            <div class="flex flex-col sm:flex-row gap-3">
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3">
                 <div class="relative">
                     <input type="text" id="employee-search" placeholder="Rechercher un Employé..." 
                            class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
