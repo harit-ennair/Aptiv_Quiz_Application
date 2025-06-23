@@ -31,6 +31,7 @@ Route::prefix('quiz')->name('quiz.')->group(function () {
     Route::post('/submit', [UserTestController::class, 'submitQuiz'])->name('submit');
     Route::get('/results/{test_id}', [UserTestController::class, 'showResults'])->name('results');
     Route::get('/api/questions/{category_id}', [UserTestController::class, 'getQuestionsByCategory'])->name('api.questions');
+    Route::post('/api/check-user-history', [UserTestController::class, 'checkUserTestHistory'])->name('api.check_history');
 });
 
 // Admin routes

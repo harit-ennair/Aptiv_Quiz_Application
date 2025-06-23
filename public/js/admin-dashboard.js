@@ -1035,6 +1035,7 @@ class AdminDashboard {
             if (result.success) {
                 this.renderTests(result.data);
                 await this.loadUsersAndFormateursForTest();
+                await this.loadRetakeStatistics(); // Load retake statistics
             } else {
                 this.showMessage('Erreur lors du chargement des tests', 'error');
             }
@@ -1104,6 +1105,7 @@ class AdminDashboard {
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm font-medium text-gray-900">
                             ${test.user ? `${test.user.name} ${test.user.last_name}` : 'N/A'}
+                            <div class="text-xs text-gray-500">ID: ${test.user ? test.user.identification : 'N/A'}</div>
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
@@ -1952,7 +1954,47 @@ class AdminDashboard {
         } catch (error) {
             console.error('Error loading users and formateurs:', error);
         }
-    }    // Search and Filter Functions
+    }
+
+    async loadRetakeStatistics() {
+        try {
+            const response = await fetch('/admin/dashboard-data');
+            const result = await response.json();
+            
+            if (result.success && result.data.retakeStats) {
+                const retakeStats = result.data.retakeStats;
+                
+                // Update the retake statistics in the UI
+                const totalRetakesEl = document.getElementById('total-retakes');
+                const usersWithRetakesEl = document.getElementById('users-with-retakes');
+                const retakeRateEl = document.getElementById('retake-rate');
+                
+                if (totalRetakesEl) {
+                    totalRetakesEl.textContent = retakeStats.total_retakes || 0;
+                }
+                
+                if (usersWithRetakesEl) {
+                    usersWithRetakesEl.textContent = retakeStats.users_with_retakes || 0;
+                }
+                
+                if (retakeRateEl) {
+                    retakeRateEl.textContent = `${retakeStats.retake_rate || 0}%`;
+                }
+            }
+        } catch (error) {
+            console.error('Error loading retake statistics:', error);
+            // Set default values on error
+            const totalRetakesEl = document.getElementById('total-retakes');
+            const usersWithRetakesEl = document.getElementById('users-with-retakes');
+            const retakeRateEl = document.getElementById('retake-rate');
+            
+            if (totalRetakesEl) totalRetakesEl.textContent = '-';
+            if (usersWithRetakesEl) usersWithRetakesEl.textContent = '-';
+            if (retakeRateEl) retakeRateEl.textContent = '-%';
+        }
+    }
+
+    // Search and Filter Functions
     filterCategories() {
         const searchTerm = document.getElementById('category-search')?.value.toLowerCase() || '';
         const processFilter = document.getElementById('process-filter')?.value || '';

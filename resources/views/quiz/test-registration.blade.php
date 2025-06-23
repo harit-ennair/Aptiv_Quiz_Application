@@ -154,6 +154,7 @@
                 <li>• Le test sera automatiquement sauvegardé</li>
                 <li>• Les résultats seront calculés automatiquement</li>
                 <li>• Vous ne pouvez pas revenir en arrière une fois le test commencé</li>
+                <li>• <strong>Si vous avez déjà passé ce test, votre ancien résultat sera remplacé par le nouveau</strong></li>
                 <li>• <strong>Votre mot de passe sera automatiquement votre numéro d'identification</strong></li>
             </ul>
         </div>
@@ -161,20 +162,100 @@
 </div>
 
 <script>
-document.getElementById('testRegistrationForm').addEventListener('submit', function(e) {
-    const categoryId = document.getElementById('category_id').value;
-    const formateurId = document.getElementById('formateur_id').value;
+// Add warning area after the form
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('testRegistrationForm');
+    const identificationInput = document.getElementById('identification');
+    const categorySelect = document.getElementById('category_id');
     
-    if (!categoryId || !formateurId) {
-        e.preventDefault();
-        alert('Veuillez sélectionner une catégorie et un formateur.');
-        return;
+    // Create warning area
+    const warningArea = document.createElement('div');
+    warningArea.id = 'test-history-warning';
+    warningArea.className = 'hidden mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded-lg';
+    form.insertBefore(warningArea, form.firstChild);
+    
+    // Function to check test history
+    function checkTestHistory() {
+        const identification = identificationInput.value;
+        const categoryId = categorySelect.value;
+        
+        if (!identification || !categoryId) {
+            warningArea.classList.add('hidden');
+            return;
+        }
+        
+        // AJAX request to check history
+        fetch('{{ route("quiz.api.check_history") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                identification: identification,
+                category_id: categoryId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.has_previous_test) {
+                warningArea.innerHTML = `
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-yellow-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div>
+                            <h4 class="font-semibold text-yellow-800">Test déjà passé</h4>
+                            <p class="text-sm">${data.message}</p>
+                        </div>
+                    </div>
+                `;
+                warningArea.classList.remove('hidden');
+            } else {
+                warningArea.classList.add('hidden');
+            }
+        })
+        .catch(error => {
+            console.error('Error checking test history:', error);
+            warningArea.classList.add('hidden');
+        });
     }
     
-    // Show loading state
-    const submitBtn = e.target.querySelector('button[type="submit"]');
-    submitBtn.innerHTML = 'Chargement...';
-    submitBtn.disabled = true;
+    // Add event listeners
+    identificationInput.addEventListener('blur', checkTestHistory);
+    categorySelect.addEventListener('change', checkTestHistory);
+      // Form submission handler
+    form.addEventListener('submit', function(e) {
+        const categoryId = document.getElementById('category_id').value;
+        const formateurId = document.getElementById('formateur_id').value;
+        
+        if (!categoryId || !formateurId) {
+            e.preventDefault();
+            alert('Veuillez sélectionner une catégorie et un formateur.');
+            return;
+        }
+        
+        // Check if warning is visible (user has previous test)
+        const warningVisible = !warningArea.classList.contains('hidden');
+        if (warningVisible) {
+            const confirmation = confirm('Vous avez déjà passé ce test. Êtes-vous sûr de vouloir le refaire ? Votre ancien résultat sera définitivement remplacé.');
+            if (!confirmation) {
+                e.preventDefault();
+                return;
+            }
+        }
+        
+        // Show loading state
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = `
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Démarrage du test...
+        `;
+        submitBtn.disabled = true;
+    });
 });
 </script>
 @endsection

@@ -62,13 +62,29 @@ class UserTestController extends Controller
                 'name' => $request->name,
                 'last_name' => $request->last_name,
             ]);
+        }        // Get category information for test description
+        $category = categories::find($request->category_id);
+        $testDescription = 'Test automatique - ' . $category->title;
+        
+        // Check if user has already taken a test for this category
+        $existingTest = test::where('user_id', $user->id)
+                           ->where('description', $testDescription)
+                           ->first();
+        
+        // If user has already taken this test category, delete the old test
+        if ($existingTest) {
+            // Delete the pivot table relationships first
+            $existingTest->quzs()->detach();
+            
+            // Delete the old test record
+            $existingTest->delete();
         }
-
-        // Create test record with automatic date
+        
+        // Create new test record with automatic date
         $test = test::create([
             'user_id' => $user->id,
             'formateur_id' => $request->formateur_id,
-            'description' => 'Test automatique - ' . categories::find($request->category_id)->title,
+            'description' => $testDescription,
             'resultat' => 0, // Will be updated after test completion
             'pourcentage' => 0, // Will be calculated after test completion
             'create_at' => now()->format('Y-m-d'),
@@ -224,5 +240,49 @@ class UserTestController extends Controller
     public function showHistoryForm()
     {
         return view('quiz.check-history');
+    }
+
+    /**
+     * Check if user has previous test attempts for a category (AJAX)
+     */
+    public function checkUserTestHistory(Request $request)
+    {
+        $request->validate([
+            'identification' => 'required|integer',
+            'category_id' => 'required|exists:categories,id',
+        ]);
+        
+        // Find user by identification
+        $user = User::where('identification', $request->identification)->first();
+        
+        if (!$user) {
+            return response()->json([
+                'has_previous_test' => false,
+                'message' => 'Nouvel utilisateur'
+            ]);
+        }
+        
+        // Get category information
+        $category = categories::find($request->category_id);
+        $testDescription = 'Test automatique - ' . $category->title;
+        
+        // Check if user has taken this test before
+        $existingTest = test::where('user_id', $user->id)
+                           ->where('description', $testDescription)
+                           ->first();
+        
+        if ($existingTest) {
+            return response()->json([
+                'has_previous_test' => true,
+                'message' => 'Vous avez déjà passé ce test le ' . $existingTest->create_at . ' avec un score de ' . $existingTest->pourcentage . '%. Votre ancien résultat sera remplacé par le nouveau.',
+                'previous_score' => $existingTest->pourcentage,
+                'previous_date' => $existingTest->create_at
+            ]);
+        }
+        
+        return response()->json([
+            'has_previous_test' => false,
+            'message' => 'Premier test pour cette catégorie'
+        ]);
     }
 }

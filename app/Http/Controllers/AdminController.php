@@ -102,6 +102,12 @@ class AdminController extends Controller
 
         // Additional statistics
         $data['additionalStats'] = $this->getAdditionalStats();
+        
+        // Retake statistics
+        $data['retakeStats'] = $this->getRetakeStats();
+
+        // Retake test statistics
+        $data['retakeStats'] = $this->getRetakeStats();
 
         return $data;
     }
@@ -310,6 +316,27 @@ class AdminController extends Controller
                 'score' => $topTest->pourcentage,
                 'user' => $topTest->user ? $topTest->user->name . ' ' . $topTest->user->last_name : 'Utilisateur inconnu'
             ] : null
+        ];
+    }
+
+    /**
+     * Get retake test statistics
+     */
+    private function getRetakeStats()
+    {
+        // Get all test descriptions to identify potential retakes
+        $testsByUser = test::select('user_id', 'description', DB::raw('COUNT(*) as count'))
+                          ->groupBy('user_id', 'description')
+                          ->having(DB::raw('COUNT(*)'), '>', 1)
+                          ->get();
+        
+        $retakeCount = $testsByUser->sum('count') - $testsByUser->count();
+        $usersWithRetakes = $testsByUser->groupBy('user_id')->count();
+        
+        return [
+            'total_retakes' => $retakeCount,
+            'users_with_retakes' => $usersWithRetakes,
+            'retake_rate' => test::count() > 0 ? round(($retakeCount / test::count()) * 100, 1) : 0
         ];
     }
 
