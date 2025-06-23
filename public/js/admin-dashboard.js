@@ -212,6 +212,7 @@ class AdminDashboard {
             categories: 'Gestion des Catégories',
             questions: 'Gestion des Questions',
             formateurs: 'Gestion des Formateurs',
+            employees: 'Gestion des Employés',
             tests: 'Gestion des Tests'
         };
 
@@ -246,6 +247,9 @@ class AdminDashboard {
                 break;
             case 'formateurs':
                 this.loadFormateurs();
+                break;
+            case 'employees':
+                this.loadEmployees();
                 break;
             case 'tests':
                 this.loadTests();
@@ -2743,6 +2747,398 @@ class AdminDashboard {
             }
         });
     }
+
+    // Employees Management
+    async loadEmployees() {
+        const loadingEl = document.getElementById('employees-loading');
+        const desktopEl = document.getElementById('employees-desktop');
+        const mobileEl = document.getElementById('employees-mobile');
+        const emptyEl = document.getElementById('employees-empty');
+
+        if (loadingEl) loadingEl.classList.remove('hidden');
+        if (desktopEl) desktopEl.classList.add('hidden');
+        if (mobileEl) mobileEl.classList.add('hidden');
+        if (emptyEl) emptyEl.classList.add('hidden');
+
+        try {
+            const response = await fetch('/admin/api/employees/all');
+            const result = await response.json();
+
+            if (result.success) {
+                this.renderEmployees(result.data);
+                this.setupEmployeeSearch();
+            } else {
+                this.showMessage('Erreur lors du chargement des employés', 'error');
+            }
+        } catch (error) {
+            this.showMessage('Une erreur est survenue', 'error');
+            console.error('Error:', error);
+        } finally {
+            if (loadingEl) loadingEl.classList.add('hidden');
+        }
+    }
+
+    renderEmployees(employees) {
+        const desktopContainer = document.getElementById('employees-desktop');
+        const mobileContainer = document.getElementById('employees-mobile');
+        const emptyEl = document.getElementById('employees-empty');
+
+        if (employees.length === 0) {
+            if (emptyEl) emptyEl.classList.remove('hidden');
+            return;
+        }
+
+        // Render employee statistics
+        this.renderEmployeeStats(employees);
+
+        // Render desktop view - simple table since all are employees
+        if (desktopContainer) {
+            desktopContainer.innerHTML = this.renderDesktopEmployeeTable(employees);
+            desktopContainer.classList.remove('hidden');
+        }
+
+        // Render mobile view - simple cards since all are employees  
+        if (mobileContainer) {
+            mobileContainer.innerHTML = this.renderMobileEmployeeCards(employees);
+            mobileContainer.classList.remove('hidden');
+        }
+    }
+
+    renderEmployeeStats(employees) {
+        const statsContainer = document.getElementById('employees-stats');
+        if (!statsContainer) return;
+
+        const totalEmployees = employees.length;
+        const employeesWithTests = employees.filter(emp => emp.tests_count > 0).length;
+        const totalTests = employees.reduce((sum, emp) => sum + (emp.tests_count || 0), 0);
+        const averageTestsPerEmployee = totalEmployees > 0 ? Math.round(totalTests / totalEmployees * 10) / 10 : 0;
+
+        let statsHtml = `
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div class="flex items-center">
+                    <div class="text-2xl mr-3">👥</div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-green-600">${totalEmployees}</h3>
+                        <p class="text-gray-600">Total Employés</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div class="flex items-center">
+                    <div class="text-2xl mr-3">✅</div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-blue-600">${employeesWithTests}</h3>
+                        <p class="text-gray-600">Ont passé des tests</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div class="flex items-center">
+                    <div class="text-2xl mr-3">📝</div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-purple-600">${totalTests}</h3>
+                        <p class="text-gray-600">Tests au total</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-aptiv-orange-600 to-aptiv-orange-700 rounded-xl p-6 text-white">
+                <div class="flex items-center">
+                    <div class="text-2xl mr-3">📊</div>
+                    <div>
+                        <h3 class="text-2xl font-bold">${averageTestsPerEmployee}</h3>
+                        <p class="text-orange-100">Moyenne tests/employé</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        statsContainer.innerHTML = statsHtml;
+        statsContainer.classList.remove('hidden');
+    }
+
+    renderDesktopEmployeeTable(employees) {
+        let html = `
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4">
+                    <div class="flex items-center text-white">
+                        <span class="text-xl mr-3">👥</span>
+                        <h3 class="text-lg font-semibold">Employés (${employees.length})</h3>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employé</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Identification</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tests Effectués</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dernière Activité</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+        `;
+
+        employees.forEach(employee => {
+            const testsCount = employee.tests_count || 0;
+            const lastActivity = employee.last_test_date ? new Date(employee.last_test_date).toLocaleDateString('fr-FR') : 'Aucune';
+            
+            html += `
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
+                                ${employee.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${employee.name} ${employee.last_name}</div>
+                                <div class="text-sm text-gray-500">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Employé
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${employee.identification}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${testsCount > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                            ${testsCount} test${testsCount !== 1 ? 's' : ''}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${lastActivity}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="adminDashboard.showEmployeeDetails(${employee.id})" 
+                                class="text-aptiv-orange-600 hover:text-aptiv-orange-900 mr-3 transition-colors">
+                            Voir détails
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += `
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+
+        return html;
+    }
+
+    renderMobileEmployeeCards(employees) {
+        let html = `
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-green-600 to-green-700 px-4 py-3">
+                    <div class="flex items-center text-white">
+                        <span class="text-lg mr-2">👥</span>
+                        <h3 class="font-semibold">Employés (${employees.length})</h3>
+                    </div>
+                </div>
+                <div class="p-4 space-y-4">
+        `;
+
+        employees.forEach(employee => {
+            const testsCount = employee.tests_count || 0;
+            const lastActivity = employee.last_test_date ? new Date(employee.last_test_date).toLocaleDateString('fr-FR') : 'Aucune';
+            
+            html += `
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                ${employee.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">${employee.name} ${employee.last_name}</h4>
+                                <p class="text-sm text-gray-500">ID: ${employee.identification}</p>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mt-1">
+                                    Employé
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center">
+                        <div class="text-sm text-gray-600">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${testsCount > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                ${testsCount} test${testsCount !== 1 ? 's' : ''}
+                            </span>
+                            <span class="ml-2">Dernière activité: ${lastActivity}</span>
+                        </div>
+                        <button onclick="adminDashboard.showEmployeeDetails(${employee.id})" 
+                                class="text-aptiv-orange-600 hover:text-aptiv-orange-900 text-sm font-medium transition-colors">
+                            Voir détails
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        return html;
+    }
+
+    setupEmployeeSearch() {
+        const searchInput = document.getElementById('employee-search');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => this.filterEmployees());
+        }
+    }
+
+    filterEmployees() {
+        const searchQuery = document.getElementById('employee-search')?.value.toLowerCase() || '';
+        
+        // Filter employee rows in desktop view
+        const desktopRows = document.querySelectorAll('#employees-desktop tbody tr');
+        desktopRows.forEach(row => {
+            const name = row.querySelector('td:first-child .text-gray-900')?.textContent.toLowerCase() || '';
+            const identification = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+            
+            const matchesSearch = name.includes(searchQuery) || identification.includes(searchQuery);
+            
+            row.style.display = matchesSearch ? '' : 'none';
+        });
+        
+        // Filter employee cards in mobile view
+        const mobileCards = document.querySelectorAll('#employees-mobile .border-gray-200');
+        mobileCards.forEach(card => {
+            const name = card.querySelector('.font-semibold')?.textContent.toLowerCase() || '';
+            const identification = card.querySelector('.text-gray-500')?.textContent.toLowerCase() || '';
+            
+            const matchesSearch = name.includes(searchQuery) || identification.includes(searchQuery);
+            
+            card.style.display = matchesSearch ? '' : 'none';
+        });
+    }
+
+    getRoleName(roleId) {
+        const roleNames = {
+            '1': 'super admin',
+            '2': 'admin',
+            '3': 'employee'
+        };
+        return roleNames[roleId] || '';
+    }
+
+    async showEmployeeDetails(employeeId) {
+        try {
+            const response = await fetch(`/admin/api/employees/${employeeId}/details`);
+            const result = await response.json();
+
+            if (result.success) {
+                this.openEmployeeDetailsModal(result.data);
+            } else {
+                this.showMessage('Erreur lors du chargement des détails', 'error');
+            }
+        } catch (error) {
+            this.showMessage('Une erreur est survenue', 'error');
+            console.error('Error:', error);
+        }
+    }
+
+    openEmployeeDetailsModal(employeeData) {
+        const modal = document.getElementById('employee-details-modal');
+        const title = document.getElementById('employee-details-title');
+        const info = document.getElementById('employee-info');
+        const history = document.getElementById('employee-test-history');
+
+        if (!modal || !title || !info || !history) return;
+
+        // Set title
+        title.textContent = `Détails de ${employeeData.employee.name} ${employeeData.employee.last_name}`;
+
+        // Set employee info
+        info.innerHTML = `
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                    ${employeeData.employee.name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900">${employeeData.employee.name} ${employeeData.employee.last_name}</h3>
+                    <p class="text-gray-600">ID: ${employeeData.employee.identification}</p>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 mt-1">
+                        ${employeeData.employee.role ? employeeData.employee.role.name : 'N/A'}
+                    </span>
+                </div>
+            </div>
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="text-center p-3 bg-white rounded-lg border">
+                    <div class="text-2xl font-bold text-green-600">${employeeData.tests.length}</div>
+                    <div class="text-sm text-gray-600">Tests Effectués</div>
+                </div>
+                <div class="text-center p-3 bg-white rounded-lg border">
+                    <div class="text-2xl font-bold text-blue-600">${employeeData.statistics.average_score || 0}%</div>
+                    <div class="text-sm text-gray-600">Score Moyen</div>
+                </div>
+                <div class="text-center p-3 bg-white rounded-lg border">
+                    <div class="text-2xl font-bold text-purple-600">${employeeData.statistics.categories_tested || 0}</div>
+                    <div class="text-sm text-gray-600">Catégories Testées</div>
+                </div>
+            </div>
+        `;
+
+        // Set test history
+        if (employeeData.tests.length === 0) {
+            history.innerHTML = `
+                <div class="text-center py-8">
+                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    <h3 class="text-lg font-medium text-gray-900">Aucun test effectué</h3>
+                    <p class="text-gray-500 mt-1">Cet employé n'a pas encore passé de tests.</p>
+                </div>
+            `;
+        } else {
+            let historyHtml = '';
+            employeeData.tests.forEach(test => {
+                const date = new Date(test.created_at).toLocaleDateString('fr-FR');
+                const time = new Date(test.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                const scoreColor = test.pourcentage >= 80 ? 'green' : test.pourcentage >= 60 ? 'yellow' : 'red';
+                
+                historyHtml += `
+                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h5 class="font-semibold text-gray-900">${test.category_name || 'Catégorie inconnue'}</h5>
+                                <p class="text-sm text-gray-600 mt-1">${test.process_name || 'Processus inconnu'}</p>
+                                <p class="text-sm text-gray-500 mt-1">Formateur: ${test.formateur ? test.formateur.name + ' ' + test.formateur.last_name : 'N/A'}</p>
+                                <p class="text-xs text-gray-400 mt-2">${date} à ${time}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-${scoreColor}-100 text-${scoreColor}-800">
+                                    ${test.pourcentage}%
+                                </span>
+                                <p class="text-xs text-gray-500 mt-1">${test.resultat}/${test.quzs ? test.quzs.length : 0} correct${test.resultat !== 1 ? 's' : ''}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            history.innerHTML = historyHtml;
+        }
+
+        // Show modal
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    closeEmployeeDetailsModal() {
+        const modal = document.getElementById('employee-details-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    }
+
+    refreshEmployees() {
+        this.loadEmployees();
+    }
 }
 
 // Initialize dashboard when DOM is loaded
@@ -2879,5 +3275,30 @@ function closeTestModal() {
 function loadTests() {
     if (window.adminDashboard) {
         window.adminDashboard.loadTests();
+    }
+}
+
+// Employee functions
+function loadEmployees() {
+    if (window.adminDashboard) {
+        window.adminDashboard.loadEmployees();
+    }
+}
+
+function showEmployeeDetails(employeeId) {
+    if (window.adminDashboard) {
+        window.adminDashboard.showEmployeeDetails(employeeId);
+    }
+}
+
+function closeEmployeeDetailsModal() {
+    if (window.adminDashboard) {
+        window.adminDashboard.closeEmployeeDetailsModal();
+    }
+}
+
+function refreshEmployees() {
+    if (window.adminDashboard) {
+        window.adminDashboard.refreshEmployees();
     }
 }

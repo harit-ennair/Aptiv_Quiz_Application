@@ -97,6 +97,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/users', [AdminController::class, 'createUser'])->name('users.create');
             Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('users.update_role');
             Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('users.delete');
+            
+            // Employees Management
+            Route::get('/employees/all', [AdminController::class, 'getAllEmployees'])->name('employees.all');
+            Route::get('/employees/{user}/details', [AdminController::class, 'getEmployeeDetails'])->name('employees.details');
         });
     });
 });

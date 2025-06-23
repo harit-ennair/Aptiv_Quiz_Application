@@ -653,4 +653,89 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get all employees with their test statistics
+     */
+    public function getAllEmployees()
+    {
+        try {
+            $employees = User::with(['role', 'tests' => function($query) {
+                $query->latest()->take(5); // Get latest 5 tests
+            }, 'tests.formateur'])
+            ->withCount('tests')
+            ->where('role_id', 3) // Only employees (role_id = 3)
+            ->selectRaw('users.*, (SELECT MAX(created_at) FROM tests WHERE tests.user_id = users.id) as last_test_date')
+            ->orderBy('name')
+            ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $employees
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors du chargement des employés: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get detailed information about an employee including test history
+     */
+    public function getEmployeeDetails(User $user)
+    {
+        try {
+            // Get employee with role
+            $employee = $user->load('role');
+            
+            // Get all tests with detailed information
+            $tests = test::where('user_id', $user->id)
+                        ->with(['formateur', 'quzs'])
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+
+            // Get category names and process names for tests
+            $testsWithCategories = $tests->map(function($test) {
+                $category = null;
+                $process = null;
+                
+                if ($test->quzs->isNotEmpty()) {
+                    $firstQuestion = $test->quzs->first();
+                    $category = categories::find($firstQuestion->categories_id);
+                    if ($category && $category->process_id) {
+                        $process = process::find($category->process_id);
+                    }
+                }
+                
+                $test->category_name = $category ? $category->title : 'Catégorie inconnue';
+                $test->process_name = $process ? $process->title : 'Processus inconnu';
+                return $test;
+            });
+
+            // Calculate statistics
+            $totalTests = $tests->count();
+            $averageScore = $tests->avg('pourcentage') ?? 0;
+            $categoriesTested = $testsWithCategories->pluck('category_name')->unique()->count();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'employee' => $employee,
+                    'tests' => $testsWithCategories,
+                    'statistics' => [
+                        'total_tests' => $totalTests,
+                        'average_score' => round($averageScore, 1),
+                        'categories_tested' => $categoriesTested
+                    ]
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors du chargement des détails de l\'employé: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
