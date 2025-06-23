@@ -2301,7 +2301,7 @@ class AdminDashboard {
                 const config = roleConfig[role];
                 return `
                     <div class="role-group ${config.bgColor} ${config.borderColor} border rounded-xl overflow-hidden shadow-sm" data-role="${role}">
-                        <div class="${config.headerColor} px-6 py-4 border-b ${config.borderColor}">
+                        <div class="${config.headerColor} px-6 py-6 border-b ${config.borderColor}">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <span class="text-2xl">${config.icon}</span>
@@ -2959,7 +2959,11 @@ class AdminDashboard {
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         ${employees.map(employee => `
-                                            <tr class="employee-row hover:bg-gray-50 transition-colors" data-employee-name="${employee.name.toLowerCase()} ${employee.last_name.toLowerCase()}" data-role="${role}">
+                                            <tr class="employee-row hover:bg-gray-50 transition-colors" 
+                                                data-employee-name="${employee.name.toLowerCase()} ${employee.last_name.toLowerCase()}" 
+                                                data-employee-id="${employee.identification || ''}" 
+                                                data-employee-email="${employee.email || ''}" 
+                                                data-role="${role}">
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="flex items-center">
                                                         <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
@@ -3054,7 +3058,11 @@ class AdminDashboard {
                         </div>
                         <div class="bg-white p-4 space-y-4">
                             ${employees.map(employee => `
-                                <div class="employee-card border border-gray-200 rounded-lg p-4" data-employee-name="${employee.name.toLowerCase()} ${employee.last_name.toLowerCase()}" data-role="${role}">
+                                <div class="employee-card border border-gray-200 rounded-lg p-4" 
+                                     data-employee-name="${employee.name.toLowerCase()} ${employee.last_name.toLowerCase()}" 
+                                     data-employee-id="${employee.identification || ''}" 
+                                     data-employee-email="${employee.email || ''}" 
+                                     data-role="${role}">
                                     <div class="flex items-start justify-between">
                                         <div class="flex items-center space-x-3">
                                             <div class="w-10 h-10 bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 rounded-full flex items-center justify-center text-white font-semibold">
@@ -3105,9 +3113,13 @@ class AdminDashboard {
         const desktopRows = document.querySelectorAll('#employees-desktop .employee-row');
         desktopRows.forEach(row => {
             const name = row.getAttribute('data-employee-name') || '';
+            const identification = row.getAttribute('data-employee-id') || '';
+            const email = row.getAttribute('data-employee-email') || '';
             const role = row.getAttribute('data-role') || '';
             
-            const matchesSearch = name.includes(searchQuery);
+            // Search in name, identification, and email
+            const searchText = `${name} ${identification} ${email}`.toLowerCase();
+            const matchesSearch = !searchQuery || searchText.includes(searchQuery);
             const matchesRole = !roleFilter || this.getRoleId(role) === roleFilter;
             
             const shouldShow = matchesSearch && matchesRole;
@@ -3118,9 +3130,13 @@ class AdminDashboard {
         const mobileCards = document.querySelectorAll('#employees-mobile .employee-card');
         mobileCards.forEach(card => {
             const name = card.getAttribute('data-employee-name') || '';
+            const identification = card.getAttribute('data-employee-id') || '';
+            const email = card.getAttribute('data-employee-email') || '';
             const role = card.getAttribute('data-role') || '';
             
-            const matchesSearch = name.includes(searchQuery);
+            // Search in name, identification, and email
+            const searchText = `${name} ${identification} ${email}`.toLowerCase();
+            const matchesSearch = !searchQuery || searchText.includes(searchQuery);
             const matchesRole = !roleFilter || this.getRoleId(role) === roleFilter;
             
             const shouldShow = matchesSearch && matchesRole;
