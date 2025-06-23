@@ -36,7 +36,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-600">Utilisateurs</p>
-                <p class="text-2xl font-bold text-gray-900 mb-1">{{ App\Models\User::count() }}</p>
+                <p class="text-2xl font-bold text-gray-900 mb-1">{{ $dashboardData['counts']['users'] }}</p>
                 <p class="text-xs text-gray-500">Total des comptes</p>
             </div>
         </div>
@@ -51,7 +51,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-600">Processus</p>
-                <p class="text-2xl font-bold text-gray-900 mb-1">{{ App\Models\process::count() }}</p>
+                <p class="text-2xl font-bold text-gray-900 mb-1">{{ $dashboardData['counts']['processes'] }}</p>
                 <p class="text-xs text-gray-500">Total des processus</p>
             </div>
         </div>
@@ -66,7 +66,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-600">Catégories</p>
-                <p class="text-2xl font-bold text-gray-900 mb-1">{{ App\Models\categories::count() }}</p>
+                <p class="text-2xl font-bold text-gray-900 mb-1">{{ $dashboardData['counts']['categories'] }}</p>
                 <p class="text-xs text-gray-500">Total des catégories</p>
             </div>
         </div>
@@ -81,7 +81,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-600">Tests</p>
-                <p class="text-2xl font-bold text-gray-900 mb-1">{{ App\Models\test::count() }}</p>
+                <p class="text-2xl font-bold text-gray-900 mb-1">{{ $dashboardData['counts']['tests'] }}</p>
                 <p class="text-xs text-gray-500">Total des tests</p>
             </div>
         </div>
@@ -96,7 +96,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-600">Formateurs</p>
-                <p class="text-2xl font-bold text-gray-900 mb-1">{{ App\Models\formateur::count() }}</p>
+                <p class="text-2xl font-bold text-gray-900 mb-1">{{ $dashboardData['counts']['formateurs'] }}</p>
                 <p class="text-xs text-gray-500">Total des formateurs</p>
             </div>
         </div>
@@ -134,28 +134,17 @@
                 <div class="mt-4 flex justify-center">
                     <div class="grid grid-cols-2 gap-4 text-sm" id="userRoleLegend">
                         @php
-                            $roles = App\Models\roles::with('users')->get();
-                            $formateursCount = App\Models\formateur::count();
                             $colors = ['from-blue-500 to-blue-600', 'from-green-500 to-green-600', 'from-purple-500 to-purple-600', 'from-orange-500 to-orange-600', 'from-pink-500 to-pink-600'];
                             $colorIndex = 0;
                         @endphp
                         
-                        @foreach($roles as $role)
-                            @if($role->users->count() > 0)
-                                <div class="flex items-center gap-2">
-                                    <span class="w-3 h-3 bg-gradient-to-r {{ $colors[$colorIndex % count($colors)] }} rounded-full"></span>
-                                    <span class="text-gray-600">{{ $role->name }} ({{ $role->users->count() }})</span>
-                                </div>
-                                @php $colorIndex++; @endphp
-                            @endif
-                        @endforeach
-                        
-                        @if($formateursCount > 0)
+                        @foreach($dashboardData['userRoles'] as $role)
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 bg-gradient-to-r {{ $colors[$colorIndex % count($colors)] }} rounded-full"></span>
-                                <span class="text-gray-600">Formateurs ({{ $formateursCount }})</span>
+                                <span class="text-gray-600">{{ $role['name'] }} ({{ $role['count'] }})</span>
                             </div>
-                        @endif
+                            @php $colorIndex++; @endphp
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -166,7 +155,7 @@
                     <h4 class="text-lg font-semibold text-gray-900">Tendance des Résultats</h4>
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 bg-green-500 rounded-full"></span>
-                        <span class="text-sm text-gray-600">30 derniers jours</span>
+                        <span class="text-sm text-gray-600">Cette année</span>
                     </div>
                 </div>
                 <div class="relative h-64">
@@ -174,15 +163,15 @@
                 </div>
                 <div class="mt-4 grid grid-cols-3 gap-4 text-center">
                     <div>
-                        <p class="text-2xl font-bold text-green-600">{{ number_format(App\Models\test::where('pourcentage', '>=', 75)->count() / max(App\Models\test::count(), 1) * 100, 1) }}%</p>
+                        <p class="text-2xl font-bold text-green-600">{{ $dashboardData['testMetrics']['excellent'] }}%</p>
                         <p class="text-xs text-gray-600">Excellent</p>
                     </div>
                     <div>
-                        <p class="text-2xl font-bold text-yellow-600">{{ number_format(App\Models\test::whereBetween('pourcentage', [50, 74])->count() / max(App\Models\test::count(), 1) * 100, 1) }}%</p>
+                        <p class="text-2xl font-bold text-yellow-600">{{ $dashboardData['testMetrics']['good'] }}%</p>
                         <p class="text-xs text-gray-600">Bon</p>
                     </div>
                     <div>
-                        <p class="text-2xl font-bold text-red-600">{{ number_format(App\Models\test::where('pourcentage', '<', 50)->count() / max(App\Models\test::count(), 1) * 100, 1) }}%</p>
+                        <p class="text-2xl font-bold text-red-600">{{ $dashboardData['testMetrics']['needsImprovement'] }}%</p>
                         <p class="text-xs text-gray-600">À améliorer</p>
                     </div>
                 </div>
@@ -202,7 +191,7 @@
                 </div>
                 <div class="mt-4 text-center">
                     <p class="text-sm text-gray-600">
-                        <span class="font-semibold">{{ App\Models\formateur::count() }}</span> formateurs actifs
+                        <span class="font-semibold">{{ $dashboardData['counts']['formateurs'] }}</span> formateurs actifs
                     </p>
                 </div>
             </div>
@@ -245,28 +234,28 @@
                             <div class="flex items-center justify-between">
                                 <span class="text-sm font-medium text-gray-600">Taux de Réussite</span>
                                 <span class="text-2xl font-bold text-green-600">
-                                    {{ number_format(App\Models\test::where('pourcentage', '>=', 60)->count() / max(App\Models\test::count(), 1) * 100, 1) }}%
+                                    {{ $dashboardData['testMetrics']['successRate'] }}%
                                 </span>
                             </div>
                             <div class="mt-2 bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full" style="width: {{ App\Models\test::where('pourcentage', '>=', 60)->count() / max(App\Models\test::count(), 1) * 100 }}%"></div>
+                                <div class="bg-green-500 h-2 rounded-full" style="width: {{ $dashboardData['testMetrics']['successRate'] }}%"></div>
                             </div>
                         </div>
                         <div class="bg-white rounded-lg p-4 border border-orange-200">
                             <div class="flex items-center justify-between">
                                 <span class="text-sm font-medium text-gray-600">Score Moyen</span>
                                 <span class="text-2xl font-bold text-blue-600">
-                                    {{ number_format(App\Models\test::avg('pourcentage') ?? 0, 1) }}%
+                                    {{ $dashboardData['testMetrics']['averageScore'] }}%
                                 </span>
                             </div>
                             <div class="mt-2 bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-500 h-2 rounded-full" style="width: {{ App\Models\test::avg('pourcentage') ?? 0 }}%"></div>
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: {{ $dashboardData['testMetrics']['averageScore'] }}%"></div>
                             </div>
                         </div>
                         <div class="bg-white rounded-lg p-4 border border-orange-200">
                             <div class="flex items-center justify-between">
                                 <span class="text-sm font-medium text-gray-600">Tests Complétés</span>
-                                <span class="text-2xl font-bold text-purple-600">{{ App\Models\test::count() }}</span>
+                                <span class="text-2xl font-bold text-purple-600">{{ $dashboardData['testMetrics']['totalTests'] }}</span>
                             </div>
                             <p class="text-sm text-gray-600 mt-1">Total des évaluations</p>
                         </div>
@@ -286,12 +275,12 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-lg font-bold text-gray-900">{{ App\Models\quz::count() }}</p>
+                        <p class="text-lg font-bold text-gray-900">{{ $dashboardData['counts']['questions'] }}</p>
                         <p class="text-sm text-gray-600">Questions</p>
                     </div>
                 </div>
                 <div class="mt-2 text-xs text-gray-500">
-                    +{{ App\Models\quz::whereDate('created_at', today())->count() }} aujourd'hui
+                    +{{ $dashboardData['additionalStats']['todayQuestions'] }} aujourd'hui
                 </div>
             </div>
 
@@ -304,12 +293,12 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-lg font-bold text-gray-900">{{ App\Models\process::count() }}</p>
+                        <p class="text-lg font-bold text-gray-900">{{ $dashboardData['counts']['processes'] }}</p>
                         <p class="text-sm text-gray-600">Processus</p>
                     </div>
                 </div>
                 <div class="mt-2 text-xs text-gray-500">
-                    {{ App\Models\categories::count() }} catégories liées
+                    {{ $dashboardData['counts']['categories'] }} catégories liées
                 </div>
             </div>
 
@@ -322,12 +311,12 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-lg font-bold text-gray-900">{{ App\Models\test::whereDate('created_at', today())->count() }}</p>
+                        <p class="text-lg font-bold text-gray-900">{{ $dashboardData['additionalStats']['todayTests'] }}</p>
                         <p class="text-sm text-gray-600">Tests Aujourd'hui</p>
                     </div>
                 </div>
                 <div class="mt-2 text-xs text-gray-500">
-                    Moyenne: {{ number_format(App\Models\test::whereDate('created_at', today())->avg('pourcentage') ?? 0, 1) }}%
+                    Moyenne: {{ number_format($dashboardData['additionalStats']['todayTestsAvg'], 1) }}%
                 </div>
             </div>
 
@@ -340,11 +329,8 @@
                         </svg>
                     </div>
                     <div>
-                        @php
-                            $topTest = App\Models\test::with('user')->orderBy('pourcentage', 'desc')->first();
-                        @endphp
-                        @if($topTest)
-                            <p class="text-lg font-bold text-gray-900">{{ $topTest->pourcentage }}%</p>
+                        @if($dashboardData['additionalStats']['topPerformer'])
+                            <p class="text-lg font-bold text-gray-900">{{ $dashboardData['additionalStats']['topPerformer']['score'] }}%</p>
                             <p class="text-sm text-gray-600">Meilleur Score</p>
                         @else
                             <p class="text-lg font-bold text-gray-900">-</p>
@@ -353,8 +339,8 @@
                     </div>
                 </div>
                 <div class="mt-2 text-xs text-gray-500">
-                    @if($topTest && $topTest->user)
-                        {{ $topTest->user->name }} {{ $topTest->user->last_name }}
+                    @if($dashboardData['additionalStats']['topPerformer'])
+                        {{ $dashboardData['additionalStats']['topPerformer']['user'] }}
                     @else
                         Aucun test disponible
                     @endif
@@ -374,25 +360,13 @@
             </div>
         </div>
         <div class="p-6">
-            @php
-                $recentTests = App\Models\test::with(['user', 'formateur'])
-                    ->orderBy('created_at', 'desc')
-                    ->take(5)
-                    ->get();
-                
-                $recentUsers = App\Models\User::with('role')
-                    ->orderBy('created_at', 'desc')
-                    ->take(3)
-                    ->get();
-            @endphp
-            
-            @if($recentTests->count() > 0 || $recentUsers->count() > 0)
+            @if($dashboardData['recentActivity']['tests']->count() > 0 || $dashboardData['recentActivity']['users']->count() > 0)
                 <div class="space-y-4">
-                    @if($recentTests->count() > 0)
+                    @if($dashboardData['recentActivity']['tests']->count() > 0)
                         <div>
                             <h4 class="text-sm font-semibold text-gray-900 mb-3">Tests Récents</h4>
                             <div class="space-y-3">
-                                @foreach($recentTests as $test)
+                                @foreach($dashboardData['recentActivity']['tests'] as $test)
                                     <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                         <div class="flex items-center gap-3">
                                             <div class="w-8 h-8 bg-{{ $test->pourcentage >= 80 ? 'green' : ($test->pourcentage >= 60 ? 'yellow' : 'red') }}-100 rounded-full flex items-center justify-center">
@@ -415,11 +389,11 @@
                         </div>
                     @endif
                     
-                    @if($recentUsers->count() > 0)
+                    @if($dashboardData['recentActivity']['users']->count() > 0)
                         <div>
                             <h4 class="text-sm font-semibold text-gray-900 mb-3">Nouveaux Utilisateurs</h4>
                             <div class="space-y-3">
-                                @foreach($recentUsers as $user)
+                                @foreach($dashboardData['recentActivity']['users'] as $user)
                                     <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
                                         <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                                             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -476,27 +450,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Users Distribution Chart (Doughnut) - Real Data
     const usersCtx = document.getElementById('usersChart').getContext('2d');
     
-    // Get real user role data
+    // Get real user role data from controller
     const userRoleData = {
-        @php
-            $roles = App\Models\roles::with('users')->get();
-            $roleNames = [];
-            $roleCounts = [];
-            $formateursCount = App\Models\formateur::count();
-            
-            foreach($roles as $role) {
-                $roleNames[] = $role->name;
-                $roleCounts[] = $role->users->count();
-            }
-            
-            // Add formateurs as a separate category
-            if($formateursCount > 0) {
-                $roleNames[] = 'Formateurs';
-                $roleCounts[] = $formateursCount;
-            }
-        @endphp
-        labels: {!! json_encode($roleNames) !!},
-        counts: {!! json_encode($roleCounts) !!}
+        labels: {!! json_encode(array_column($dashboardData['userRoles'], 'name')) !!},
+        counts: {!! json_encode(array_column($dashboardData['userRoles'], 'count')) !!}
     };
     
     window.usersChart = new Chart(usersCtx, {
@@ -537,17 +494,10 @@ document.addEventListener('DOMContentLoaded', function() {
     window.resultsChart = new Chart(resultsCtx, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'],
+            labels: {!! json_encode($dashboardData['timeBasedData']['labels']) !!},
             datasets: [{
                 label: 'Score Moyen',
-                data: [
-                    {{ App\Models\test::whereMonth('created_at', 1)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereMonth('created_at', 2)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereMonth('created_at', 3)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereMonth('created_at', 4)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereMonth('created_at', 5)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereMonth('created_at', 6)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0 }}
-                ],
+                data: {!! json_encode($dashboardData['timeBasedData']['testResults']) !!},
                 borderColor: 'rgba(16, 185, 129, 1)',
                 backgroundColor: 'rgba(16, 185, 129, 0.1)',
                 borderWidth: 3,
@@ -592,33 +542,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Top 5 Formateur Performance Chart (Bar Chart) - Real Data
     const formateurCtx = document.getElementById('formateurChart').getContext('2d');
     
-    // Get real formateur performance data
+    // Get real formateur performance data from controller
     const formateurData = {
-        @php
-            $topFormateurs = App\Models\formateur::with(['tests' => function($query) {
-                $query->select('formateur_id', 'pourcentage');
-            }])
-            ->get()
-            ->map(function($formateur) {
-                $avgScore = $formateur->tests->avg('pourcentage') ?? 0;
-                $testCount = $formateur->tests->count();
-                return [
-                    'name' => $formateur->name . ' ' . $formateur->last_name,
-                    'avgScore' => round($avgScore, 1),
-                    'testCount' => $testCount
-                ];
-            })
-            ->sortByDesc('avgScore')
-            ->take(5)
-            ->values();
-            
-            $formateurNames = $topFormateurs->pluck('name')->toArray();
-            $formateurScores = $topFormateurs->pluck('avgScore')->toArray();
-            $formateurTestCounts = $topFormateurs->pluck('testCount')->toArray();
-        @endphp
-        labels: {!! json_encode($formateurNames) !!},
-        scores: {!! json_encode($formateurScores) !!},
-        testCounts: {!! json_encode($formateurTestCounts) !!}
+        labels: {!! json_encode(array_column($dashboardData['topFormateurs'], 'name')) !!},
+        scores: {!! json_encode(array_column($dashboardData['topFormateurs'], 'avgScore')) !!},
+        testCounts: {!! json_encode(array_column($dashboardData['topFormateurs'], 'testCount')) !!}
     };
     
     window.formateurChart = new Chart(formateurCtx, {
@@ -695,17 +623,10 @@ document.addEventListener('DOMContentLoaded', function() {
     window.activityChart = new Chart(activityCtx, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'],
+            labels: {!! json_encode($dashboardData['timeBasedData']['labels']) !!},
             datasets: [{
                 label: 'Inscriptions',
-                data: [
-                    {{ App\Models\User::whereMonth('created_at', 1)->whereYear('created_at', date('Y'))->count() }},
-                    {{ App\Models\User::whereMonth('created_at', 2)->whereYear('created_at', date('Y'))->count() }},
-                    {{ App\Models\User::whereMonth('created_at', 3)->whereYear('created_at', date('Y'))->count() }},
-                    {{ App\Models\User::whereMonth('created_at', 4)->whereYear('created_at', date('Y'))->count() }},
-                    {{ App\Models\User::whereMonth('created_at', 5)->whereYear('created_at', date('Y'))->count() }},
-                    {{ App\Models\User::whereMonth('created_at', 6)->whereYear('created_at', date('Y'))->count() }}
-                ],
+                data: {!! json_encode($dashboardData['timeBasedData']['userActivity']) !!},
                 borderColor: 'rgba(249, 115, 22, 1)',
                 backgroundColor: 'rgba(249, 115, 22, 0.2)',
                 borderWidth: 3,
@@ -741,7 +662,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Time filter functionality
+    // Time filter functionality with AJAX
     const timeFilter = document.getElementById('time-filter');
     if (timeFilter) {
         timeFilter.addEventListener('change', function() {
@@ -751,11 +672,23 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show loading state
             showLoadingState();
             
-            // Apply filter and refresh charts
-            setTimeout(() => {
-                applyTimeFilter(selectedPeriod);
-                hideLoadingState();
-            }, 500);
+            // Fetch new data from controller
+            fetch(`{{ route('admin.dashboard.data') }}?period=${selectedPeriod}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        applyTimeFilterWithData(selectedPeriod, data.data);
+                        hideLoadingState();
+                        showFilterMessage(selectedPeriod);
+                    } else {
+                        console.error('Failed to fetch dashboard data');
+                        hideLoadingState();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching dashboard data:', error);
+                    hideLoadingState();
+                });
         });
     }
 });
@@ -802,128 +735,29 @@ function hideLoadingState() {
     });
 }
 
-function applyTimeFilter(period) {
+function applyTimeFilterWithData(period, data) {
     // Update Test Results Trend Chart
-    updateResultsChart(period);
+    updateResultsChartWithData(data.timeBasedData);
     
     // Update Monthly Activity Chart
-    updateActivityChart(period);
+    updateActivityChartWithData(data.timeBasedData);
     
     // Update stats cards
     updateStatsCards(period);
-    
-    // Show success message
-    showFilterMessage(period);
 }
 
-function updateResultsChart(period) {
+function updateResultsChartWithData(timeBasedData) {
     if (window.resultsChart) {
-        let newData = [];
-        let newLabels = [];
-        
-        switch(period) {
-            case 'today':
-                newLabels = ['00h-06h', '06h-12h', '12h-18h', '18h-24h'];
-                newData = [
-                    {{ App\Models\test::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [0, 5])->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [6, 11])->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [12, 17])->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [18, 23])->avg('pourcentage') ?? 0 }}
-                ];
-                break;
-            case 'week':
-                const today = new Date();
-                const daysOfWeek = [];
-                const weekData = [];
-                for(let i = 6; i >= 0; i--) {
-                    const date = new Date(today);
-                    date.setDate(date.getDate() - i);
-                    daysOfWeek.push(date.toLocaleDateString('fr-FR', { weekday: 'short' }));
-                }
-                newLabels = daysOfWeek;
-                newData = [
-                    @for($i = 6; $i >= 0; $i--)
-                        {{ App\Models\test::whereDate('created_at', today()->subDays($i))->avg('pourcentage') ?? 0 }}{{ $i > 0 ? ',' : '' }}
-                    @endfor
-                ];
-                break;
-            case 'month':
-                newLabels = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'];
-                newData = [
-                    {{ App\Models\test::whereBetween('created_at', [now()->startOfMonth(), now()->startOfMonth()->addDays(6)])->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereBetween('created_at', [now()->startOfMonth()->addDays(7), now()->startOfMonth()->addDays(13)])->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereBetween('created_at', [now()->startOfMonth()->addDays(14), now()->startOfMonth()->addDays(20)])->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereBetween('created_at', [now()->startOfMonth()->addDays(21), now()->endOfMonth()])->avg('pourcentage') ?? 0 }}
-                ];
-                break;
-            case 'year':
-            default:
-                newLabels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'];
-                newData = [
-                    {{ App\Models\test::whereMonth('created_at', 1)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereMonth('created_at', 2)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereMonth('created_at', 3)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereMonth('created_at', 4)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereMonth('created_at', 5)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0 }},
-                    {{ App\Models\test::whereMonth('created_at', 6)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0 }}
-                ];
-                break;
-        }
-        
-        window.resultsChart.data.labels = newLabels;
-        window.resultsChart.data.datasets[0].data = newData;
+        window.resultsChart.data.labels = timeBasedData.labels;
+        window.resultsChart.data.datasets[0].data = timeBasedData.testResults;
         window.resultsChart.update('active');
     }
 }
 
-function updateActivityChart(period) {
+function updateActivityChartWithData(timeBasedData) {
     if (window.activityChart) {
-        let newData = [];
-        let newLabels = [];
-        
-        switch(period) {
-            case 'today':
-                newLabels = ['00h-06h', '06h-12h', '12h-18h', '18h-24h'];
-                newData = [
-                    {{ App\Models\User::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [0, 5])->count() }},
-                    {{ App\Models\User::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [6, 11])->count() }},
-                    {{ App\Models\User::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [12, 17])->count() }},
-                    {{ App\Models\User::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [18, 23])->count() }}
-                ];
-                break;
-            case 'week':
-                newLabels = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-                newData = [
-                    @for($i = 6; $i >= 0; $i--)
-                        {{ App\Models\User::whereDate('created_at', today()->subDays($i))->count() }}{{ $i > 0 ? ',' : '' }}
-                    @endfor
-                ];
-                break;
-            case 'month':
-                newLabels = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'];
-                newData = [
-                    {{ App\Models\User::whereBetween('created_at', [now()->startOfMonth(), now()->startOfMonth()->addDays(6)])->count() }},
-                    {{ App\Models\User::whereBetween('created_at', [now()->startOfMonth()->addDays(7), now()->startOfMonth()->addDays(13)])->count() }},
-                    {{ App\Models\User::whereBetween('created_at', [now()->startOfMonth()->addDays(14), now()->startOfMonth()->addDays(20)])->count() }},
-                    {{ App\Models\User::whereBetween('created_at', [now()->startOfMonth()->addDays(21), now()->endOfMonth()])->count() }}
-                ];
-                break;
-            case 'year':
-            default:
-                newLabels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'];
-                newData = [
-                    {{ App\Models\User::whereMonth('created_at', 1)->whereYear('created_at', date('Y'))->count() }},
-                    {{ App\Models\User::whereMonth('created_at', 2)->whereYear('created_at', date('Y'))->count() }},
-                    {{ App\Models\User::whereMonth('created_at', 3)->whereYear('created_at', date('Y'))->count() }},
-                    {{ App\Models\User::whereMonth('created_at', 4)->whereYear('created_at', date('Y'))->count() }},
-                    {{ App\Models\User::whereMonth('created_at', 5)->whereYear('created_at', date('Y'))->count() }},
-                    {{ App\Models\User::whereMonth('created_at', 6)->whereYear('created_at', date('Y'))->count() }}
-                ];
-                break;
-        }
-        
-        window.activityChart.data.labels = newLabels;
-        window.activityChart.data.datasets[0].data = newData;
+        window.activityChart.data.labels = timeBasedData.labels;
+        window.activityChart.data.datasets[0].data = timeBasedData.userActivity;
         window.activityChart.update('active');
     }
 }

@@ -43,6 +43,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::get('/enhanced-dashboard', [AdminController::class, 'dashboard'])->name('enhanced-dashboard');
+        Route::get('/dashboard-data', [AdminController::class, 'getDashboardDataAjax'])->name('dashboard.data');
         Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
         Route::post('/profile', [AdminController::class, 'updateProfile'])->name('profile.update');
         Route::post('/logout', [AdminController::class, 'logout'])->name('logout');

@@ -5,7 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\test;
+use App\Models\formateur;
+use App\Models\categories;
+use App\Models\process;
+use App\Models\quz;
+use App\Models\roles;
 
 class AdminController extends Controller
 {
@@ -56,7 +63,268 @@ class AdminController extends Controller
             return redirect()->route('admin.login');
         }
 
-        return view('admin.enhanced-dashboard', compact('user'));
+        $dashboardData = $this->getDashboardData();
+
+        return view('admin.enhanced-dashboard', compact('user', 'dashboardData'));
+    }
+
+    /**
+     * Get dashboard statistics data
+     */
+    public function getDashboardData($period = 'year')
+    {
+        $data = [];
+
+        // Basic counts
+        $data['counts'] = [
+            'users' => User::count(),
+            'processes' => process::count(),
+            'categories' => categories::count(),
+            'tests' => test::count(),
+            'formateurs' => formateur::count(),
+            'questions' => quz::count(),
+        ];
+
+        // User role distribution
+        $data['userRoles'] = $this->getUserRoleDistribution();
+
+        // Test performance metrics
+        $data['testMetrics'] = $this->getTestMetrics();
+
+        // Top 5 formateur performance
+        $data['topFormateurs'] = $this->getTopFormateurs();
+
+        // Time-based data based on period
+        $data['timeBasedData'] = $this->getTimeBasedData($period);
+
+        // Recent activity
+        $data['recentActivity'] = $this->getRecentActivity();
+
+        // Additional statistics
+        $data['additionalStats'] = $this->getAdditionalStats();
+
+        return $data;
+    }
+
+    /**
+     * Get user role distribution
+     */
+    private function getUserRoleDistribution()
+    {
+        $roles = roles::with('users')->get();
+        $roleData = [];
+        $formateursCount = formateur::count();
+
+        foreach ($roles as $role) {
+            if ($role->users->count() > 0) {
+                $roleData[] = [
+                    'name' => $role->name,
+                    'count' => $role->users->count()
+                ];
+            }
+        }
+
+        // Add formateurs as separate category
+        if ($formateursCount > 0) {
+            $roleData[] = [
+                'name' => 'Formateurs',
+                'count' => $formateursCount
+            ];
+        }
+
+        return $roleData;
+    }
+
+    /**
+     * Get test performance metrics
+     */
+    private function getTestMetrics()
+    {
+        $totalTests = test::count();
+        
+        if ($totalTests === 0) {
+            return [
+                'successRate' => 0,
+                'averageScore' => 0,
+                'excellent' => 0,
+                'good' => 0,
+                'needsImprovement' => 0,
+                'totalTests' => 0
+            ];
+        }
+
+        $excellentCount = test::where('pourcentage', '>=', 80)->count();
+        $goodCount = test::whereBetween('pourcentage', [60, 79])->count();
+        $needsImprovementCount = test::where('pourcentage', '<', 60)->count();
+        $successfulTests = test::where('pourcentage', '>=', 60)->count();
+
+        return [
+            'successRate' => round(($successfulTests / $totalTests) * 100, 1),
+            'averageScore' => round(test::avg('pourcentage') ?? 0, 1),
+            'excellent' => round(($excellentCount / $totalTests) * 100, 1),
+            'good' => round(($goodCount / $totalTests) * 100, 1),
+            'needsImprovement' => round(($needsImprovementCount / $totalTests) * 100, 1),
+            'totalTests' => $totalTests
+        ];
+    }
+
+    /**
+     * Get top 5 formateur performance
+     */
+    private function getTopFormateurs()
+    {
+        return formateur::with(['tests' => function($query) {
+            $query->select('formateur_id', 'pourcentage');
+        }])
+        ->get()
+        ->map(function($formateur) {
+            $avgScore = $formateur->tests->avg('pourcentage') ?? 0;
+            $testCount = $formateur->tests->count();
+            return [
+                'name' => $formateur->name . ' ' . $formateur->last_name,
+                'avgScore' => round($avgScore, 1),
+                'testCount' => $testCount
+            ];
+        })
+        ->sortByDesc('avgScore')
+        ->take(5)
+        ->values()
+        ->toArray();
+    }
+
+    /**
+     * Get time-based data for charts
+     */
+    private function getTimeBasedData($period = 'year')
+    {
+        switch ($period) {
+            case 'today':
+                return [
+                    'labels' => ['00h-06h', '06h-12h', '12h-18h', '18h-24h'],
+                    'testResults' => [
+                        test::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [0, 5])->avg('pourcentage') ?? 0,
+                        test::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [6, 11])->avg('pourcentage') ?? 0,
+                        test::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [12, 17])->avg('pourcentage') ?? 0,
+                        test::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [18, 23])->avg('pourcentage') ?? 0
+                    ],
+                    'userActivity' => [
+                        User::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [0, 5])->count(),
+                        User::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [6, 11])->count(),
+                        User::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [12, 17])->count(),
+                        User::whereDate('created_at', today())->whereBetween(DB::raw('HOUR(created_at)'), [18, 23])->count()
+                    ]
+                ];
+
+            case 'week':
+                $labels = [];
+                $testResults = [];
+                $userActivity = [];
+                
+                for ($i = 6; $i >= 0; $i--) {
+                    $date = today()->subDays($i);
+                    $labels[] = $date->format('D');
+                    $testResults[] = test::whereDate('created_at', $date)->avg('pourcentage') ?? 0;
+                    $userActivity[] = User::whereDate('created_at', $date)->count();
+                }
+                
+                return [
+                    'labels' => $labels,
+                    'testResults' => $testResults,
+                    'userActivity' => $userActivity
+                ];
+
+            case 'month':
+                return [
+                    'labels' => ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+                    'testResults' => [
+                        test::whereBetween('created_at', [now()->startOfMonth(), now()->startOfMonth()->addDays(6)])->avg('pourcentage') ?? 0,
+                        test::whereBetween('created_at', [now()->startOfMonth()->addDays(7), now()->startOfMonth()->addDays(13)])->avg('pourcentage') ?? 0,
+                        test::whereBetween('created_at', [now()->startOfMonth()->addDays(14), now()->startOfMonth()->addDays(20)])->avg('pourcentage') ?? 0,
+                        test::whereBetween('created_at', [now()->startOfMonth()->addDays(21), now()->endOfMonth()])->avg('pourcentage') ?? 0
+                    ],
+                    'userActivity' => [
+                        User::whereBetween('created_at', [now()->startOfMonth(), now()->startOfMonth()->addDays(6)])->count(),
+                        User::whereBetween('created_at', [now()->startOfMonth()->addDays(7), now()->startOfMonth()->addDays(13)])->count(),
+                        User::whereBetween('created_at', [now()->startOfMonth()->addDays(14), now()->startOfMonth()->addDays(20)])->count(),
+                        User::whereBetween('created_at', [now()->startOfMonth()->addDays(21), now()->endOfMonth()])->count()
+                    ]
+                ];
+
+            case 'year':
+            default:
+                return [
+                    'labels' => ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'],
+                    'testResults' => [
+                        test::whereMonth('created_at', 1)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0,
+                        test::whereMonth('created_at', 2)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0,
+                        test::whereMonth('created_at', 3)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0,
+                        test::whereMonth('created_at', 4)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0,
+                        test::whereMonth('created_at', 5)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0,
+                        test::whereMonth('created_at', 6)->whereYear('created_at', date('Y'))->avg('pourcentage') ?? 0
+                    ],
+                    'userActivity' => [
+                        User::whereMonth('created_at', 1)->whereYear('created_at', date('Y'))->count(),
+                        User::whereMonth('created_at', 2)->whereYear('created_at', date('Y'))->count(),
+                        User::whereMonth('created_at', 3)->whereYear('created_at', date('Y'))->count(),
+                        User::whereMonth('created_at', 4)->whereYear('created_at', date('Y'))->count(),
+                        User::whereMonth('created_at', 5)->whereYear('created_at', date('Y'))->count(),
+                        User::whereMonth('created_at', 6)->whereYear('created_at', date('Y'))->count()
+                    ]
+                ];
+        }
+    }
+
+    /**
+     * Get recent activity
+     */
+    private function getRecentActivity()
+    {
+        $recentTests = test::with(['user', 'formateur'])
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        $recentUsers = User::with('role')
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
+
+        return [
+            'tests' => $recentTests,
+            'users' => $recentUsers
+        ];
+    }
+
+    /**
+     * Get additional statistics
+     */
+    private function getAdditionalStats()
+    {
+        $topTest = test::with('user')->orderBy('pourcentage', 'desc')->first();
+        
+        return [
+            'todayTests' => test::whereDate('created_at', today())->count(),
+            'todayTestsAvg' => test::whereDate('created_at', today())->avg('pourcentage') ?? 0,
+            'todayQuestions' => quz::whereDate('created_at', today())->count(),
+            'topPerformer' => $topTest ? [
+                'score' => $topTest->pourcentage,
+                'user' => $topTest->user ? $topTest->user->name . ' ' . $topTest->user->last_name : 'Utilisateur inconnu'
+            ] : null
+        ];
+    }
+
+    /**
+     * AJAX endpoint for filtered dashboard data
+     */
+    public function getDashboardDataAjax(Request $request)
+    {
+        $period = $request->get('period', 'year');
+        $data = $this->getDashboardData($period);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
     }/**
      * Handle admin logout
      */
