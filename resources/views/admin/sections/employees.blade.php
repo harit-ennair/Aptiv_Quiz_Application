@@ -1,9 +1,9 @@
 <!-- Employees Management Section -->
 <div class="space-y-6">
     <!-- Header -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
+                <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Employés</h2>
                 <p class="text-gray-600 text-sm lg:text-base mt-1">Consulter tous les employés et leur historique de tests</p>
             </div>            <div class="flex flex-col sm:flex-row gap-3">
                 <div class="relative">
@@ -13,6 +13,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
+                <select id="employee-role-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
+                    <option value="">Tous les rôles</option>
+                    <option value="1">Super Admin</option>
+                    <option value="2">Admin</option>
+                    <option value="3">Employee</option>
+                </select>
                 <button onclick="adminDashboard.refreshEmployees()" 
                         class="px-4 py-2 bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,3 +91,27 @@
         </div>
     </div>
 </div>
+
+<script>
+// Add employees filtering functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const employeeSearch = document.getElementById('employee-search');
+    const roleFilter = document.getElementById('employee-role-filter');
+    
+    if (employeeSearch) {
+        employeeSearch.addEventListener('input', function() {
+            if (window.adminDashboard) {
+                window.adminDashboard.filterEmployees();
+            }
+        });
+    }
+    
+    if (roleFilter) {
+        roleFilter.addEventListener('change', function() {
+            if (window.adminDashboard) {
+                window.adminDashboard.filterEmployees();
+            }
+        });
+    }
+});
+</script>
