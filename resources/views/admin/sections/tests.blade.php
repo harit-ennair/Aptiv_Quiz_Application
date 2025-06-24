@@ -1177,6 +1177,23 @@ function viewTestDetails(testId) {
                 </div>
             </div>
 
+            <!-- Description Section -->
+            ${test.description ? `
+            <div class="bg-white p-3 rounded-lg border border-gray-200">
+                <div class="flex items-center mb-2">
+                    <div class="w-5 h-5 bg-yellow-100 rounded flex items-center justify-center mr-2">
+                        <svg class="w-3 h-3 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-sm font-semibold text-gray-900">Description</h4>
+                </div>
+                <div class="text-xs text-gray-700 bg-gray-50 p-2 rounded border">
+                    ${test.description}
+                </div>
+            </div>
+            ` : ''}
+
             <!-- Compact Performance Metrics -->
             <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-lg border">
                 <h4 class="text-sm font-semibold text-gray-900 mb-2 flex items-center">
@@ -1399,6 +1416,10 @@ function editTest(testId) {
                             <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
                             <input type="text" value="${formatDate(test.created_at)}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" readonly>
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="edit-description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Description du test...">${test.description || ''}</textarea>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1424,6 +1445,7 @@ function editTest(testId) {
 
 function saveTestChanges(testId) {
     const newScore = document.getElementById('edit-score').value;
+    const newDescription = document.getElementById('edit-description').value;
     
     if (!newScore || newScore < 0 || newScore > 100) {
         showNotification('Veuillez entrer un score valide (0-100)', 'error');
@@ -1438,7 +1460,8 @@ function saveTestChanges(testId) {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
         body: JSON.stringify({
-            pourcentage: parseFloat(newScore)
+            pourcentage: parseFloat(newScore),
+            description: newDescription
         })
     })
     .then(response => response.json())
@@ -1448,11 +1471,13 @@ function saveTestChanges(testId) {
             const testIndex = allTests.findIndex(t => t.id === testId);
             if (testIndex !== -1) {
                 allTests[testIndex].pourcentage = parseFloat(newScore);
+                allTests[testIndex].description = newDescription;
             }
             
             const filteredIndex = filteredTests.findIndex(t => t.id === testId);
             if (filteredIndex !== -1) {
                 filteredTests[filteredIndex].pourcentage = parseFloat(newScore);
+                filteredTests[filteredIndex].description = newDescription;
             }
             
             // Update stats and re-render table
@@ -1470,11 +1495,13 @@ function saveTestChanges(testId) {
         const testIndex = allTests.findIndex(t => t.id === testId);
         if (testIndex !== -1) {
             allTests[testIndex].pourcentage = parseFloat(newScore);
+            allTests[testIndex].description = newDescription;
         }
         
         const filteredIndex = filteredTests.findIndex(t => t.id === testId);
         if (filteredIndex !== -1) {
             filteredTests[filteredIndex].pourcentage = parseFloat(newScore);
+            filteredTests[filteredIndex].description = newDescription;
         }
         
         updateStatsFromData();
