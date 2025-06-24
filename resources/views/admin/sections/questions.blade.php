@@ -191,13 +191,157 @@
     }
 }
 
-@keyframes pulse {
-    0%, 100% {
-        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+/* Enhanced UX animations and improvements */
+.filter-section-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    transition: all 0.3s ease;
+}
+
+.filter-section-header:hover {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+.enhanced-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+.enhanced-select:focus {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%233b82f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}
+
+.search-input-container {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.search-input-container:focus-within {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.quick-filter-badge {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.quick-filter-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stats-card-enhanced {
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-card-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.stats-card-enhanced:hover::before {
+    left: 100%;
+}
+
+.view-toggle-btn {
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.view-toggle-btn.active {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #374151;
+}
+
+.view-toggle-btn:not(.active):hover {
+    background: rgba(255, 255, 255, 0.5);
+    color: #374151;
+}
+
+.empty-state-illustration {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.step-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.step-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.step-number {
+    animation: pulse-scale 2s infinite;
+}
+
+@keyframes pulse-scale {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.loading-dots {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.loading-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ea580c;
+    animation: loading-bounce 1.4s infinite both;
+}
+
+.loading-dot:nth-child(1) { animation-delay: -0.32s; }
+.loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes loading-bounce {
+    0%, 80%, 100% {
+        transform: scale(0);
     }
-    50% {
-        box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+    40% {
+        transform: scale(1);
     }
+}
+
+.glassmorphism {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.card-hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-lift:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .pulse-animation {
@@ -457,149 +601,422 @@
 </style>
 
 <!-- Questions Management Section -->
-<div class="space-y-6">
-    <!-- Header -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-                <!-- <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Questions</h2> -->
-                <p class="text-gray-600 text-sm lg:text-base mt-1">Gérer et organiser les questions par processus et catégorie</p>
+<div class="space-y-6">    <!-- Header -->
+    <div class="bg-gradient-to-r from-white to-gray-50 rounded-xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
+        <!-- Decorative background pattern -->
+        <div class="absolute top-0 right-0 w-32 h-32 opacity-5">
+            <svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+        </div>
+        
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 relative z-10">
+            <div class="flex items-center space-x-4">
+                <div class="bg-aptiv-orange-100 p-3 rounded-lg">
+                    <svg class="w-8 h-8 text-aptiv-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl lg:text-2xl font-bold text-gray-900 mb-1">Gestion des Questions</h2>
+                    <p class="text-gray-600 text-sm lg:text-base">Créez et organisez vos questions par processus et catégorie</p>
+                </div>
             </div>
-            <button onclick="openQuestionModal()" class="bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white px-4 py-2 rounded-lg transition-colors btn-touch inline-flex items-center text-sm font-medium">
+            
+            <div class="flex items-center space-x-3">
+                <!-- Quick stats mini cards -->
+                <div class="hidden lg:flex items-center space-x-2 text-sm text-gray-500 bg-white px-3 py-2 rounded-lg border">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <span id="header-quick-count">0 questions</span>
+                </div>
+                
+                <button onclick="openQuestionModal()" class="bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 hover:from-aptiv-orange-600 hover:to-aptiv-orange-700 text-white px-6 py-3 rounded-lg transition-all duration-200 btn-touch inline-flex items-center text-sm font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Nouvelle Question
+                </button>
+            </div>
+        </div>
+    </div>    <!-- Filters Section -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <!-- Filter Header -->
+        <div class="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-100 p-2 rounded-lg">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">Filtres & Recherche</h3>
+                        <p class="text-sm text-gray-500">Affinez votre recherche de questions</p>
+                    </div>
+                </div>
+                
+                <!-- Quick filter badges -->
+                <div class="hidden lg:flex items-center space-x-2">
+                    <span class="text-xs text-gray-500">Raccourcis:</span>
+                    <button onclick="showAllQuestions()" class="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full text-xs font-medium transition-colors">
+                        Toutes
+                    </button>
+                    <button onclick="showRecentQuestions()" class="px-3 py-1 bg-green-100 hover:bg-green-200 text-green-700 rounded-full text-xs font-medium transition-colors">
+                        Récentes
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter Controls -->
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Process Filter -->
+                <div class="space-y-2">
+                    <label for="question-process-filter" class="flex items-center text-sm font-medium text-gray-700">
+                        <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14-7l2 2-2 2m-14 4h14m-14 4h14"></path>
+                        </svg>
+                        Processus
+                    </label>
+                    <div class="relative">
+                        <select id="question-process-filter" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:shadow-md appearance-none pr-10 text-gray-700">
+                            <option value="">Tous les processus</option>
+                        </select>
+                        <svg class="absolute right-3 top-3.5 h-4 w-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="space-y-2">
+                    <label for="question-category-filter" class="flex items-center text-sm font-medium text-gray-700">
+                        <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                        </svg>
+                        Catégorie
+                    </label>
+                    <div class="relative">
+                        <select id="question-category-filter" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white shadow-sm transition-all hover:shadow-md appearance-none pr-10 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-700" disabled>
+                            <option value="">Sélectionner d'abord un processus</option>
+                        </select>
+                        <svg class="absolute right-3 top-3.5 h-4 w-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Search -->
+                <div class="space-y-2">
+                    <label for="question-search" class="flex items-center text-sm font-medium text-gray-700">
+                        <svg class="w-4 h-4 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        Recherche Textuelle
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="question-search" placeholder="Tapez pour rechercher dans les questions..." 
+                               class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white shadow-sm transition-all hover:shadow-md text-gray-700">
+                        <svg class="absolute left-3 top-3.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <button id="clear-search-btn" class="absolute right-3 top-3.5 h-4 w-4 text-gray-400 hover:text-gray-600 hidden">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>        <!-- Enhanced Statistics Dashboard -->
+        <div id="questions-stats" class="bg-gradient-to-r from-gray-50 to-white p-6 border-t border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Statistiques en temps réel</h4>
+                <div class="flex items-center text-xs text-gray-500">
+                    <div class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+                    Mis à jour automatiquement
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Total Questions Card -->
+                <div class="stats-card orange rounded-xl px-5 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center mb-2">
+                                <svg class="w-5 h-5 mr-2 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span class="text-sm opacity-90 font-medium">Total</span>
+                            </div>
+                            <div class="flex items-baseline">
+                                <span id="total-questions-count" class="text-2xl font-bold">0</span>
+                                <span class="text-sm ml-1 opacity-75">questions</span>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-20 p-2 rounded-lg group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Filtered Questions Card -->
+                <div class="stats-card blue rounded-xl px-5 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center mb-2">
+                                <svg class="w-5 h-5 mr-2 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                                </svg>
+                                <span class="text-sm opacity-90 font-medium">Filtrées</span>
+                            </div>
+                            <div class="flex items-baseline">
+                                <span id="filtered-questions-count" class="text-2xl font-bold">0</span>
+                                <span class="text-sm ml-1 opacity-75">résultats</span>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-20 p-2 rounded-lg group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Category Info Card -->
+                <div class="stats-card green rounded-xl px-5 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center mb-2">
+                                <svg class="w-5 h-5 mr-2 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                </svg>
+                                <span class="text-sm opacity-90 font-medium">Catégorie</span>
+                            </div>
+                            <div class="flex items-baseline">
+                                <span id="selected-category-name" class="text-lg font-bold truncate max-w-20">Aucune</span>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-20 p-2 rounded-lg group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2l-5.37.84zM12 9c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Performance Indicator -->
+                <div class="stats-card bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl px-5 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center mb-2">
+                                <svg class="w-5 h-5 mr-2 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                <span class="text-sm opacity-90 font-medium">Performance</span>
+                            </div>
+                            <div class="flex items-baseline">
+                                <span id="search-performance" class="text-2xl font-bold">Excellent</span>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-20 p-2 rounded-lg group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        <!-- Enhanced Action Buttons -->
+        <div class="bg-white p-6 border-t border-gray-100">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <!-- Left side - Filter actions -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <button 
+                        id="clear-filters-btn"
+                        onclick="clearFilters()" 
+                        class="bg-gray-400 cursor-not-allowed opacity-50 text-white px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium inline-flex items-center hover:shadow-md disabled:hover:shadow-none"
+                        title="Aucun filtre actif"
+                        disabled>
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Effacer les filtres
+                    </button>
+                    
+                    <button onclick="refreshQuestions()" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium inline-flex items-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Actualiser
+                    </button>
+                </div>
+                
+                <!-- Right side - View options -->
+                <div class="flex items-center gap-3">
+                    <span class="text-sm text-gray-500 font-medium">Affichage:</span>
+                    
+                    <!-- View toggle buttons -->
+                    <div class="bg-gray-100 p-1 rounded-lg flex">
+                        <button id="grid-view-btn" onclick="switchToGridView()" class="px-3 py-1.5 rounded-md text-sm font-medium transition-all bg-white shadow-sm text-gray-900 border border-gray-200">
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                            </svg>
+                            Cartes
+                        </button>
+                        <button id="list-view-btn" onclick="switchToListView()" class="px-3 py-1.5 rounded-md text-sm font-medium transition-all text-gray-500 hover:text-gray-700">
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                            </svg>
+                            Liste
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick action hints -->
+            <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div class="flex items-start">
+                    <svg class="w-4 h-4 text-blue-600 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div class="text-xs text-blue-700">
+                        <p class="font-medium mb-1">💡 Conseils rapides:</p>
+                        <ul class="space-y-1 text-blue-600">
+                            <li>• Sélectionnez un processus puis une catégorie pour voir les questions</li>
+                            <li>• Utilisez la recherche pour trouver des questions spécifiques</li>
+                            <li>• Cliquez sur une carte pour modifier la question</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    <!-- Enhanced Loading State -->
+    <div id="questions-loading" class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+        <div class="max-w-md mx-auto">
+            <!-- Animated loading icon -->
+            <div class="relative mb-6">
+                <div class="spinner mx-auto mb-4"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <svg class="w-8 h-8 text-aptiv-orange-400 animate-bounce" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Chargement en cours...</h3>
+            <p class="text-gray-600 mb-4">Nous récupérons vos questions, cela ne prendra qu'un instant.</p>
+            <div class="flex justify-center space-x-1">
+                <div class="w-2 h-2 bg-aptiv-orange-400 rounded-full animate-bounce"></div>
+                <div class="w-2 h-2 bg-aptiv-orange-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                <div class="w-2 h-2 bg-aptiv-orange-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Empty State -->
+    <div id="questions-empty" class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center hidden">
+        <div class="max-w-md mx-auto">
+            <!-- Larger, more expressive illustration -->
+            <div class="mb-6">
+                <div class="w-24 h-24 mx-auto bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="text-4xl mb-2">🎯</div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">Aucune question pour le moment</h3>
+            <p class="text-gray-600 mb-6">Commencez à créer votre première question pour enrichir votre base de connaissances.</p>
+            <button onclick="openQuestionModal()" class="bg-gradient-to-r from-aptiv-orange-500 to-aptiv-orange-600 hover:from-aptiv-orange-600 hover:to-aptiv-orange-700 text-white px-6 py-3 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-1 inline-flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
-                Ajouter une question
+                Créer ma première question
             </button>
         </div>
-    </div>    <!-- Filters Section -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Process Filter -->
-            <div>
-                <label for="question-process-filter" class="block text-sm font-medium text-gray-700 mb-2">Processus</label>
-                <select id="question-process-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent">
-                    <option value="">Tous les processus</option>
-                </select>
-            </div>
-
-            <!-- Category Filter -->
-            <div>
-                <label for="question-category-filter" class="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
-                <select id="question-category-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent" disabled>
-                    <option value="">Sélectionner d'abord un processus</option>
-                </select>
-            </div>
-
-            <!-- Search -->
-            <div>
-                <label for="question-search" class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
-                <div class="relative">
-                    <input type="text" id="question-search" placeholder="Rechercher une question..." 
-                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent">
-                    <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Statistics Bar -->
-        <div id="questions-stats" class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="stats-card orange rounded-lg px-4 py-3 shadow-lg">
-                <div class="flex items-center">
-                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <div>
-                        <span class="text-sm opacity-90">Total Questions:</span>
-                        <span id="total-questions-count" class="font-bold text-lg ml-1">0</span>
-                    </div>
-                </div>
-            </div>
-            <div class="stats-card blue rounded-lg px-4 py-3 shadow-lg">
-                <div class="flex items-center">
-                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-                    </svg>
-                    <div>
-                        <span class="text-sm opacity-90">Filtrées:</span>
-                        <span id="filtered-questions-count" class="font-bold text-lg ml-1">0</span>
-                    </div>
-                </div>
-            </div>
-            <div class="stats-card green rounded-lg px-4 py-3 shadow-lg">
-                <div class="flex items-center">
-                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                    </svg>
-                    <div>
-                        <span class="text-sm opacity-90">Catégorie:</span>
-                        <span id="selected-category-name" class="font-bold text-lg ml-1">Aucune</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="mt-6 flex flex-wrap gap-3">
-            <button 
-                id="clear-filters-btn"
-                onclick="clearFilters()" 
-                class="bg-gray-400 cursor-not-allowed opacity-50 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium"
-                title="Aucun filtre actif"
-                disabled>
-                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-                Effacer les filtres
-            </button>
-            <button onclick="refreshQuestions()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium">
-                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                </svg>
-                Actualiser
-            </button>
-        </div>
-    </div>    <!-- Loading State -->
-    <div id="questions-loading" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
-        <div class="spinner mx-auto mb-4"></div>
-        <p class="text-gray-600">Chargement des questions...</p>
     </div>
 
-    <!-- Empty State -->
-    <div id="questions-empty" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center hidden">
-        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune question trouvée</h3>
-        <p class="text-gray-500">Commencez par créer une nouvelle question.</p>
+    <!-- Enhanced Filtered Empty State -->
+    <div id="questions-filtered-empty" class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center hidden">
+        <div class="max-w-md mx-auto">
+            <!-- Search illustration -->
+            <div class="mb-6">
+                <div class="w-24 h-24 mx-auto bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <div class="text-4xl mb-2">🔍</div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">Aucun résultat trouvé</h3>
+            <p class="text-gray-600 mb-6">Nous n'avons trouvé aucune question correspondant à vos critères de recherche. Essayez de modifier vos filtres.</p>
+            <div class="space-y-3">
+                <button onclick="clearFilters()" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-1 inline-flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    Effacer tous les filtres
+                </button>
+                <p class="text-sm text-gray-500">
+                    ou <button onclick="openQuestionModal()" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 font-medium underline">créer une nouvelle question</button>
+                </p>
+            </div>
+        </div>
     </div>
 
-    <!-- Filtered Empty State -->
-    <div id="questions-filtered-empty" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center hidden">
-        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun résultat trouvé</h3>
-        <p class="text-gray-500 mb-4">Essayez de modifier vos critères de recherche.</p>
-        <button onclick="clearFilters()" class="bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium">
-            Effacer les filtres
-        </button>    </div>
-
-    <!-- Initial State - No Search Yet -->
-    <div id="questions-initial-state" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
-        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-        </svg>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Sélectionner une catégorie</h3>
-        <p class="text-gray-500 mb-4">Choisissez une catégorie dans le filtre ci-dessus pour afficher les questions.</p>
-        <div class="flex flex-wrap justify-center gap-2 text-xs text-gray-400">
-            <span class="bg-blue-100 px-2 py-1 rounded text-blue-600">📋 Sélectionner un processus</span>
-            <span class="bg-green-100 px-2 py-1 rounded text-green-600">📁 Choisir une catégorie</span>
-            <span class="bg-purple-100 px-2 py-1 rounded text-purple-600">❓ Voir les questions</span>
+    <!-- Enhanced Initial State -->
+    <div id="questions-initial-state" class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+        <div class="max-w-lg mx-auto">
+            <!-- Step-by-step illustration -->
+            <div class="mb-8">
+                <div class="w-24 h-24 mx-auto bg-gradient-to-br from-indigo-100 to-purple-200 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-12 h-12 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                </div>
+                <div class="text-4xl mb-2">📚</div>
+            </div>
+            
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Commencez par sélectionner une catégorie</h3>
+            <p class="text-gray-600 mb-8">Suivez ces étapes simples pour explorer vos questions organisées par catégories.</p>
+            
+            <!-- Steps -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div class="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold">1</div>
+                    <h4 class="font-semibold text-blue-900 mb-2">Sélectionner un processus</h4>
+                    <p class="text-sm text-blue-700">Choisissez le processus qui vous intéresse dans le premier filtre.</p>
+                </div>
+                
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <div class="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold">2</div>
+                    <h4 class="font-semibold text-green-900 mb-2">Choisir une catégorie</h4>
+                    <p class="text-sm text-green-700">Sélectionnez ensuite une catégorie spécifique pour affiner votre recherche.</p>
+                </div>
+                
+                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                    <div class="w-10 h-10 bg-purple-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold">3</div>
+                    <h4 class="font-semibold text-purple-900 mb-2">Explorer les questions</h4>
+                    <p class="text-sm text-purple-700">Découvrez toutes les questions liées à cette catégorie.</p>
+                </div>
+            </div>
+            
+            <!-- Call to action -->
+            <div class="bg-gradient-to-r from-gray-50 to-white p-4 rounded-lg border border-gray-200">
+                <p class="text-sm text-gray-600 mb-3">
+                    <span class="font-medium">Conseil:</span> Vous pouvez aussi utiliser la recherche textuelle pour trouver des questions spécifiques.
+                </p>
+                <button onclick="document.getElementById('question-process-filter').focus()" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 font-medium text-sm underline">
+                    Commencer maintenant →
+                </button>
+            </div>
         </div>
-    </div>    <!-- Desktop Questions View -->
+    </div><!-- Desktop Questions View -->
     <div id="questions-desktop" class="desktop-table space-y-6 hidden">
         <!-- Questions will be grouped by category here -->
     </div>
@@ -759,6 +1176,228 @@
 </div>
 
 <script>
+console.log('Questions management script loaded');
+
+// Enhanced UX Functions
+let currentViewMode = 'grid'; // 'grid' or 'list'
+
+// Switch to grid view
+function switchToGridView() {
+    currentViewMode = 'grid';
+    updateViewButtons();
+    refreshQuestionDisplay();
+}
+
+// Switch to list view  
+function switchToListView() {
+    currentViewMode = 'list';
+    updateViewButtons();
+    refreshQuestionDisplay();
+}
+
+// Update view toggle buttons appearance
+function updateViewButtons() {
+    const gridBtn = document.getElementById('grid-view-btn');
+    const listBtn = document.getElementById('list-view-btn');
+    
+    if (gridBtn && listBtn) {
+        if (currentViewMode === 'grid') {
+            gridBtn.classList.add('active', 'bg-white', 'shadow-sm', 'text-gray-900', 'border', 'border-gray-200');
+            gridBtn.classList.remove('text-gray-500', 'hover:text-gray-700');
+            listBtn.classList.remove('active', 'bg-white', 'shadow-sm', 'text-gray-900', 'border', 'border-gray-200');
+            listBtn.classList.add('text-gray-500', 'hover:text-gray-700');
+        } else {
+            listBtn.classList.add('active', 'bg-white', 'shadow-sm', 'text-gray-900', 'border', 'border-gray-200');
+            listBtn.classList.remove('text-gray-500', 'hover:text-gray-700');
+            gridBtn.classList.remove('active', 'bg-white', 'shadow-sm', 'text-gray-900', 'border', 'border-gray-200');
+            gridBtn.classList.add('text-gray-500', 'hover:text-gray-700');
+        }
+    }
+}
+
+// Show all questions (quick filter)
+function showAllQuestions() {
+    const processFilter = document.getElementById('question-process-filter');
+    const categoryFilter = document.getElementById('question-category-filter');
+    const searchInput = document.getElementById('question-search');
+    
+    if (processFilter) processFilter.value = '';
+    if (categoryFilter) {
+        categoryFilter.value = '';
+        categoryFilter.disabled = true;
+        categoryFilter.innerHTML = '<option value="">Sélectionner d\'abord un processus</option>';
+    }
+    if (searchInput) searchInput.value = '';
+    
+    updateSearchPerformance('excellent');
+    filterQuestions();
+}
+
+// Show recent questions (quick filter)
+function showRecentQuestions() {
+    // This would filter by creation date - implementation depends on your data structure
+    console.log('Showing recent questions...');
+    // For now, just show all questions
+    showAllQuestions();
+}
+
+// Enhanced search input with clear button
+function setupEnhancedSearch() {
+    const searchInput = document.getElementById('question-search');
+    const clearBtn = document.getElementById('clear-search-btn');
+    
+    if (searchInput && clearBtn) {
+        searchInput.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+            
+            // Update performance indicator based on search length
+            if (this.value.length === 0) {
+                updateSearchPerformance('excellent');
+            } else if (this.value.length < 3) {
+                updateSearchPerformance('good');
+            } else {
+                updateSearchPerformance('excellent');
+            }
+        });
+        
+        clearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            clearBtn.classList.add('hidden');
+            updateSearchPerformance('excellent');
+            filterQuestions();
+        });
+    }
+}
+
+// Update search performance indicator
+function updateSearchPerformance(level) {
+    const performanceEl = document.getElementById('search-performance');
+    if (performanceEl) {
+        const levels = {
+            'excellent': { text: 'Excellent', class: 'text-green-400' },
+            'good': { text: 'Bon', class: 'text-yellow-400' },
+            'fair': { text: 'Moyen', class: 'text-orange-400' }
+        };
+        
+        const config = levels[level] || levels['excellent'];
+        performanceEl.textContent = config.text;
+        performanceEl.className = `text-2xl font-bold ${config.class}`;
+    }
+}
+
+// Refresh question display based on current view mode
+function refreshQuestionDisplay() {
+    const cardsContainer = document.getElementById('questions-cards');
+    const desktopContainer = document.getElementById('questions-desktop');
+    const mobileContainer = document.getElementById('questions-mobile');
+    
+    if (currentViewMode === 'grid') {
+        // Show grid view
+        if (cardsContainer) cardsContainer.classList.remove('hidden');
+        if (desktopContainer) desktopContainer.classList.add('hidden');
+        if (mobileContainer) mobileContainer.classList.add('hidden');
+    } else {
+        // Show list view
+        if (cardsContainer) cardsContainer.classList.add('hidden');
+        if (desktopContainer) desktopContainer.classList.remove('hidden');
+        if (mobileContainer) mobileContainer.classList.remove('hidden');
+    }
+}
+
+// Enhanced clear filters with animation
+function clearFilters() {
+    console.log('clearFilters called'); // Debug log
+    
+    try {
+        const processFilter = document.getElementById('question-process-filter');
+        const categoryFilter = document.getElementById('question-category-filter');
+        const searchInput = document.getElementById('question-search');
+        const clearBtn = document.getElementById('clear-filters-btn');
+        
+        // Prevent execution if button is disabled
+        if (clearBtn?.disabled) {
+            console.log('Clear filters button is disabled');
+            return;
+        }
+        
+        // Add loading animation
+        if (clearBtn) {
+            clearBtn.innerHTML = '<svg class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>Effacement...';
+            clearBtn.disabled = true;
+        }
+        
+        // Clear filters with delay for visual feedback
+        setTimeout(() => {
+            try {
+                if (processFilter) processFilter.value = '';
+                if (categoryFilter) {
+                    categoryFilter.value = '';
+                    categoryFilter.disabled = true;
+                    categoryFilter.innerHTML = '<option value="">Sélectionner d\'abord un processus</option>';
+                }
+                if (searchInput) {
+                    searchInput.value = '';
+                    const clearSearchBtn = document.getElementById('clear-search-btn');
+                    if (clearSearchBtn) clearSearchBtn.classList.add('hidden');
+                }
+                
+                updateSearchPerformance('excellent');
+                
+                // Reset filtered questions to show all
+                filteredQuestions = [...allQuestions];
+                renderQuestions();
+                updateStatistics();
+                
+                // Reset button
+                if (clearBtn) {
+                    clearBtn.innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>Effacer les filtres';
+                    clearBtn.disabled = false;
+                }
+                
+                console.log('Filters cleared successfully');
+            } catch (error) {
+                console.error('Error in clearFilters timeout:', error);
+            }
+        }, 500);
+        
+    } catch (error) {
+        console.error('Error in clearFilters:', error);
+    }
+}
+
+// Initialize enhanced UX features
+function initEnhancedUX() {
+    console.log('Initializing enhanced UX features...');
+    
+    try {
+        setupEnhancedSearch();
+        updateViewButtons();
+        updateSearchPerformance('excellent');
+        
+        // Add smooth scrolling to filter focus
+        const processFilter = document.getElementById('question-process-filter');
+        if (processFilter) {
+            processFilter.addEventListener('focus', function() {
+                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
+        
+        // Add hover effects to stats cards
+        const statsCards = document.querySelectorAll('.stats-card');
+        statsCards.forEach(card => {
+            card.classList.add('stats-card-enhanced');
+        });
+        
+        console.log('Enhanced UX features initialized successfully');
+    } catch (error) {
+        console.error('Error initializing enhanced UX features:', error);
+    }
+}
+
 // Questions Management JavaScript
 let allQuestions = [];
 let filteredQuestions = [];
@@ -767,38 +1406,58 @@ let allProcesses = [];
 
 // Initialize questions section
 function initQuestionsSection() {
-    // Save current filter state before reloading
-    const currentSearch = document.getElementById('question-search')?.value || '';
-    const currentProcess = document.getElementById('question-process-filter')?.value || '';
-    const currentCategory = document.getElementById('question-category-filter')?.value || '';
+    console.log('Initializing questions section...');
     
-    loadProcessesForQuestions().then(() => {
-        loadCategoriesForQuestions().then(() => {
-            loadQuestions().then(() => {
-                // Restore filter state after data is loaded
-                if (currentSearch || currentProcess || currentCategory) {
-                    const searchInput = document.getElementById('question-search');
-                    const processFilter = document.getElementById('question-process-filter');
-                    const categoryFilter = document.getElementById('question-category-filter');
-                    
-                    if (searchInput && currentSearch) searchInput.value = currentSearch;
-                    if (processFilter && currentProcess) {
-                        processFilter.value = currentProcess;
-                        updateCategoryFilter(currentProcess);
-                    }
-                    if (categoryFilter && currentCategory) {
-                        // Wait a bit for category filter to be populated
-                        setTimeout(() => {
-                            categoryFilter.value = currentCategory;
+    try {
+        // Initialize enhanced UX features first
+        initEnhancedUX();
+        
+        // Save current filter state before reloading
+        const currentSearch = document.getElementById('question-search')?.value || '';
+        const currentProcess = document.getElementById('question-process-filter')?.value || '';
+        const currentCategory = document.getElementById('question-category-filter')?.value || '';
+        
+        loadProcessesForQuestions().then(() => {
+            loadCategoriesForQuestions().then(() => {
+                loadQuestions().then(() => {
+                    // Restore filter state after data is loaded
+                    if (currentSearch || currentProcess || currentCategory) {
+                        const searchInput = document.getElementById('question-search');
+                        const processFilter = document.getElementById('question-process-filter');
+                        const categoryFilter = document.getElementById('question-category-filter');
+                        
+                        if (searchInput && currentSearch) searchInput.value = currentSearch;
+                        if (processFilter && currentProcess) {
+                            processFilter.value = currentProcess;
+                            updateCategoryFilter(currentProcess);
+                        }
+                        if (categoryFilter && currentCategory) {
+                            // Wait a bit for category filter to be populated
+                            setTimeout(() => {
+                                categoryFilter.value = currentCategory;
+                                filterQuestions();
+                            }, 100);
+                        } else if (currentSearch || currentProcess) {
                             filterQuestions();
-                        }, 100);
-                    } else if (currentSearch || currentProcess) {
-                        filterQuestions();
+                        }
                     }
-                }
+                    
+                    // Initialize view mode
+                    refreshQuestionDisplay();
+                    
+                    console.log('Questions section initialized successfully');
+                }).catch(error => {
+                    console.error('Error loading questions:', error);
+                });
+            }).catch(error => {
+                console.error('Error loading categories:', error);
             });
+        }).catch(error => {
+            console.error('Error loading processes:', error);
         });
-    });
+    } catch (error) {
+        console.error('Error initializing questions section:', error);
+    }
 }
 
 // Load processes for filter dropdown
@@ -935,6 +1594,12 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         updateClearFiltersButton();
     }, 500);
+    
+    // Handle question form submission
+    const questionForm = document.getElementById('question-form');
+    if (questionForm) {
+        questionForm.addEventListener('submit', handleQuestionSubmit);
+    }
 });
 
 // Debounce function to improve search performance
@@ -1048,48 +1713,47 @@ function restoreFilterState(filterState) {
     }
 }
 
-// Clear all filters
-function clearFilters() {
-    const clearBtn = document.getElementById('clear-filters-btn');
-    
-    // Prevent execution if button is disabled
-    if (clearBtn?.disabled) {
-        return;
-    }
-    
-    // Force clear all filter inputs
-    const searchInput = document.getElementById('question-search');
-    const processFilter = document.getElementById('question-process-filter');
-    const categoryFilter = document.getElementById('question-category-filter');
-    
-    if (searchInput) searchInput.value = '';
-    if (processFilter) processFilter.value = '';
-    if (categoryFilter) {
-        categoryFilter.value = '';
-        categoryFilter.disabled = true;
-        categoryFilter.innerHTML = '<option value="">Sélectionner d\'abord un processus</option>';
-    }
-    
-    // Clear any stored filter state
-    sessionStorage.removeItem('questionFilters');
-    localStorage.removeItem('questionFilters');
-    
-    // Reset filtered questions to show all
-    filteredQuestions = [...allQuestions];
-    renderQuestions();
-    updateStatistics();      // Show confirmation message
-    showMessage('Filtres effacés avec succès - Sélectionnez une catégorie pour afficher les questions', 'success');
-}
-
 // Update statistics
 function updateStatistics() {
-    document.getElementById('total-questions-count').textContent = allQuestions.length;
-    document.getElementById('filtered-questions-count').textContent = filteredQuestions.length;
+    const totalCount = allQuestions.length;
+    const filteredCount = filteredQuestions.length;
     
+    // Update main stats
+    document.getElementById('total-questions-count').textContent = totalCount;
+    document.getElementById('filtered-questions-count').textContent = filteredCount;
+    
+    // Update header quick count
+    const headerQuickCount = document.getElementById('header-quick-count');
+    if (headerQuickCount) {
+        if (filteredCount === totalCount) {
+            headerQuickCount.textContent = `${totalCount} question${totalCount > 1 ? 's' : ''}`;
+        } else {
+            headerQuickCount.textContent = `${filteredCount}/${totalCount} question${totalCount > 1 ? 's' : ''}`;
+        }
+    }
+    
+    // Update category name
     const categoryFilter = document.getElementById('question-category-filter');
     const selectedCategoryId = categoryFilter?.value;
     const selectedCategory = allCategories.find(cat => cat.id == selectedCategoryId);
-    document.getElementById('selected-category-name').textContent = selectedCategory ? selectedCategory.title : 'Aucune';
+    const categoryNameEl = document.getElementById('selected-category-name');
+    if (categoryNameEl) {
+        categoryNameEl.textContent = selectedCategory ? selectedCategory.title : 'Aucune';
+    }
+    
+    // Update search performance based on filter efficiency
+    if (totalCount > 0) {
+        const efficiency = filteredCount / totalCount;
+        if (efficiency > 0.8) {
+            updateSearchPerformance('excellent');
+        } else if (efficiency > 0.5) {
+            updateSearchPerformance('good');
+        } else {
+            updateSearchPerformance('fair');
+        }
+    } else {
+        updateSearchPerformance('excellent');
+    }
     
     // Update clear filters button state
     updateClearFiltersButton();
@@ -1381,14 +2045,6 @@ function reindexAnswers() {
         textInput.name = `answers[${i}][answer_text]`;
     }
 }
-
-// Handle question form submission
-document.addEventListener('DOMContentLoaded', function() {
-    const questionForm = document.getElementById('question-form');
-    if (questionForm) {
-        questionForm.addEventListener('submit', handleQuestionSubmit);
-    }
-});
 
 async function handleQuestionSubmit(e) {
     e.preventDefault();
