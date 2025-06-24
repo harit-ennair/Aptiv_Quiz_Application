@@ -261,7 +261,7 @@
                 </div>
                 <h3 class="text-base font-semibold text-gray-900">Test Details</h3>
             </div>
-            <button onclick="closeTestDetailsModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 hover:bg-gray-100 rounded">
+            <button id="header-close-btn" class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 hover:bg-gray-100 rounded">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -395,33 +395,47 @@ function initializeTestsSection() {
 }
 
 function setupEventListeners() {
-    // Smart search functionality
+    // Only setup listeners for elements that actually exist
     const smartSearch = document.getElementById('smart-search');
-    smartSearch.addEventListener('input', debounce(handleSmartSearch, 300));
-    smartSearch.addEventListener('focus', showSearchSuggestions);
-    smartSearch.addEventListener('blur', hideSearchSuggestions);
+    if (smartSearch) {
+        smartSearch.addEventListener('input', debounce(handleSmartSearch, 300));
+        smartSearch.addEventListener('focus', showSearchSuggestions);
+        smartSearch.addEventListener('blur', hideSearchSuggestions);
+    }
     
     // Filter toggle
-    document.getElementById('filter-toggle').addEventListener('click', toggleFiltersPanel);
+    const filterToggle = document.getElementById('filter-toggle');
+    if (filterToggle) {
+        filterToggle.addEventListener('click', toggleFiltersPanel);
+    }
     
-    // Filter controls
+    // Filter controls - only add listeners if elements exist
     ['score-filter', 'period-filter', 'category-filter', 'formateur-filter', 'show-retakes'].forEach(id => {
-        document.getElementById(id).addEventListener('change', applyFilters);
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('change', applyFilters);
+        }
     });
     
     // Per page selector
-    document.getElementById('per-page').addEventListener('change', function() {
-        perPage = parseInt(this.value);
-        currentPage = 1;
-        renderTestsTable();
-    });
+    const perPageSelect = document.getElementById('per-page');
+    if (perPageSelect) {
+        perPageSelect.addEventListener('change', function() {
+            perPage = parseInt(this.value);
+            currentPage = 1;
+            renderTestsTable();
+        });
+    }
     
     // Search suggestions
     document.querySelectorAll('.suggestion-item').forEach(item => {
         item.addEventListener('click', function() {
-            document.getElementById('smart-search').value = this.dataset.search;
-            handleSmartSearch();
-            hideSearchSuggestions();
+            const smartSearchEl = document.getElementById('smart-search');
+            if (smartSearchEl) {
+                smartSearchEl.value = this.dataset.search;
+                handleSmartSearch();
+                hideSearchSuggestions();
+            }
         });
     });
 }
@@ -1217,7 +1231,7 @@ function viewTestDetails(testId) {
 
             <!-- Compact Action Buttons -->
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-200">
-                <button onclick="closeTestDetailsModal()" class="px-3 py-1.5 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded transition-colors duration-200 flex items-center gap-1">
+                <button id="close-modal-btn" class="px-3 py-1.5 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded transition-colors duration-200 flex items-center gap-1">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -1235,23 +1249,40 @@ function viewTestDetails(testId) {
     
     // Add entrance animation
     modal.classList.remove('hidden');
+    modal.style.display = 'block';
     setTimeout(() => {
         modal.querySelector('.relative').classList.add('animate-fadeInUp');
     }, 10);
+    
+    // Setup all event handlers after content is loaded
+    setTimeout(() => {
+        // Close button in modal content
+        const closeBtn = document.getElementById('close-modal-btn');
+        if (closeBtn) {
+            closeBtn.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Close button clicked from event handler');
+                closeTestDetailsModal();
+            };
+        }
+        
+        // Header close button
+        const headerCloseBtn = document.getElementById('header-close-btn');
+        if (headerCloseBtn) {
+            headerCloseBtn.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Header close button clicked');
+                closeTestDetailsModal();
+            };
+        }
+        
+        console.log('Event handlers set up for modal buttons');
+    }, 100);
 }
 
-function closeTestDetailsModal() {
-    const modal = document.getElementById('test-details-modal');
-    const modalContent = modal.querySelector('.relative');
-    
-    // Add exit animation
-    modalContent.classList.add('animate-fadeOutDown');
-    
-    setTimeout(() => {
-        modal.classList.add('hidden');
-        modalContent.classList.remove('animate-fadeInUp', 'animate-fadeOutDown');
-    }, 300);
-}
+// This function is now defined later with debounce protection
 
 function deleteTest(testId) {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce test ?')) return;
@@ -1430,7 +1461,7 @@ function editTest(testId) {
                 </div>
             </div>
             <div class="flex items-center justify-end gap-4 pt-4 border-t border-gray-200">
-                <button type="button" onclick="closeTestDetailsModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                <button type="button" id="cancel-edit-btn" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
                     Annuler
                 </button>
                 <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
@@ -1445,6 +1476,17 @@ function editTest(testId) {
         e.preventDefault();
         saveTestChanges(testId);
     });
+    
+    // Add cancel button handler with simple approach
+    setTimeout(() => {
+        const cancelBtn = document.getElementById('cancel-edit-btn');
+        if (cancelBtn) {
+            cancelBtn.onclick = function(e) {
+                e.preventDefault();
+                closeTestDetailsModal();
+            };
+        }
+    }, 50);
     
     // Ensure modal is properly displayed
     modal.classList.remove('hidden');
@@ -1537,33 +1579,70 @@ function getStatusIcon(iconType) {
     return icons[iconType] || icons['check'];
 }
 
-// Enhanced modal close function with animation
+// Simple modal close function
+
 function closeTestDetailsModal() {
-    const modal = document.getElementById('test-details-modal');
-    const modalContent = modal.querySelector('.relative');
+    console.log('Close button clicked!'); // Debug log
     
-    if (modalContent) {
-        // Add exit animation
-        modalContent.classList.add('animate-fadeOutDown');
+    const modal = document.getElementById('test-details-modal');
+    if (!modal) {
+        console.error('Modal element not found!');
+        return;
     }
     
-    setTimeout(() => {
-        modal.classList.add('hidden');
-        modal.style.display = 'none';
-        if (modalContent) {
-            modalContent.classList.remove('animate-fadeInUp', 'animate-fadeOutDown');
-        }
-    }, 300);
+    console.log('Modal found, closing...');
+    
+    // Simple close without complex animations
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+    
+    // Clean up modal content classes
+    const modalContent = modal.querySelector('.relative');
+    if (modalContent) {
+        modalContent.classList.remove('animate-fadeInUp', 'animate-fadeOutDown');
+    }
+    
+    // Clear the modal content to ensure clean state for next opening
+    const content = document.getElementById('test-details-content');
+    if (content) {
+        content.innerHTML = '';
+    }
+    
+    console.log('Modal closed successfully');
 }
 
 // Add click outside modal to close functionality
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('test-details-modal');
     
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            closeTestDetailsModal();
-        }
-    });
+    if (modal) {
+        // Click outside to close
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                console.log('Clicked outside modal, closing...');
+                closeTestDetailsModal();
+            }
+        });
+        
+        // Escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                console.log('Escape key pressed, closing modal...');
+                closeTestDetailsModal();
+            }
+        });
+    }
 });
+
+// Make sure the function is globally accessible for debugging
+window.closeTestDetailsModal = closeTestDetailsModal;
+
+// Test function to verify JavaScript is working
+function testFunction() {
+    console.log('Test function called successfully!');
+    alert('JavaScript is working!');
+}
+window.testFunction = testFunction;
+
+console.log('Modal close function loaded:', typeof closeTestDetailsModal);
 </script>
