@@ -364,8 +364,8 @@
                                 @foreach($dashboardData['recentActivity']['tests'] as $test)
                                     <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 bg-{{ $test->pourcentage >= 80 ? 'green' : ($test->pourcentage >= 60 ? 'yellow' : 'red') }}-100 rounded-full flex items-center justify-center">
-                                                <svg class="w-4 h-4 text-{{ $test->pourcentage >= 80 ? 'green' : ($test->pourcentage >= 60 ? 'yellow' : 'red') }}-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div class="w-8 h-8 bg-{{ $test->pourcentage >= 75 ? 'green' : ($test->pourcentage >= 50 ? 'yellow' : 'red') }}-100 rounded-full flex items-center justify-center">
+                                                <svg class="w-4 h-4 text-{{ $test->pourcentage >= 75 ? 'green' : ($test->pourcentage >= 50 ? 'yellow' : 'red') }}-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                 </svg>
                                             </div>
@@ -375,7 +375,7 @@
                                             </div>
                                         </div>
                                         <div class="text-right">
-                                            <p class="text-sm font-bold text-{{ $test->pourcentage >= 80 ? 'green' : ($test->pourcentage >= 60 ? 'yellow' : 'red') }}-600">{{ $test->pourcentage }}%</p>
+                                            <p class="text-sm font-bold text-{{ $test->pourcentage >= 75 ? 'green' : ($test->pourcentage >= 50 ? 'yellow' : 'red') }}-600">{{ $test->pourcentage }}%</p>
                                             <p class="text-xs text-gray-500">{{ $test->resultat }}/{{ $test->resultat + ($test->pourcentage > 0 ? intval((100 - $test->pourcentage) * $test->resultat / $test->pourcentage) : 0) }}</p>
                                         </div>
                                     </div>
