@@ -35,7 +35,7 @@
                         <div id="search-suggestions" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 hidden z-10">
                             <div class="p-2 text-xs text-gray-500 border-b">Suggestions de recherche:</div>
                             <div class="p-2 space-y-1">
-                                <div class="suggestion-item cursor-pointer p-2 hover:bg-blue-50 rounded text-sm" data-search="score:>80">Tests avec score > 80%</div>
+                                <div class="suggestion-item cursor-pointer p-2 hover:bg-blue-50 rounded text-sm" data-search="score:>75">Tests avec score > 75%</div>
                                 <div class="suggestion-item cursor-pointer p-2 hover:bg-blue-50 rounded text-sm" data-search="today">Tests d'aujourd'hui</div>
                                 <div class="suggestion-item cursor-pointer p-2 hover:bg-blue-50 rounded text-sm" data-search="failed">Tests échoués</div>
                                 <div class="suggestion-item cursor-pointer p-2 hover:bg-blue-50 rounded text-sm" data-search="retake">Tests repris</div>
@@ -68,9 +68,9 @@
                             <label class="block text-xs font-medium text-gray-700 mb-1">Score</label>
                             <select id="score-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                                 <option value="">Tous les scores</option>
-                                <option value="excellent">Excellent (≥80%)</option>
-                                <option value="good">Bon (60-79%)</option>
-                                <option value="poor">Faible (<60%)</option>
+                                <option value="excellent">Excellent (≥75%)</option>
+                                <option value="good">Bon (50-74%)</option>
+                                <option value="poor">Faible (<50%)</option>
                             </select>
                         </div>
                         
@@ -379,6 +379,7 @@ function loadTestsData() {
     fetch('/admin/api/tests')
         .then(response => response.json())
         .then(data => {
+            console.log('API Response:', data); // Debug log
             if (data.success) {
                 allTests = data.data || [];
                 filteredTests = [...allTests];
@@ -392,11 +393,13 @@ function loadTestsData() {
                 renderTestsTable();
                 initializeCharts();
             } else {
+                console.log('API Error:', data.message); // Debug log
                 showError(data.message || 'Erreur lors du chargement des tests');
             }
         })
         .catch(error => {
             console.error('Error loading tests:', error);
+            console.log('Loading sample data as fallback'); // Debug log
             // Show sample data for testing
             loadSampleData();
         })
@@ -444,7 +447,7 @@ function updateStatsFromData() {
     const averageScore = totalTests > 0 ? 
         allTests.reduce((sum, test) => sum + (test.pourcentage || 0), 0) / totalTests : 0;
     
-    const successfulTests = allTests.filter(test => (test.pourcentage || 0) >= 60).length;
+    const successfulTests = allTests.filter(test => (test.pourcentage || 0) >= 50).length;
     const successRate = totalTests > 0 ? (successfulTests / totalTests) * 100 : 0;
     
     updateStats({
@@ -493,6 +496,30 @@ function loadSampleData() {
             pourcentage: 45,
             created_at: '2024-06-24T09:00:00Z',
             is_retake: false
+        },
+        {
+            id: 4,
+            user: { name: 'Alice', last_name: 'Wonder', identification: '22222' },
+            formateur: { name: 'Paul', last_name: 'Durand' },
+            category_name: 'Assembly Line',
+            process_name: 'Production',
+            category_id: 4,
+            formateur_id: 4,
+            pourcentage: 78,
+            created_at: '2024-06-24T11:30:00Z',
+            is_retake: false
+        },
+        {
+            id: 5,
+            user: { name: 'Bob', last_name: 'Builder', identification: '33333' },
+            formateur: { name: 'Claire', last_name: 'Moreau' },
+            category_name: 'Quality Assurance',
+            process_name: 'Contrôle',
+            category_id: 5,
+            formateur_id: 5,
+            pourcentage: 55,
+            created_at: '2024-06-23T16:45:00Z',
+            is_retake: true
         }
     ];
     
@@ -526,13 +553,13 @@ function handleSmartSearch() {
             } else if (['today', "aujourd'hui", 'hier', 'semaine', 'mois'].includes(query)) {
                 return handleDateQuery(test, query);
             } else if (['failed', 'échec', 'échoué', 'fail'].includes(query)) {
-                return (test.pourcentage || 0) < 60;
+                return (test.pourcentage || 0) < 50;
             } else if (['retake', 'repris', 'retaken'].includes(query)) {
                 return test.is_retake === true;
             } else if (['excellent', 'très bien'].includes(query)) {
-                return (test.pourcentage || 0) >= 80;
+                return (test.pourcentage || 0) >= 75;
             } else if (['good', 'bien', 'bon'].includes(query)) {
-                return (test.pourcentage || 0) >= 60 && (test.pourcentage || 0) < 80;
+                return (test.pourcentage || 0) >= 50 && (test.pourcentage || 0) < 75;
             } else {
                 // General text search - handle potential missing properties
                 const searchFields = [
@@ -640,13 +667,13 @@ function applyFilters() {
         if (scoreFilter) {
             switch(scoreFilter) {
                 case 'excellent':
-                    if (test.pourcentage < 80) return false;
+                    if (test.pourcentage < 75) return false;
                     break;
                 case 'good':
-                    if (test.pourcentage < 60 || test.pourcentage >= 80) return false;
+                    if (test.pourcentage < 50 || test.pourcentage >= 75) return false;
                     break;
                 case 'poor':
-                    if (test.pourcentage >= 60) return false;
+                    if (test.pourcentage >= 50) return false;
                     break;
             }
         }
@@ -824,14 +851,14 @@ function createTestRow(test) {
     row.className = 'hover:bg-gray-50 fade-in';
     
     const score = test.pourcentage || 0;
-    const scoreClass = score >= 80 ? 'score-excellent' : 
-                      score >= 60 ? 'score-good' : 'score-poor';
+    const scoreClass = score >= 75 ? 'score-excellent' : 
+                      score >= 50 ? 'score-good' : 'score-poor';
     
     const statusClass = test.is_retake ? 'status-retake' : 
-                       score >= 60 ? 'status-completed' : 'status-failed';
+                       score >= 50 ? 'status-completed' : 'status-failed';
     
     const statusText = test.is_retake ? 'Repris' : 
-                      score >= 60 ? 'Réussi' : 'Échoué';
+                      score >= 50 ? 'Réussi' : 'Échoué';
     
     // Safe property access with defaults
     const userName = test.user ? `${test.user.name || 'N/A'} ${test.user.last_name || ''}`.trim() : 'N/A';
