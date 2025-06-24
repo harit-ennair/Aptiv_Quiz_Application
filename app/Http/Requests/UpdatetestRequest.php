@@ -22,11 +22,11 @@ class UpdatetestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'sometimes|exists:users,id',
             'description' => 'nullable|string|max:1000',
-            'formateur_id' => 'required|exists:formateurs,id',
-            'resultat' => 'required|integer|min:0|max:100',
-            'pourcentage' => 'required|integer|min:0|max:100',
+            'formateur_id' => 'sometimes|exists:formateurs,id',
+            'resultat' => 'sometimes|integer|min:0|max:100',
+            'pourcentage' => 'sometimes|integer|min:0|max:100',
         ];
     }
 }

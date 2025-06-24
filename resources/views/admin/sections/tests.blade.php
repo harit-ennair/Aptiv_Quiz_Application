@@ -1287,11 +1287,17 @@ function viewTestDetails(testId) {
 function deleteTest(testId) {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce test ?')) return;
     
-    // Simulate API call to delete test
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if (!csrfToken) {
+        showNotification('Erreur: Token CSRF manquant', 'error');
+        return;
+    }
+    
+    // API call to delete test
     fetch(`/admin/api/tests/${testId}`, {
         method: 'DELETE',
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            'X-CSRF-TOKEN': csrfToken
         }
     })
     .then(response => response.json())
@@ -1300,15 +1306,16 @@ function deleteTest(testId) {
             // Remove from local data
             allTests = allTests.filter(t => t.id !== testId);
             filteredTests = filteredTests.filter(t => t.id !== testId);
+            updateStatsFromData();
             renderTestsTable();
-            showNotification('Test supprimé avec succès', 'success');
+            showNotification(data.message || 'Test supprimé avec succès', 'success');
         } else {
-            showNotification('Erreur lors de la suppression', 'error');
+            showNotification(data.message || 'Erreur lors de la suppression', 'error');
         }
     })
     .catch(error => {
         console.error('Error deleting test:', error);
-        showNotification('Erreur de connexion', 'error');
+        showNotification('Erreur de connexion au serveur', 'error');
     });
 }
 
@@ -1370,18 +1377,43 @@ function debounce(func, wait) {
 function showNotification(message, type = 'info') {
     // Create and show notification
     const notification = document.createElement('div');
-    notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
+    notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 transform ${
         type === 'success' ? 'bg-green-500 text-white' : 
         type === 'error' ? 'bg-red-500 text-white' : 
         'bg-blue-500 text-white'
     }`;
-    notification.textContent = message;
+    notification.innerHTML = `
+        <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ${type === 'success' ? 
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>' :
+                type === 'error' ?
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>' :
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>'
+                }
+            </svg>
+            <span>${message}</span>
+        </div>
+    `;
     
     document.body.appendChild(notification);
     
+    // Add entrance animation
     setTimeout(() => {
-        notification.remove();
-    }, 3000);
+        notification.style.transform = 'translateX(0)';
+        notification.style.opacity = '1';
+    }, 100);
+    
+    // Remove after 5 seconds
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    }, 5000);
 }
 
 function showError(message) {
@@ -1505,25 +1537,54 @@ function saveTestChanges(testId) {
     const newScore = document.getElementById('edit-score').value;
     const newDescription = document.getElementById('edit-description').value;
     
+    console.log('Form values:', { 
+        scoreElement: document.getElementById('edit-score'), 
+        descriptionElement: document.getElementById('edit-description'),
+        newScore, 
+        newDescription 
+    });
+    
     if (!newScore || newScore < 0 || newScore > 100) {
         showNotification('Veuillez entrer un score valide (0-100)', 'error');
         return;
     }
     
-    // Simulate API call to update test
+    console.log('Saving test changes:', { testId, newScore, newDescription });
+    
+    // Check CSRF token
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    console.log('CSRF Token found:', csrfToken ? 'Yes' : 'No');
+    
+    if (!csrfToken) {
+        showNotification('Erreur: Token CSRF manquant', 'error');
+        return;
+    }
+    
+    // Show loading state
+    const submitBtn = document.querySelector('#edit-test-form button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sauvegarde...';
+    }
+    
+    // API call to update test
     fetch(`/admin/api/tests/${testId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            'X-CSRF-TOKEN': csrfToken
         },
         body: JSON.stringify({
             pourcentage: parseFloat(newScore),
             description: newDescription
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         if (data.success) {
             // Update local data
             const testIndex = allTests.findIndex(t => t.id === testId);
@@ -1542,30 +1603,22 @@ function saveTestChanges(testId) {
             updateStatsFromData();
             renderTestsTable();
             closeTestDetailsModal();
-            showNotification('Test modifié avec succès', 'success');
+            showNotification(data.message || 'Test modifié avec succès', 'success');
         } else {
-            showNotification('Erreur lors de la modification', 'error');
+            console.error('API Error:', data);
+            showNotification(data.message || 'Erreur lors de la modification', 'error');
         }
     })
     .catch(error => {
         console.error('Error updating test:', error);
-        // For demo purposes, update locally
-        const testIndex = allTests.findIndex(t => t.id === testId);
-        if (testIndex !== -1) {
-            allTests[testIndex].pourcentage = parseFloat(newScore);
-            allTests[testIndex].description = newDescription;
+        showNotification('Erreur de connexion au serveur', 'error');
+    })
+    .finally(() => {
+        // Reset button state
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Sauvegarder';
         }
-        
-        const filteredIndex = filteredTests.findIndex(t => t.id === testId);
-        if (filteredIndex !== -1) {
-            filteredTests[filteredIndex].pourcentage = parseFloat(newScore);
-            filteredTests[filteredIndex].description = newDescription;
-        }
-        
-        updateStatsFromData();
-        renderTestsTable();
-        closeTestDetailsModal();
-        showNotification('Test modifié avec succès (mode démo)', 'success');
     });
 }
 
