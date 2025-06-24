@@ -31,16 +31,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
-                        <!-- Search suggestions dropdown -->
-                        <div id="search-suggestions" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 hidden z-10">
-                            <div class="p-2 text-xs text-gray-500 border-b">Suggestions de recherche:</div>
-                            <div class="p-2 space-y-1">
-                                <div class="suggestion-item cursor-pointer p-2 hover:bg-blue-50 rounded text-sm" data-search="score:>75">Tests avec score > 75%</div>
-                                <div class="suggestion-item cursor-pointer p-2 hover:bg-blue-50 rounded text-sm" data-search="today">Tests d'aujourd'hui</div>
-                                <div class="suggestion-item cursor-pointer p-2 hover:bg-blue-50 rounded text-sm" data-search="failed">Tests échoués</div>
-                                <div class="suggestion-item cursor-pointer p-2 hover:bg-blue-50 rounded text-sm" data-search="retake">Tests repris</div>
-                            </div>
-                        </div>
                     </div>
                     
                     <!-- Filter Buttons -->
