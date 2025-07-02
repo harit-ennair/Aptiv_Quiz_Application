@@ -2,8 +2,15 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-200">
     <div class="p-6 border-b border-gray-200">
         <div>
-            <!-- <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Mon Profil</h2> -->
-            <p class="text-gray-600 text-sm lg:text-base mt-1">Gérer les informations de votre compte</p>
+            <div class="flex items-center gap-4 mb-2">
+                <div class="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Mon Profil</h2>
+            </div>
+            <p class="text-gray-600 text-sm lg:text-base">Gérer les informations de votre compte</p>
         </div>
     </div>
     <div class="p-6">        <form id="profile-form" class="space-y-6">

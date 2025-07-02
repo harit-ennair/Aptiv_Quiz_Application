@@ -4,8 +4,15 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-                <!-- <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Employés</h2> -->
-                <p class="text-gray-600 text-sm lg:text-base mt-1">Consulter tous les employés et leur historique de tests</p>
+                <div class="flex items-center gap-4 mb-2">
+                    <div class="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.916-.75M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.916-.75M7 20v-2c0-.656.126-1.283.356-1.857M15 6a3 3 0 11-6 0 3 3 0 016 0zm-9 8a2 2 0 100-4 2 2 0 000 4zm14 0a2 2 0 100-4 2 2 0 000 4z"></path>
+                        </svg>
+                    </div>
+                  
+                </div>
+                <p class="text-gray-600 text-sm lg:text-base">Consulter tous les employés et leur historique de tests</p>
             </div>
             <div class="flex flex-col sm:flex-row gap-3">
                 <div class="relative">

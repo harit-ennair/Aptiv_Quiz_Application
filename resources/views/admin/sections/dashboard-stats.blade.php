@@ -4,8 +4,15 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-                <!-- <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Tableau de Bord</h2> -->
-                <p class="text-gray-600 text-sm lg:text-base mt-1">Vue d'ensemble des métriques système en temps réel</p>
+                <div class="flex items-center gap-4 mb-2">
+                    <div class="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Tableau de Bord</h2>
+                </div>
+                <p class="text-gray-600 text-sm lg:text-base">Vue d'ensemble des métriques système en temps réel</p>
             </div>
             <div class="flex flex-col sm:flex-row gap-3">
                 <div class="relative">
