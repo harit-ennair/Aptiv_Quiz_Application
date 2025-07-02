@@ -534,7 +534,7 @@
     <!-- Main Content -->
     <div class="content-area main-content-mobile lg:main-content-desktop">
         <!-- Top Header -->
-        <header class="bg-white shadow-sm border-b header-sticky flex-shrink-0">
+        <!-- <header class="bg-white shadow-sm border-b header-sticky flex-shrink-0">
             <div class="flex items-center justify-between px-4 lg:px-6 py-3 lg:py-4">
                 <div class="flex items-center min-w-0 flex-1">
                     <button id="sidebar-toggle" class="lg:hidden mr-3 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors btn-touch">
@@ -551,7 +551,7 @@
                     </span>
                 </div>
             </div>
-        </header>
+        </header> -->
         
         <!-- Content Area -->
         <main class="scrollable-content p-4 lg:p-8 bg-gray-50">
