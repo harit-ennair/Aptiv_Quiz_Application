@@ -214,12 +214,12 @@ class QuzController extends Controller
     {
         try {
             // Delete the physical file
-            if ($quz->image) {
-                $this->deleteImage($quz->image);
+            if ($quz->image_path) {
+                $this->deleteImage($quz->image_path);
             }
 
             // Remove image reference from database
-            $quz->update(['image' => null]);
+            $quz->update(['image_path' => null]);
 
             return response()->json([
                 'success' => true,
