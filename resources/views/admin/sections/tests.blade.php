@@ -525,7 +525,7 @@ function updateStatsFromData() {
     const averageScore = totalTests > 0 ? 
         allTests.reduce((sum, test) => sum + (test.pourcentage || 0), 0) / totalTests : 0;
     
-    const successfulTests = allTests.filter(test => (test.pourcentage || 0) >= 50).length;
+    const successfulTests = allTests.filter(test => (test.pourcentage || 0) >= 75).length;
     const successRate = totalTests > 0 ? (successfulTests / totalTests) * 100 : 0;
     
     updateStats({
@@ -933,10 +933,10 @@ function createTestRow(test) {
                       score >= 50 ? 'score-good' : 'score-poor';
     
     const statusClass = test.is_retake ? 'status-retake' : 
-                       score >= 50 ? 'status-completed' : 'status-failed';
+                       score >= 75 ? 'status-completed' : 'status-failed';
     
     const statusText = test.is_retake ? 'Repris' : 
-                      score >= 50 ? 'Réussi' : 'Échoué';
+                      score >= 75 ? 'Réussi' : 'Échoué';
     
     // Safe property access with defaults
     const userName = test.user ? `${test.user.name || 'N/A'} ${test.user.last_name || ''}`.trim() : 'N/A';
