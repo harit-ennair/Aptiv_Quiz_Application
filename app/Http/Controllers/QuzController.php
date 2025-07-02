@@ -9,6 +9,7 @@ use App\Http\Requests\StorequzRequest;
 use App\Http\Requests\UpdatequzRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class QuzController extends Controller
 {
@@ -29,9 +30,22 @@ class QuzController extends Controller
      */
     private function deleteImage($imagePath)
     {
-        if ($imagePath && Storage::exists('public/questions/' . $imagePath)) {
-            Storage::delete('public/questions/' . $imagePath);
+        if ($imagePath) {
+            // Check if the image exists in storage
+            if (Storage::exists('public/questions/' . $imagePath)) {
+                // Delete from storage
+                Storage::delete('public/questions/' . $imagePath);
+                return true;
+            }
+            
+            // If the image might be stored with a different path format, try to find it
+            if (Storage::exists('public/' . $imagePath)) {
+                Storage::delete('public/' . $imagePath);
+                return true;
+            }
         }
+        
+        return false;
     }
     /**
      * Display a listing of the resource.
@@ -183,9 +197,16 @@ class QuzController extends Controller
     {
         // Delete associated image if exists
         if ($quz->image_path) {
-            $this->deleteImage($quz->image_path);
+            // Make sure image is deleted from storage
+            $imageDeleted = $this->deleteImage($quz->image_path);
+            
+            // Log if image deletion failed but continue with question deletion
+            if (!$imageDeleted) {
+                Log::warning("Failed to delete image for question #{$quz->id}: {$quz->image_path}");
+            }
         }
 
+        // Delete the question record
         $quz->delete();
 
         return response()->json([
@@ -214,12 +235,12 @@ class QuzController extends Controller
     {
         try {
             // Delete the physical file
-            if ($quz->image) {
-                $this->deleteImage($quz->image);
+            if ($quz->image_path) {
+                $this->deleteImage($quz->image_path);
             }
 
             // Remove image reference from database
-            $quz->update(['image' => null]);
+            $quz->update(['image_path' => null]);
 
             return response()->json([
                 'success' => true,
