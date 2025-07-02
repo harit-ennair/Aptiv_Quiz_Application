@@ -9,19 +9,13 @@
             </div>
             <div class="flex flex-col sm:flex-row gap-3">
                 <div class="relative">
-                    <input type="text" id="employee-search" placeholder="Rechercher par nom, email ou ID..." 
+                    <input type="text" id="employee-search" placeholder="Rechercher par nom ou ID..." 
                            class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm"
                            title="Rechercher par nom, email ou numéro d'identification">
                     <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <select id="employee-role-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
-                    <option value="">Tous les rôles</option>
-                    <option value="1">Super Admin</option>
-                    <option value="2">Admin</option>
-                    <option value="3">Employee</option>
-                </select>
                 <button onclick="adminDashboard.refreshEmployees()" 
                         class="px-4 py-2 bg-aptiv-orange-600 hover:bg-aptiv-orange-700 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,9 +28,7 @@
     </div>
 
     <!-- Employees Statistics -->
-    <div id="employees-stats" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 hidden">
-        <!-- Stats cards will be populated here -->
-    </div>
+
 
     <!-- Loading State -->
     <div id="employees-loading" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
