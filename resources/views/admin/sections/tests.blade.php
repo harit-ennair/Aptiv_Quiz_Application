@@ -284,6 +284,16 @@
     animation: spin 1s linear infinite;
 }
 
+.spinner-small {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f4f6;
+    border-top: 2px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -1097,7 +1107,7 @@ function viewTestDetails(testId) {
     // Get status information
     const statusInfo = test.is_retake ? 
         { text: 'Test Retaken', class: 'bg-purple-100 text-purple-800', icon: 'refresh' } :
-        score >= 50 ? 
+        score >= 75 ? 
         { text: 'Passed', class: 'bg-green-100 text-green-800', icon: 'check' } :
         { text: 'Failed', class: 'bg-red-100 text-red-800', icon: 'x' };
     
@@ -1217,8 +1227,8 @@ function viewTestDetails(testId) {
                         <div class="text-xs text-gray-500">Score</div>
                     </div>
                     <div class="bg-white p-2 rounded border text-center">
-                        <div class="text-lg font-bold ${score >= 50 ? 'text-green-600' : 'text-red-600'}">
-                            ${score >= 50 ? 'PASS' : 'FAIL'}
+                        <div class="text-lg font-bold ${score >= 75 ? 'text-green-600' : 'text-red-600'}">
+                            ${score >= 75 ? 'PASS' : 'FAIL'}
                         </div>
                         <div class="text-xs text-gray-500">Result</div>
                     </div>
@@ -1433,7 +1443,26 @@ function editTest(testId) {
     const content = document.getElementById('test-details-content');
     
     // Update modal title
-    modal.querySelector('h3').textContent = 'Modifier le Test';
+    const modalHeader = modal.querySelector('h3');
+    if (modalHeader) {
+        modalHeader.textContent = 'Modifier la Description';
+    } else {
+        // If there's no h3 title element, add one to the top of the modal
+        const modalContent = modal.querySelector('.relative');
+        if (modalContent && modalContent.firstChild) {
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'bg-blue-50 p-4 rounded-t-lg border-b flex items-center justify-between';
+            titleDiv.innerHTML = `
+                <h3 class="text-lg font-semibold text-blue-800">Modifier la Description</h3>
+                <button id="header-close-btn" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            `;
+            modalContent.insertBefore(titleDiv, modalContent.firstChild);
+        }
+    }
     
     // Safe property access with defaults
     const userName = test.user?.name || 'N/A';
@@ -1448,55 +1477,23 @@ function editTest(testId) {
     
     content.innerHTML = `
         <form id="edit-test-form" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <h4 class="font-semibold text-gray-900 mb-4">Informations Utilisateur</h4>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
-                            <input type="text" value="${userName}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
-                            <input type="text" value="${userLastName}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">ID</label>
-                            <input type="text" value="${userIdentification}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" readonly>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-gray-900 mb-4">Détails du Test</h4>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Score (%)</label>
-                            <input type="number" id="edit-score" value="${testScore}" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
-                            <input type="text" value="${categoryName}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Formateur</label>
-                            <input type="text" value="${formateurName}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                            <input type="text" value="${testDate}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                            <textarea id="edit-description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Description du test...">${testDescription}</textarea>
-                        </div>
+            <div>
+                <h4 class="font-semibold text-gray-900 mb-4">Description</h4>
+                <div class="space-y-4">
+                    <div>
+                        <textarea id="edit-description" rows="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Description du test...">${testDescription}</textarea>
                     </div>
                 </div>
             </div>
+            <input type="hidden" id="edit-score" value="${testScore}" />
             <div class="flex items-center justify-end gap-4 pt-4 border-t border-gray-200">
                 <button type="button" id="cancel-edit-btn" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
                     Annuler
                 </button>
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <button type="submit" id="save-test-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
                     Sauvegarder
                 </button>
             </div>
@@ -1534,20 +1531,21 @@ function editTest(testId) {
 }
 
 function saveTestChanges(testId) {
-    const newScore = document.getElementById('edit-score').value;
-    const newDescription = document.getElementById('edit-description').value;
+    const scoreElement = document.getElementById('edit-score');
+    const descriptionElement = document.getElementById('edit-description');
     
-    console.log('Form values:', { 
-        scoreElement: document.getElementById('edit-score'), 
-        descriptionElement: document.getElementById('edit-description'),
-        newScore, 
-        newDescription 
-    });
-    
-    if (!newScore || newScore < 0 || newScore > 100) {
-        showNotification('Veuillez entrer un score valide (0-100)', 'error');
+    if (!descriptionElement) {
+        showNotification('Erreur: formulaire incomplet', 'error');
         return;
     }
+    
+    const newScore = scoreElement ? scoreElement.value : null;
+    const newDescription = descriptionElement.value;
+    
+    console.log('Form values:', { 
+        descriptionElement,
+        newDescription 
+    });
     
     console.log('Saving test changes:', { testId, newScore, newDescription });
     
@@ -1561,10 +1559,17 @@ function saveTestChanges(testId) {
     }
     
     // Show loading state
-    const submitBtn = document.querySelector('#edit-test-form button[type="submit"]');
+    const submitBtn = document.getElementById('save-test-btn');
     if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Sauvegarde...';
+        const originalContent = submitBtn.innerHTML;
+        submitBtn.innerHTML = `
+            <div class="spinner-small mr-2"></div>
+            Sauvegarde...
+        `;
+        
+        // Store original content for reset later
+        submitBtn.dataset.originalContent = originalContent;
     }
     
     // API call to update test
@@ -1615,9 +1620,19 @@ function saveTestChanges(testId) {
     })
     .finally(() => {
         // Reset button state
+        const submitBtn = document.getElementById('save-test-btn');
         if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Sauvegarder';
+            if (submitBtn.dataset.originalContent) {
+                submitBtn.innerHTML = submitBtn.dataset.originalContent;
+            } else {
+                submitBtn.innerHTML = `
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Sauvegarder
+                `;
+            }
         }
     });
 }
