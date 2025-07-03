@@ -212,59 +212,6 @@
                 <div class="relative h-64">
                     <canvas id="activityChart"></canvas>
                 </div>
-                <div class="mt-4 flex justify-between text-sm text-gray-600">
-                    <span>Jan</span>
-                    <span>Fév</span>
-                    <span>Mar</span>
-                    <span>Avr</span>
-                    <span>Mai</span>
-                    <span>Jun</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Performance Insights -->
-        <div class="bg-gradient-to-br from-aptiv-orange-50 to-orange-100 rounded-xl border border-orange-200 p-6">
-            <div class="flex items-start gap-4">
-                <div class="p-3 bg-aptiv-orange-500 rounded-lg">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Aperçu des Performances</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="bg-white rounded-lg p-4 border border-orange-200">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-gray-600">Taux de Réussite</span>
-                                <span class="text-2xl font-bold text-green-600">
-                                    {{ $dashboardData['testMetrics']['successRate'] }}%
-                                </span>
-                            </div>
-                            <div class="mt-2 bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full" style="width: {{ $dashboardData['testMetrics']['successRate'] }}%"></div>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-lg p-4 border border-orange-200">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-gray-600">Score Moyen</span>
-                                <span class="text-2xl font-bold text-blue-600">
-                                    {{ $dashboardData['testMetrics']['averageScore'] }}%
-                                </span>
-                            </div>
-                            <div class="mt-2 bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-500 h-2 rounded-full" style="width: {{ $dashboardData['testMetrics']['averageScore'] }}%"></div>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-lg p-4 border border-orange-200">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-gray-600">Tests Complétés</span>
-                                <span class="text-2xl font-bold text-purple-600">{{ $dashboardData['testMetrics']['totalTests'] }}</span>
-                            </div>
-                            <p class="text-sm text-gray-600 mt-1">Total des évaluations</p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 

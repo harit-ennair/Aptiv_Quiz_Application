@@ -8,7 +8,7 @@
         <!-- Results Header -->
         <div class="text-center mb-8">
             <div class="mb-6">
-                @if($test->pourcentage >= 80)
+                @if($test->pourcentage >= 75)
                     <div class="w-24 h-24 mx-auto bg-green-500 rounded-full flex items-center justify-center mb-4">
                         <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -69,7 +69,7 @@
                         {{ $test->resultat }} / {{ $test->quzs->count() }} bonnes réponses
                     </h2>
                     <p class="text-white/90">
-                        @if($test->pourcentage >= 80)
+                        @if($test->pourcentage >= 75)
                             Excellent travail! Vous maîtrisez parfaitement ce sujet.
                         @elseif($test->pourcentage >= 60)
                             Bon travail! Continuez vos efforts pour vous améliorer.
@@ -148,9 +148,9 @@
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Performance Level -->
-                <div class="text-center p-6 rounded-xl {{ $test->pourcentage >= 80 ? 'bg-green-50 border border-green-200' : ($test->pourcentage >= 60 ? 'bg-yellow-50 border border-yellow-200' : 'bg-red-50 border border-red-200') }}">
-                    <div class="text-3xl font-bold {{ $test->pourcentage >= 80 ? 'text-green-600' : ($test->pourcentage >= 60 ? 'text-yellow-600' : 'text-red-600') }} mb-2">
-                        @if($test->pourcentage >= 80)
+                <div class="text-center p-6 rounded-xl {{ $test->pourcentage >= 75 ? 'bg-green-50 border border-green-200' : ($test->pourcentage >= 60 ? 'bg-yellow-50 border border-yellow-200' : 'bg-red-50 border border-red-200') }}">
+                    <div class="text-3xl font-bold {{ $test->pourcentage >= 75 ? 'text-green-600' : ($test->pourcentage >= 60 ? 'text-yellow-600' : 'text-red-600') }} mb-2">
+                        @if($test->pourcentage >= 75)
                             A
                         @elseif($test->pourcentage >= 60)
                             B
@@ -158,7 +158,7 @@
                             C
                         @endif
                     </div>
-                    <p class="text-sm font-medium {{ $test->pourcentage >= 80 ? 'text-green-800' : ($test->pourcentage >= 60 ? 'text-yellow-800' : 'text-red-800') }}">
+                    <p class="text-sm font-medium {{ $test->pourcentage >= 75 ? 'text-green-800' : ($test->pourcentage >= 60 ? 'text-yellow-800' : 'text-red-800') }}">
                         Niveau atteint
                     </p>
                 </div>

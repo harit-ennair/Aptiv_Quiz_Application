@@ -1125,7 +1125,7 @@ class AdminDashboard {
                             <div class="text-lg percentage-icon icon-bounce">
                                 ${test.pourcentage === 100 ? '🏆' : 
                                   test.pourcentage >= 90 ? '🌟' :
-                                  test.pourcentage >= 80 ? '⭐' :
+                                  test.pourcentage >= 75 ? '⭐' :
                                   test.pourcentage >= 70 ? '🎯' :
                                   test.pourcentage >= 60 ? '👍' :
                                   test.pourcentage >= 50 ? '📈' :
@@ -1139,7 +1139,7 @@ class AdminDashboard {
                                     <div class="percentage-progress-bar h-2 rounded-full ${
                                         test.pourcentage === 100 ? 'bg-gradient-to-r from-purple-500 to-violet-600' :
                                         test.pourcentage >= 90 ? 'bg-gradient-to-r from-yellow-400 to-yellow-500' :
-                                        test.pourcentage >= 80 ? 'bg-gradient-to-r from-green-400 to-green-500' :
+                                        test.pourcentage >= 75 ? 'bg-gradient-to-r from-green-400 to-green-500' :
                                         test.pourcentage >= 70 ? 'bg-gradient-to-r from-blue-400 to-blue-500' :
                                         test.pourcentage >= 60 ? 'bg-gradient-to-r from-indigo-400 to-indigo-500' :
                                         test.pourcentage >= 50 ? 'bg-gradient-to-r from-orange-400 to-orange-500' :
@@ -1221,7 +1221,7 @@ class AdminDashboard {
                                 <div class="text-2xl percentage-icon icon-bounce">
                                     ${test.pourcentage === 100 ? '🏆' : 
                                       test.pourcentage >= 90 ? '🌟' :
-                                      test.pourcentage >= 80 ? '⭐' :
+                                      test.pourcentage >= 75 ? '⭐' :
                                       test.pourcentage >= 70 ? '🎯' :
                                       test.pourcentage >= 60 ? '👍' :
                                       test.pourcentage >= 50 ? '📈' :
@@ -1235,7 +1235,7 @@ class AdminDashboard {
                                 <div class="percentage-progress-bar h-2 rounded-full ${
                                     test.pourcentage === 100 ? 'bg-gradient-to-r from-purple-500 to-violet-600' :
                                     test.pourcentage >= 90 ? 'bg-gradient-to-r from-yellow-400 to-yellow-500' :
-                                    test.pourcentage >= 80 ? 'bg-gradient-to-r from-green-400 to-green-500' :
+                                    test.pourcentage >= 75 ? 'bg-gradient-to-r from-green-400 to-green-500' :
                                     test.pourcentage >= 70 ? 'bg-gradient-to-r from-blue-400 to-blue-500' :
                                     test.pourcentage >= 60 ? 'bg-gradient-to-r from-indigo-400 to-indigo-500' :
                                     test.pourcentage >= 50 ? 'bg-gradient-to-r from-orange-400 to-orange-500' :
@@ -1246,7 +1246,7 @@ class AdminDashboard {
                             <div class="text-xs text-gray-600 mt-1 performance-badge">
                                 ${test.pourcentage === 100 ? 'Parfait!' : 
                                   test.pourcentage >= 90 ? 'Exceptionnel' :
-                                  test.pourcentage >= 80 ? 'Excellent' : 
+                                  test.pourcentage >= 75 ? 'Excellent' : 
                                   test.pourcentage >= 70 ? 'Très bien' :
                                   test.pourcentage >= 60 ? 'Bien' :
                                   test.pourcentage >= 50 ? 'Moyen' : 
@@ -3242,7 +3242,7 @@ class AdminDashboard {
             employeeData.tests.forEach(test => {
                 const date = new Date(test.created_at).toLocaleDateString('fr-FR');
                 const time = new Date(test.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                const scoreColor = test.pourcentage >= 80 ? 'green' : test.pourcentage >= 60 ? 'yellow' : 'red';
+                const scoreColor = test.pourcentage >= 75 ? 'green' : test.pourcentage >= 60 ? 'yellow' : 'red';
                 
                 historyHtml += `
                     <div class="bg-white border border-gray-200 rounded-lg p-4">

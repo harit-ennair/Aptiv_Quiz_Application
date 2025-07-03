@@ -159,8 +159,8 @@ class AdminController extends Controller
             ];
         }
 
-        $excellentCount = test::where('pourcentage', '>=', 80)->count();
-        $goodCount = test::whereBetween('pourcentage', [60, 79])->count();
+        $excellentCount = test::where('pourcentage', '>=', 75)->count();
+        $goodCount = test::whereBetween('pourcentage', [60, 74])->count();
         $needsImprovementCount = test::where('pourcentage', '<', 60)->count();
         $successfulTests = test::where('pourcentage', '>=', 60)->count();
 
