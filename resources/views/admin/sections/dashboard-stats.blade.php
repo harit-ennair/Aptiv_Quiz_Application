@@ -234,17 +234,7 @@
                 <div class="flex-1">
                     <h4 class="text-lg font-semibold text-gray-900 mb-2">Aperçu des Performances</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="bg-white rounded-lg p-4 border border-orange-200">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-gray-600">Taux de Réussite</span>
-                                <span class="text-2xl font-bold text-green-600">
-                                    {{ $dashboardData['testMetrics']['successRate'] }}%
-                                </span>
-                            </div>
-                            <div class="mt-2 bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full" style="width: {{ $dashboardData['testMetrics']['successRate'] }}%"></div>
-                            </div>
-                        </div>
+         
                         <div class="bg-white rounded-lg p-4 border border-orange-200">
                             <div class="flex items-center justify-between">
                                 <span class="text-sm font-medium text-gray-600">Score Moyen</span>
