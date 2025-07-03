@@ -249,7 +249,7 @@ class AdminDashboard {
                 this.loadFormateurs();
                 break;
             case 'employees':
-                this.loadEmployees();
+                this.loadEmployeesTable();
                 break;
             case 'tests':
                 this.loadTests();
@@ -3279,8 +3279,396 @@ class AdminDashboard {
         }
     }
 
+    // Employee table management methods
+    async loadEmployeesTable() {
+        const loadingEl = document.getElementById('employees-loading');
+        const containerEl = document.getElementById('employees-container');
+        const emptyEl = document.getElementById('employees-empty');
+
+        if (loadingEl) loadingEl.classList.remove('hidden');
+        if (containerEl) containerEl.classList.add('hidden');
+        if (emptyEl) emptyEl.classList.add('hidden');
+
+        try {
+            const response = await fetch('/admin/api/employees/all');
+            const result = await response.json();
+
+            if (result.success) {
+                this.employeesData = result.data;
+                this.currentEmployeesPage = 1;
+                this.employeesPerPage = 25;
+                this.employeesSortField = 'name';
+                this.employeesSortDirection = 'asc';
+                this.renderEmployeesTable();
+                this.updateEmployeesStats();
+                if (containerEl) containerEl.classList.remove('hidden');
+            } else {
+                this.showMessage('Erreur lors du chargement des employés', 'error');
+                if (emptyEl) emptyEl.classList.remove('hidden');
+            }
+        } catch (error) {
+            this.showMessage('Une erreur est survenue', 'error');
+            console.error('Error:', error);
+            if (emptyEl) emptyEl.classList.remove('hidden');
+        } finally {
+            if (loadingEl) loadingEl.classList.add('hidden');
+        }
+    }
+
+    renderEmployeesTable() {
+        const tableBody = document.getElementById('employees-table-body');
+        if (!tableBody || !this.employeesData) return;
+
+        const filteredEmployees = this.getFilteredEmployees();
+        const startIndex = (this.currentEmployeesPage - 1) * this.employeesPerPage;
+        const endIndex = startIndex + this.employeesPerPage;
+        const paginatedEmployees = filteredEmployees.slice(startIndex, endIndex);
+
+        tableBody.innerHTML = paginatedEmployees.map(employee => `
+            <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 h-10 w-10">
+                            <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                                <span class="text-white font-medium text-sm">
+                                    ${employee.name ? employee.name.charAt(0).toUpperCase() : 'U'}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-900">${employee.name || 'N/A'}</div>
+                            <div class="text-sm text-gray-500">${employee.last_name || 'N/A'}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-900">${employee.identification || 'N/A'}</div>
+                    <div class="text-sm text-gray-500">${employee.role?.name || 'Sans rôle'}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-900">${employee.tests_count || 0}</div>
+                    <div class="text-sm text-gray-500">
+                        ${employee.tests_count > 0 ? 'tests effectués' : 'aucun test'}
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-900">
+                        ${employee.last_test_date ? new Date(employee.last_test_date).toLocaleDateString('fr-FR') : 'N/A'}
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        ${employee.last_test_date ? new Date(employee.last_test_date).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}) : 'Jamais'}
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div class="flex items-center space-x-2">
+                        <button onclick="adminDashboard.showEmployeeDetails(${employee.id})" 
+                                class="text-aptiv-orange-600 hover:text-aptiv-orange-900 transition-colors"
+                                title="Voir les détails">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </button>
+                        <button onclick="adminDashboard.editEmployee(${employee.id})" 
+                                class="text-blue-600 hover:text-blue-900 transition-colors"
+                                title="Modifier">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                        </button>
+                        <button onclick="adminDashboard.deleteEmployee(${employee.id}, '${employee.name?.replace(/'/g, "\\'")}' || 'Employé')" 
+                                class="text-red-600 hover:text-red-900 transition-colors"
+                                title="Supprimer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+
+        this.updateEmployeesPagination(filteredEmployees.length);
+        this.updateEmployeesResultsCount(filteredEmployees.length);
+    }
+
+    getFilteredEmployees() {
+        if (!this.employeesData) return [];
+        
+        const searchTerm = document.getElementById('employee-search')?.value?.toLowerCase() || '';
+        
+        let filteredEmployees = this.employeesData.filter(employee => {
+            const matchesSearch = !searchTerm || 
+                (employee.name && employee.name.toLowerCase().includes(searchTerm)) ||
+                (employee.last_name && employee.last_name.toLowerCase().includes(searchTerm)) ||
+                (employee.identification && employee.identification.toString().includes(searchTerm));
+            
+            return matchesSearch;
+        });
+
+        // Apply sorting
+        if (this.employeesSortField) {
+            filteredEmployees.sort((a, b) => {
+                let aValue = a[this.employeesSortField];
+                let bValue = b[this.employeesSortField];
+
+                // Handle null/undefined values
+                if (aValue === null || aValue === undefined) aValue = '';
+                if (bValue === null || bValue === undefined) bValue = '';
+
+                // Handle different data types
+                if (this.employeesSortField === 'tests_count') {
+                    aValue = parseInt(aValue) || 0;
+                    bValue = parseInt(bValue) || 0;
+                } else if (this.employeesSortField === 'last_activity') {
+                    // Map last_activity to last_test_date for sorting
+                    aValue = a.last_test_date ? new Date(a.last_test_date).getTime() : 0;
+                    bValue = b.last_test_date ? new Date(b.last_test_date).getTime() : 0;
+                } else if (this.employeesSortField === 'identification') {
+                    aValue = parseInt(aValue) || 0;
+                    bValue = parseInt(bValue) || 0;
+                } else {
+                    aValue = aValue.toString().toLowerCase();
+                    bValue = bValue.toString().toLowerCase();
+                }
+
+                if (this.employeesSortDirection === 'asc') {
+                    return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+                } else {
+                    return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+                }
+            });
+        }
+
+        return filteredEmployees;
+    }
+
+    updateEmployeesStats() {
+        if (!this.employeesData) return;
+
+        const totalEmployees = this.employeesData.length;
+        const activeEmployees = this.employeesData.filter(emp => emp.last_test_date).length;
+        const totalTests = this.employeesData.reduce((sum, emp) => sum + (emp.tests_count || 0), 0);
+        const averageTests = totalEmployees > 0 ? Math.round(totalTests / totalEmployees) : 0;
+
+        document.getElementById('total-employees').textContent = totalEmployees;
+        document.getElementById('active-employees').textContent = activeEmployees;
+        document.getElementById('total-tests-taken').textContent = totalTests;
+        document.getElementById('average-tests').textContent = averageTests;
+    }
+
+    updateEmployeesPagination(totalResults) {
+        const totalPages = Math.ceil(totalResults / this.employeesPerPage);
+        const paginationNav = document.getElementById('employees-pagination-nav');
+        
+        if (!paginationNav) return;
+
+        let paginationHtml = '';
+        
+        // Previous button
+        paginationHtml += `
+            <button onclick="adminDashboard.prevEmployeesPage()" 
+                    class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${this.currentEmployeesPage <= 1 ? 'opacity-50 cursor-not-allowed' : ''}"
+                    ${this.currentEmployeesPage <= 1 ? 'disabled' : ''}>
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        `;
+
+        // Page numbers
+        for (let i = 1; i <= Math.min(totalPages, 10); i++) {
+            paginationHtml += `
+                <button onclick="adminDashboard.goToEmployeesPage(${i})" 
+                        class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 ${i === this.currentEmployeesPage ? 'bg-aptiv-orange-50 border-aptiv-orange-500 text-aptiv-orange-600' : ''}">
+                    ${i}
+                </button>
+            `;
+        }
+
+        // Next button
+        paginationHtml += `
+            <button onclick="adminDashboard.nextEmployeesPage()" 
+                    class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${this.currentEmployeesPage >= totalPages ? 'opacity-50 cursor-not-allowed' : ''}"
+                    ${this.currentEmployeesPage >= totalPages ? 'disabled' : ''}>
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        `;
+
+        paginationNav.innerHTML = paginationHtml;
+
+        // Update mobile pagination buttons
+        const prevMobile = document.getElementById('employees-prev-mobile');
+        const nextMobile = document.getElementById('employees-next-mobile');
+        
+        if (prevMobile) {
+            prevMobile.disabled = this.currentEmployeesPage <= 1;
+        }
+        if (nextMobile) {
+            nextMobile.disabled = this.currentEmployeesPage >= totalPages;
+        }
+    }
+
+    updateEmployeesResultsCount(totalResults) {
+        const resultsCountEl = document.getElementById('employees-results-count');
+        if (resultsCountEl) {
+            resultsCountEl.textContent = `${totalResults} résultat${totalResults !== 1 ? 's' : ''}`;
+        }
+
+        const paginationInfo = document.getElementById('employees-pagination-info');
+        if (paginationInfo) {
+            const startIndex = (this.currentEmployeesPage - 1) * this.employeesPerPage + 1;
+            const endIndex = Math.min(startIndex + this.employeesPerPage - 1, totalResults);
+            paginationInfo.innerHTML = `
+                Affichage de <span class="font-medium">${startIndex}</span> à <span class="font-medium">${endIndex}</span> sur <span class="font-medium">${totalResults}</span> résultats
+            `;
+        }
+    }
+
+    goToEmployeesPage(page) {
+        this.currentEmployeesPage = page;
+        this.renderEmployeesTable();
+    }
+
+    sortEmployees(field) {
+        if (this.employeesSortField === field) {
+            // Toggle sort direction if same field
+            this.employeesSortDirection = this.employeesSortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            // New field, default to ascending
+            this.employeesSortField = field;
+            this.employeesSortDirection = 'asc';
+        }
+        
+        this.currentEmployeesPage = 1;
+        this.renderEmployeesTable();
+        this.updateSortIndicators();
+    }
+
+    updateSortIndicators() {
+        // Remove all existing sort indicators
+        document.querySelectorAll('#employees-container th button').forEach(btn => {
+            btn.classList.remove('text-aptiv-orange-600');
+            const svg = btn.querySelector('svg');
+            if (svg) {
+                svg.classList.remove('text-aptiv-orange-600');
+            }
+        });
+
+        // Add indicator to current sort field
+        const currentButton = document.querySelector(`#employees-container th button[onclick="adminDashboard.sortEmployees('${this.employeesSortField}')"]`);
+        if (currentButton) {
+            currentButton.classList.add('text-aptiv-orange-600');
+            const svg = currentButton.querySelector('svg');
+            if (svg) {
+                svg.classList.add('text-aptiv-orange-600');
+                // Update SVG icon based on sort direction
+                if (this.employeesSortDirection === 'desc') {
+                    svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17l-4 4-4-4"></path>';
+                } else {
+                    svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7l4-4 4 4"></path>';
+                }
+            }
+        }
+    }
+
+    async deleteEmployee(employeeId, employeeName) {
+        // Store the employee info for the modal
+        this.employeeToDelete = { id: employeeId, name: employeeName };
+        
+        // Show the delete confirmation modal
+        const modal = document.getElementById('delete-employee-modal');
+        const message = document.getElementById('delete-employee-message');
+        
+        if (modal && message) {
+            message.textContent = `Êtes-vous sûr de vouloir supprimer l'employé "${employeeName}" ? Cette action est irréversible et supprimera également tous les tests associés.`;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+    }
+
+    cancelDeleteEmployee() {
+        const modal = document.getElementById('delete-employee-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        this.employeeToDelete = null;
+    }
+
+    async confirmDeleteEmployee() {
+        if (!this.employeeToDelete) return;
+
+        const { id: employeeId, name: employeeName } = this.employeeToDelete;
+
+        try {
+            const response = await fetch(`/admin/api/employees/${employeeId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showMessage(`Employé "${employeeName}" supprimé avec succès`, 'success');
+                // Remove employee from local data
+                this.employeesData = this.employeesData.filter(emp => emp.id !== employeeId);
+                this.renderEmployeesTable();
+                this.updateEmployeesStats();
+            } else {
+                this.showMessage(result.message || 'Erreur lors de la suppression', 'error');
+            }
+        } catch (error) {
+            this.showMessage('Une erreur est survenue lors de la suppression', 'error');
+            console.error('Delete error:', error);
+        }
+
+        // Close modal
+        this.cancelDeleteEmployee();
+    }
+
+    filterEmployees() {
+        this.currentEmployeesPage = 1;
+        this.renderEmployeesTable();
+    }
+
+    changeEmployeesPerPage() {
+        const perPageSelect = document.getElementById('employees-per-page');
+        if (perPageSelect) {
+            this.employeesPerPage = parseInt(perPageSelect.value);
+            this.currentEmployeesPage = 1;
+            this.renderEmployeesTable();
+        }
+    }
+
+    prevEmployeesPage() {
+        if (this.currentEmployeesPage > 1) {
+            this.currentEmployeesPage--;
+            this.renderEmployeesTable();
+        }
+    }
+
+    nextEmployeesPage() {
+        const filteredEmployees = this.getFilteredEmployees();
+        const totalPages = Math.ceil(filteredEmployees.length / this.employeesPerPage);
+        if (this.currentEmployeesPage < totalPages) {
+            this.currentEmployeesPage++;
+            this.renderEmployeesTable();
+        }
+    }
+
+    editEmployee(employeeId) {
+        // TODO: Implement employee editing
+        console.log('Edit employee:', employeeId);
+    }
+
     refreshEmployees() {
-        this.loadEmployees();
+        this.loadEmployeesTable();
     }
 }
 

@@ -105,6 +105,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             // Employees Management
             Route::get('/employees/all', [AdminController::class, 'getAllEmployees'])->name('employees.all');
             Route::get('/employees/{user}/details', [AdminController::class, 'getEmployeeDetails'])->name('employees.details');
+            Route::delete('/employees/{user}', [AdminController::class, 'deleteEmployee'])->name('employees.delete');
         });
     });
 });

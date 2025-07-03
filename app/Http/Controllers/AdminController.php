@@ -738,4 +738,40 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Delete an employee and all associated tests
+     */
+    public function deleteEmployee(User $user)
+    {
+        try {
+            // Check if user is actually an employee
+            if ($user->role_id != 3) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Seuls les employés peuvent être supprimés via cette méthode'
+                ], 400);
+            }
+
+            // Get employee name for response
+            $employeeName = $user->name;
+
+            // Delete all tests associated with this employee
+            $testsDeleted = test::where('user_id', $user->id)->delete();
+
+            // Delete the employee
+            $user->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Employé '$employeeName' supprimé avec succès ($testsDeleted tests supprimés)"
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression de l\'employé: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
