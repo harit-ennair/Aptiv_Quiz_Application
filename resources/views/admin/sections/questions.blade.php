@@ -601,22 +601,22 @@
 </style>
 
 <!-- Questions Management Section -->
-<div class="space-y-6">    <!-- Header -->
-    <div class="bg-gradient-to-r from-white to-gray-50 rounded-xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
-        <!-- Decorative background pattern -->
-
-        
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 relative z-10">
-            <div class="flex items-center space-x-4">
-                <div class="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+<div class="space-y-6">    
+    <!-- Enhanced Header -->
+    <div class="bg-gradient-to-r from-white via-blue-50 to-purple-50 rounded-2xl shadow-lg border border-gray-200 p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div class="text-center lg:text-left">
+                <div class="flex items-center justify-center lg:justify-start gap-3 mb-2">
+                    <div class="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                        Gestion des Questions
+                    </h2>
                 </div>
-                <div>
-                    <!-- <h2 class="text-xl lg:text-2xl font-bold text-gray-900 mb-1">Gestion des Questions</h2> -->
-                    <p class="text-gray-600 text-sm lg:text-base">Créez et organisez vos questions par processus et catégorie</p>
-                </div>
+                <p class="text-gray-600 text-sm lg:text-base">Créez et organisez vos questions par processus et catégorie</p>
             </div>
             
             <div class="flex items-center space-x-3">

@@ -1,16 +1,18 @@
 <!-- Categories Management -->
 <div class="space-y-6">
-    <!-- Header -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-                <div class="flex items-center gap-4 mb-2">
+    <!-- Enhanced Header -->
+    <div class="bg-gradient-to-r from-white via-blue-50 to-purple-50 rounded-2xl shadow-lg border border-gray-200 p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div class="text-center lg:text-left">
+                <div class="flex items-center justify-center lg:justify-start gap-3 mb-2">
                     <div class="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                         </svg>
                     </div>
-                    <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Catégories</h2>
+                    <h2 class="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                        Gestion des Catégories
+                    </h2>
                 </div>
                 <p class="text-gray-600 text-sm lg:text-base">Organiser les catégories par processus</p>
             </div>

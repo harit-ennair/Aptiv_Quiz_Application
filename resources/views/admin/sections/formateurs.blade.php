@@ -1,16 +1,18 @@
 <!-- Formateurs Management Section -->
 <div class="space-y-6">
-    <!-- Header -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-                <div class="flex items-center gap-4 mb-2">
+    <!-- Enhanced Header -->
+    <div class="bg-gradient-to-r from-white via-blue-50 to-purple-50 rounded-2xl shadow-lg border border-gray-200 p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div class="text-center lg:text-left">
+                <div class="flex items-center justify-center lg:justify-start gap-3 mb-2">
                     <div class="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>
                         </svg>
                     </div>
-                    <h2 class="text-xl lg:text-2xl font-bold text-gray-900">Gestion des Formateurs</h2>
+                    <h2 class="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                        Gestion des Formateurs
+                    </h2>
                 </div>
                 <p class="text-gray-600 text-sm lg:text-base">Gérer les formateurs et leurs informations</p>
             </div>
