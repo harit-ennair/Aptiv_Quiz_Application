@@ -20,6 +20,10 @@ use App\Http\Controllers\UserTestController;
 |
 */
 
+Route::get('/test-formateur-delete', function () {
+    return view('test-formateur-delete');
+})->name('test.formateur.delete');
+
 Route::get('/', [ProcessController::class, 'index'])->name('home');
 Route::get('/process/{process}/categories', [ProcessController::class, 'show'])->name('process.categories');
 

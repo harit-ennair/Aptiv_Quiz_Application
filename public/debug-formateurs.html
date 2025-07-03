@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Formateurs Debug</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Test Formateurs Debug</h1>
+        
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4">Debug Instructions</h2>
+            <ol class="list-decimal list-inside space-y-2 text-sm">
+                <li>Navigate to the admin page (formateurs section)</li>
+                <li>Open the browser console (F12)</li>
+                <li>Look for the detailed debug logs when the page loads</li>
+                <li>Try clicking a delete button on any formateur</li>
+                <li>Check the comprehensive debug logs in the console</li>
+                <li>You can also run these debug commands in console:</li>
+            </ol>
+            
+            <div class="mt-4 bg-gray-50 p-4 rounded">
+                <h3 class="font-medium mb-2">Debug Commands:</h3>
+                <ul class="space-y-1 text-sm font-mono">
+                    <li><code>window.inspectFormateursData()</code> - Inspect current data state</li>
+                    <li><code>window.manualDeleteTest(1)</code> - Test delete with specific ID</li>
+                    <li><code>window.reloadFormateursData()</code> - Reload data from API</li>
+                    <li><code>allFormateurs</code> - View all formateurs array</li>
+                    <li><code>filteredFormateurs</code> - View filtered formateurs array</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Recent Fixes Applied</h2>
+            <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>✅ Fixed duplicate notifications by clearing existing ones first</li>
+                <li>✅ Changed form submission to use API calls instead of local data</li>
+                <li>✅ Fixed table not updating by reloading data after operations</li>
+                <li>✅ Enhanced notification system with unique class names</li>
+                <li>✅ Consolidated event listeners to prevent duplicates</li>
+            </ul>
+            
+            <div class="mt-4 p-4 bg-green-50 rounded">
+                <p class="text-sm text-green-800">
+                    <strong>Expected behavior:</strong> Single notifications, automatic table refresh, 
+                    and data persistence through API calls.
+                </p>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Direct API Testing</h2>
+            <p class="text-sm text-gray-600 mb-4">Test the API endpoints directly:</p>
+            <div class="bg-gray-50 p-4 rounded text-sm font-mono">
+                <p class="mb-2">// Test GET endpoint</p>
+                <p class="mb-4">fetch('/admin/api/formateurs').then(r => r.json()).then(console.log)</p>
+                
+                <p class="mb-2">// Test DELETE endpoint (replace 1 with actual ID)</p>
+                <p>fetch('/admin/api/formateurs/1', {<br>
+                &nbsp;&nbsp;method: 'DELETE',<br>
+                &nbsp;&nbsp;headers: {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')<br>
+                &nbsp;&nbsp;}<br>
+                }).then(r => r.json()).then(console.log)</p>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Expected Debug Output</h2>
+            <p class="text-sm text-gray-600 mb-4">
+                When you click a delete button, you should see detailed logs showing:
+            </p>
+            <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>The formateur ID being passed to deleteFormateur()</li>
+                <li>The current state of allFormateurs array</li>
+                <li>Multiple comparison methods being tested</li>
+                <li>Whether the formateur is found with each method</li>
+                <li>The deletion process step by step</li>
+            </ul>
+            
+            <div class="mt-4 p-4 bg-blue-50 rounded">
+                <p class="text-sm">
+                    <strong>Note:</strong> If the delete still doesn't work, the debug logs will show exactly 
+                    why the formateur cannot be found, which will help us identify the root cause.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

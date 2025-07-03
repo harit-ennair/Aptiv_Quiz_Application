@@ -13,7 +13,20 @@ class FormateurController extends Controller
      */
     public function index()
     {
-        $formateurs = formateur::all();
+        $formateurs = formateur::with('tests')->get()->map(function ($formateur) {
+            return [
+                'id' => $formateur->id,
+                'name' => $formateur->name,
+                'last_name' => $formateur->last_name,
+                'identification' => $formateur->identification,
+                'created_at' => $formateur->created_at,
+                'updated_at' => $formateur->updated_at,
+                'full_name' => trim($formateur->name . ' ' . $formateur->last_name),
+                'tests_count' => $formateur->tests->count(),
+                'tests' => $formateur->tests
+            ];
+        });
+        
         return response()->json([
             'success' => true,
             'data' => $formateurs
