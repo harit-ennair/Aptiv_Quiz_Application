@@ -14,28 +14,28 @@
                         Dashboard
                     </h2>
                 </div>
-                <p class="text-gray-600 text-sm lg:text-base">Real-time system metrics overview</p>
+                <p class="text-gray-600 text-sm lg:text-base">Aperçu des métriques système en temps réel</p>
             </div>
             <div class="flex flex-col sm:flex-row gap-3">
                 <div class="relative">
                     <select id="time-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                        <option value="year" selected>This Year</option>
+                        <option value="today">Aujourd'hui</option>
+                        <option value="week">Cette semaine</option>
+                        <option value="month">Ce mois</option>
+                        <option value="year" selected>Cette année</option>
                     </select>
                 </div>
                 <button onclick="exportToPowerPoint()" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors btn-touch">
                     <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
-                    Export PPT
+                    Exporter PPT
                 </button>
                 <button onclick="refreshDashboard()" class="px-4 py-2 text-sm font-medium text-white bg-aptiv-orange-600 hover:bg-aptiv-orange-700 rounded-lg transition-colors btn-touch">
                     <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                     </svg>
-                    Refresh
+                    Actualiser
                 </button>
             </div>
         </div>
@@ -50,9 +50,9 @@
                 </div>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-600">Users</p>
+                <p class="text-sm font-medium text-gray-600">Utilisateurs</p>
                 <p class="text-2xl font-bold text-gray-900 mb-1" data-stat="users">{{ $dashboardData['counts']['users'] }}</p>
-                <p class="text-xs text-gray-500">Total accounts</p>
+                <p class="text-xs text-gray-500">Comptes totaux</p>
             </div>
         </div>
 
@@ -65,9 +65,9 @@
                 </div>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-600">Processes</p>
+                <p class="text-sm font-medium text-gray-600">Processus</p>
                 <p class="text-2xl font-bold text-gray-900 mb-1" data-stat="processes">{{ $dashboardData['counts']['processes'] }}</p>
-                <p class="text-xs text-gray-500">Total processes</p>
+                <p class="text-xs text-gray-500">Processus totaux</p>
             </div>
         </div>
 
@@ -80,9 +80,9 @@
                 </div>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-600">Categories</p>
+                <p class="text-sm font-medium text-gray-600">Catégories</p>
                 <p class="text-2xl font-bold text-gray-900 mb-1" data-stat="categories">{{ $dashboardData['counts']['categories'] }}</p>
-                <p class="text-xs text-gray-500">Total categories</p>
+                <p class="text-xs text-gray-500">Catégories totales</p>
             </div>
         </div>
 
@@ -97,7 +97,7 @@
             <div>
                 <p class="text-sm font-medium text-gray-600">Tests</p>
                 <p class="text-2xl font-bold text-gray-900 mb-1" data-stat="tests">{{ $dashboardData['counts']['tests'] }}</p>
-                <p class="text-xs text-gray-500">Total tests</p>
+                <p class="text-xs text-gray-500">Tests totaux</p>
             </div>
         </div>
 
@@ -110,9 +110,9 @@
                 </div>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-600">Trainers</p>
+                <p class="text-sm font-medium text-gray-600">Formateurs</p>
                 <p class="text-2xl font-bold text-gray-900 mb-1" data-stat="formateurs">{{ $dashboardData['counts']['formateurs'] }}</p>
-                <p class="text-xs text-gray-500">Total trainers</p>
+                <p class="text-xs text-gray-500">Formateurs totaux</p>
             </div>
         </div>
     </div>
@@ -121,7 +121,7 @@
     <div class="space-y-6">
         <!-- Charts Header -->
         <div class="flex items-center justify-between">
-            <h3 class="text-xl font-bold text-gray-900">Visual Analytics</h3>
+            <h3 class="text-xl font-bold text-gray-900">Analyses visuelles</h3>
             <div class="flex gap-2">
 
             </div>
@@ -132,10 +132,10 @@
             <!-- Users Distribution Chart -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h4 class="text-lg font-semibold text-gray-900">User Distribution</h4>
+                    <h4 class="text-lg font-semibold text-gray-900">Distribution des utilisateurs</h4>
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
-                        <span class="text-sm text-gray-600">By Role</span>
+                        <span class="text-sm text-gray-600">Par rôle</span>
                     </div>
                 </div>
                 <div class="relative h-64">
@@ -162,10 +162,10 @@
             <!-- Test Results Trend -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h4 class="text-lg font-semibold text-gray-900">Results Trend</h4>
+                    <h4 class="text-lg font-semibold text-gray-900">Tendance des résultats</h4>
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 bg-green-500 rounded-full"></span>
-                        <span class="text-sm text-gray-600">This Year</span>
+                        <span class="text-sm text-gray-600">Cette année</span>
                     </div>
                 </div>
                 <div class="relative h-64">
@@ -178,11 +178,11 @@
                     </div>
                     <div>
                         <p class="text-2xl font-bold text-yellow-600" data-metric="good">{{ $dashboardData['testMetrics']['good'] }}%</p>
-                        <p class="text-xs text-gray-600">Good</p>
+                        <p class="text-xs text-gray-600">Bien</p>
                     </div>
                     <div>
                         <p class="text-2xl font-bold text-red-600" data-metric="needsImprovement">{{ $dashboardData['testMetrics']['needsImprovement'] }}%</p>
-                        <p class="text-xs text-gray-600">Needs Improvement</p>
+                        <p class="text-xs text-gray-600">À améliorer</p>
                     </div>
                 </div>
             </div>
@@ -190,10 +190,10 @@
             <!-- Top 5 Formateur Performance -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h4 class="text-lg font-semibold text-gray-900">Top 5 Trainer Performance</h4>
+                    <h4 class="text-lg font-semibold text-gray-900">Top 5 Performance des formateurs</h4>
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 bg-purple-500 rounded-full"></span>
-                        <span class="text-sm text-gray-600">Average Score</span>
+                        <span class="text-sm text-gray-600">Score moyen</span>
                     </div>
                 </div>
                 <div class="relative h-64">
@@ -209,10 +209,10 @@
             <!-- Monthly Activity -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h4 class="text-lg font-semibold text-gray-900">Monthly Activity</h4>
+                    <h4 class="text-lg font-semibold text-gray-900">Activité</h4>
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 bg-aptiv-orange-500 rounded-full"></span>
-                        <span class="text-sm text-gray-600">Registrations</span>
+                        <span class="text-sm text-gray-600">Inscriptions</span>
                     </div>
                 </div>
                 <div class="relative h-64">
@@ -269,11 +269,11 @@
                     </div>
                     <div>
                         <p class="text-lg font-bold text-gray-900" data-activity="testsToday">{{ $dashboardData['additionalStats']['todayTests'] }}</p>
-                        <p class="text-sm text-gray-600">Tests Today</p>
+                        <p class="text-sm text-gray-600">Tests d'aujourd'hui</p>
                     </div>
                 </div>
                 <div class="mt-2 text-xs text-gray-500">
-                    Average: <span data-activity="averageScore">{{ number_format($dashboardData['additionalStats']['todayTestsAvg'], 1) }}</span>%
+                    Moyenne: <span data-activity="averageScore">{{ number_format($dashboardData['additionalStats']['todayTestsAvg'], 1) }}</span>%
                 </div>
             </div>
 
@@ -288,10 +288,10 @@
                     <div>
                         @if($dashboardData['additionalStats']['topPerformer'])
                             <p class="text-lg font-bold text-gray-900">{{ $dashboardData['additionalStats']['topPerformer']['score'] }}%</p>
-                            <p class="text-sm text-gray-600">Meilleur Score</p>
+                            <p class="text-sm text-gray-600">Meilleur score</p>
                         @else
                             <p class="text-lg font-bold text-gray-900">-</p>
-                            <p class="text-sm text-gray-600">Meilleur Score</p>
+                            <p class="text-sm text-gray-600">Meilleur score</p>
                         @endif
                     </div>
                 </div>
@@ -321,7 +321,7 @@
                 <div class="space-y-4">
                     @if($dashboardData['recentActivity']['tests']->count() > 0)
                         <div>
-                            <h4 class="text-sm font-semibold text-gray-900 mb-3">Tests Récents</h4>
+                            <h4 class="text-sm font-semibold text-gray-900 mb-3">Tests récents</h4>
                             <div class="space-y-3">
                                 @foreach($dashboardData['recentActivity']['tests'] as $test)
                                     <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -348,7 +348,7 @@
                     
                     @if($dashboardData['recentActivity']['users']->count() > 0)
                         <div>
-                            <h4 class="text-sm font-semibold text-gray-900 mb-3">Nouveaux Utilisateurs</h4>
+                            <h4 class="text-sm font-semibold text-gray-900 mb-3">Nouveaux utilisateurs</h4>
                             <div class="space-y-3">
                                 @foreach($dashboardData['recentActivity']['users'] as $user)
                                     <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
@@ -453,7 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: {!! json_encode($dashboardData['timeBasedData']['labels']) !!},
             datasets: [{
-                label: 'Score Moyen',
+                label: 'Score moyen',
                 data: {!! json_encode($dashboardData['timeBasedData']['testResults']) !!},
                 borderColor: 'rgba(16, 185, 129, 1)',
                 backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -511,7 +511,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: formateurData.labels.length > 0 ? formateurData.labels : ['Aucun formateur'],
             datasets: [{
-                label: 'Score Moyen (%)',
+                label: 'Score moyen (%)',
                 data: formateurData.scores.length > 0 ? formateurData.scores : [0],
                 backgroundColor: [
                     'rgba(139, 92, 246, 0.8)',
@@ -774,7 +774,7 @@ window.exportCharts = function() {
     
     // This is a simplified version - you might want to use a library like html2canvas
     console.log('Exporting charts...');
-    alert('Chart export functionality in development');
+    alert('Fonctionnalité d\'exportation des graphiques en développement');
 };
 
 // PowerPoint Export Function
