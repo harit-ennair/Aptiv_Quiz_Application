@@ -1,5 +1,8 @@
 <!-- Tests Management Section -->
 <div class="space-y-6">
+    <!-- Include SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <!-- Enhanced Header with Creative Search -->
     <div class="bg-gradient-to-r from-white via-blue-50 to-purple-50 rounded-2xl shadow-lg border border-gray-200 p-6">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -1330,29 +1333,150 @@ function deleteTest(testId) {
 }
 
 function exportTests() {
-    // Generate CSV export
-    const csvData = filteredTests.map(test => [
-        `${test.user.name} ${test.user.last_name}`,
-        test.user.identification,
-        test.category_name,
-        `${test.formateur.name} ${test.formateur.last_name}`,
-        test.pourcentage,
-        formatDate(test.created_at),
-        test.is_retake ? 'Repris' : 'Premier'
-    ]);
+    // Show loading notification
+    showNotification('Génération du fichier Excel en cours...', 'info');
     
-    const headers = ['Utilisateur', 'ID', 'Catégorie', 'Formateur', 'Score (%)', 'Date', 'Type'];
+    // Generate Excel data
+    const excelData = filteredTests.map(test => {
+        // Determine type based on score
+        let type = 'Échec';
+        if (test.pourcentage >= 75) {
+            type = 'Pass';
+        } else if (test.is_retake) {
+            type = 'Repris';
+        }
+        
+        return [
+            test.user?.name || 'N/A',
+            test.user?.last_name || 'N/A',
+            test.user?.identification || 'N/A',
+            test.process_name || 'N/A',
+            test.category_name || 'N/A',
+            test.formateur ? `${test.formateur.name || ''} ${test.formateur.last_name || ''}`.trim() : 'N/A',
+            test.pourcentage || 0,
+            formatDate(test.created_at),
+            type
+        ];
+    });
+    
+    const headers = ['Nom', 'Prénom', 'ID', 'Processus', 'Catégorie', 'Formateur', 'Score (%)', 'Date', 'Type'];
+    
+    // Create workbook and worksheet
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...excelData]);
+    
+    // Set column widths
+    const colWidths = [
+        { wch: 15 }, // Nom
+        { wch: 15 }, // Prénom
+        { wch: 12 }, // ID
+        { wch: 20 }, // Processus
+        { wch: 25 }, // Catégorie
+        { wch: 20 }, // Formateur
+        { wch: 10 }, // Score
+        { wch: 18 }, // Date
+        { wch: 12 }  // Type
+    ];
+    ws['!cols'] = colWidths;
+    
+    // Style the header row
+    const headerRange = XLSX.utils.decode_range(ws['!ref']);
+    for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+        if (!ws[cellAddress]) continue;
+        
+        ws[cellAddress].s = {
+            font: { bold: true, color: { rgb: "FFFFFF" } },
+            fill: { fgColor: { rgb: "3B82F6" } },
+            alignment: { horizontal: "center" }
+        };
+    }
+    
+    // Add conditional formatting for scores and types
+    for (let row = 1; row <= excelData.length; row++) {
+        // Score column (G)
+        const scoreCell = `G${row + 1}`;
+        const typeCell = `I${row + 1}`;
+        const score = excelData[row - 1][6];
+        
+        if (ws[scoreCell]) {
+            if (score >= 75) {
+                ws[scoreCell].s = { fill: { fgColor: { rgb: "10B981" } }, font: { color: { rgb: "FFFFFF" } } };
+            } else if (score >= 50) {
+                ws[scoreCell].s = { fill: { fgColor: { rgb: "F59E0B" } }, font: { color: { rgb: "FFFFFF" } } };
+            } else {
+                ws[scoreCell].s = { fill: { fgColor: { rgb: "EF4444" } }, font: { color: { rgb: "FFFFFF" } } };
+            }
+        }
+        
+        // Type column styling
+        if (ws[typeCell]) {
+            const typeValue = excelData[row - 1][8];
+            if (typeValue === 'Pass') {
+                ws[typeCell].s = { fill: { fgColor: { rgb: "10B981" } }, font: { color: { rgb: "FFFFFF" }, bold: true } };
+            } else if (typeValue === 'Repris') {
+                ws[typeCell].s = { fill: { fgColor: { rgb: "8B5CF6" } }, font: { color: { rgb: "FFFFFF" } } };
+            } else {
+                ws[typeCell].s = { fill: { fgColor: { rgb: "EF4444" } }, font: { color: { rgb: "FFFFFF" } } };
+            }
+        }
+    }
+    
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(wb, ws, "Tests Results");
+    
+    // Generate filename with current date
+    const currentDate = new Date().toISOString().split('T')[0];
+    const filename = `aptiv_tests_export_${currentDate}.xlsx`;
+    
+    // Write and download the file
+    try {
+        XLSX.writeFile(wb, filename);
+        showNotification(`Fichier Excel exporté avec succès: ${filename}`, 'success');
+    } catch (error) {
+        console.error('Export error:', error);
+        // Fallback to CSV if XLSX fails
+        exportTestsCSV();
+    }
+}
+
+function exportTestsCSV() {
+    // Fallback CSV export
+    const csvData = filteredTests.map(test => {
+        let type = 'Échec';
+        if (test.pourcentage >= 75) {
+            type = 'Pass';
+        } else if (test.is_retake) {
+            type = 'Repris';
+        }
+        
+        return [
+            test.user?.name || 'N/A',
+            test.user?.last_name || 'N/A',
+            test.user?.identification || 'N/A',
+            test.process_name || 'N/A',
+            test.category_name || 'N/A',
+            test.formateur ? `${test.formateur.name || ''} ${test.formateur.last_name || ''}`.trim() : 'N/A',
+            test.pourcentage || 0,
+            formatDate(test.created_at),
+            type
+        ];
+    });
+    
+    const headers = ['Nom', 'Prénom', 'ID', 'Processus', 'Catégorie', 'Formateur', 'Score (%)', 'Date', 'Type'];
     const csv = [headers, ...csvData].map(row => row.join(',')).join('\n');
     
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `tests_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `aptiv_tests_export_${new Date().toISOString().split('T')[0]}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    showNotification('Fichier CSV exporté avec succès (fallback)', 'success');
 }
 
 function initializeCharts() {
