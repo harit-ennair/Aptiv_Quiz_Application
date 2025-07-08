@@ -11,25 +11,31 @@
                         </svg>
                     </div>
                     <h2 class="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                        Tableau de Bord
+                        Dashboard
                     </h2>
                 </div>
-                <p class="text-gray-600 text-sm lg:text-base">Vue d'ensemble des métriques système en temps réel</p>
+                <p class="text-gray-600 text-sm lg:text-base">Real-time system metrics overview</p>
             </div>
             <div class="flex flex-col sm:flex-row gap-3">
                 <div class="relative">
                     <select id="time-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-aptiv-orange-500 focus:border-transparent text-sm">
-                        <option value="today">Aujourd'hui</option>
-                        <option value="week">Cette semaine</option>
-                        <option value="month">Ce mois</option>
-                        <option value="year" selected>Cette année</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="year" selected>This Year</option>
                     </select>
                 </div>
+                <button onclick="exportToPowerPoint()" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors btn-touch">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Export PPT
+                </button>
                 <button onclick="refreshDashboard()" class="px-4 py-2 text-sm font-medium text-white bg-aptiv-orange-600 hover:bg-aptiv-orange-700 rounded-lg transition-colors btn-touch">
                     <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                     </svg>
-                    Actualiser
+                    Refresh
                 </button>
             </div>
         </div>
@@ -44,9 +50,9 @@
                 </div>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-600">Utilisateurs</p>
-                <p class="text-2xl font-bold text-gray-900 mb-1">{{ $dashboardData['counts']['users'] }}</p>
-                <p class="text-xs text-gray-500">Total des comptes</p>
+                <p class="text-sm font-medium text-gray-600">Users</p>
+                <p class="text-2xl font-bold text-gray-900 mb-1" data-stat="users">{{ $dashboardData['counts']['users'] }}</p>
+                <p class="text-xs text-gray-500">Total accounts</p>
             </div>
         </div>
 
@@ -59,9 +65,9 @@
                 </div>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-600">Processus</p>
-                <p class="text-2xl font-bold text-gray-900 mb-1">{{ $dashboardData['counts']['processes'] }}</p>
-                <p class="text-xs text-gray-500">Total des processus</p>
+                <p class="text-sm font-medium text-gray-600">Processes</p>
+                <p class="text-2xl font-bold text-gray-900 mb-1" data-stat="processes">{{ $dashboardData['counts']['processes'] }}</p>
+                <p class="text-xs text-gray-500">Total processes</p>
             </div>
         </div>
 
@@ -74,9 +80,9 @@
                 </div>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-600">Catégories</p>
-                <p class="text-2xl font-bold text-gray-900 mb-1">{{ $dashboardData['counts']['categories'] }}</p>
-                <p class="text-xs text-gray-500">Total des catégories</p>
+                <p class="text-sm font-medium text-gray-600">Categories</p>
+                <p class="text-2xl font-bold text-gray-900 mb-1" data-stat="categories">{{ $dashboardData['counts']['categories'] }}</p>
+                <p class="text-xs text-gray-500">Total categories</p>
             </div>
         </div>
 
@@ -90,8 +96,8 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-600">Tests</p>
-                <p class="text-2xl font-bold text-gray-900 mb-1">{{ $dashboardData['counts']['tests'] }}</p>
-                <p class="text-xs text-gray-500">Total des tests</p>
+                <p class="text-2xl font-bold text-gray-900 mb-1" data-stat="tests">{{ $dashboardData['counts']['tests'] }}</p>
+                <p class="text-xs text-gray-500">Total tests</p>
             </div>
         </div>
 
@@ -104,9 +110,9 @@
                 </div>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-600">Formateurs</p>
-                <p class="text-2xl font-bold text-gray-900 mb-1">{{ $dashboardData['counts']['formateurs'] }}</p>
-                <p class="text-xs text-gray-500">Total des formateurs</p>
+                <p class="text-sm font-medium text-gray-600">Trainers</p>
+                <p class="text-2xl font-bold text-gray-900 mb-1" data-stat="formateurs">{{ $dashboardData['counts']['formateurs'] }}</p>
+                <p class="text-xs text-gray-500">Total trainers</p>
             </div>
         </div>
     </div>
@@ -115,7 +121,7 @@
     <div class="space-y-6">
         <!-- Charts Header -->
         <div class="flex items-center justify-between">
-            <h3 class="text-xl font-bold text-gray-900">Analyses Visuelles</h3>
+            <h3 class="text-xl font-bold text-gray-900">Visual Analytics</h3>
             <div class="flex gap-2">
 
             </div>
@@ -126,10 +132,10 @@
             <!-- Users Distribution Chart -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h4 class="text-lg font-semibold text-gray-900">Distribution des Utilisateurs</h4>
+                    <h4 class="text-lg font-semibold text-gray-900">User Distribution</h4>
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
-                        <span class="text-sm text-gray-600">Par rôle</span>
+                        <span class="text-sm text-gray-600">By Role</span>
                     </div>
                 </div>
                 <div class="relative h-64">
@@ -156,10 +162,10 @@
             <!-- Test Results Trend -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h4 class="text-lg font-semibold text-gray-900">Tendance des Résultats</h4>
+                    <h4 class="text-lg font-semibold text-gray-900">Results Trend</h4>
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 bg-green-500 rounded-full"></span>
-                        <span class="text-sm text-gray-600">Cette année</span>
+                        <span class="text-sm text-gray-600">This Year</span>
                     </div>
                 </div>
                 <div class="relative h-64">
@@ -167,16 +173,16 @@
                 </div>
                 <div class="mt-4 grid grid-cols-3 gap-4 text-center">
                     <div>
-                        <p class="text-2xl font-bold text-green-600">{{ $dashboardData['testMetrics']['excellent'] }}%</p>
+                        <p class="text-2xl font-bold text-green-600" data-metric="excellent">{{ $dashboardData['testMetrics']['excellent'] }}%</p>
                         <p class="text-xs text-gray-600">Excellent</p>
                     </div>
                     <div>
-                        <p class="text-2xl font-bold text-yellow-600">{{ $dashboardData['testMetrics']['good'] }}%</p>
-                        <p class="text-xs text-gray-600">Bon</p>
+                        <p class="text-2xl font-bold text-yellow-600" data-metric="good">{{ $dashboardData['testMetrics']['good'] }}%</p>
+                        <p class="text-xs text-gray-600">Good</p>
                     </div>
                     <div>
-                        <p class="text-2xl font-bold text-red-600">{{ $dashboardData['testMetrics']['needsImprovement'] }}%</p>
-                        <p class="text-xs text-gray-600">À améliorer</p>
+                        <p class="text-2xl font-bold text-red-600" data-metric="needsImprovement">{{ $dashboardData['testMetrics']['needsImprovement'] }}%</p>
+                        <p class="text-xs text-gray-600">Needs Improvement</p>
                     </div>
                 </div>
             </div>
@@ -184,10 +190,10 @@
             <!-- Top 5 Formateur Performance -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h4 class="text-lg font-semibold text-gray-900">Top 5 Formateurs Performance</h4>
+                    <h4 class="text-lg font-semibold text-gray-900">Top 5 Trainer Performance</h4>
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 bg-purple-500 rounded-full"></span>
-                        <span class="text-sm text-gray-600">Score moyen</span>
+                        <span class="text-sm text-gray-600">Average Score</span>
                     </div>
                 </div>
                 <div class="relative h-64">
@@ -203,10 +209,10 @@
             <!-- Monthly Activity -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h4 class="text-lg font-semibold text-gray-900">Activité Mensuelle</h4>
+                    <h4 class="text-lg font-semibold text-gray-900">Monthly Activity</h4>
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 bg-aptiv-orange-500 rounded-full"></span>
-                        <span class="text-sm text-gray-600">Inscriptions</span>
+                        <span class="text-sm text-gray-600">Registrations</span>
                     </div>
                 </div>
                 <div class="relative h-64">
@@ -262,12 +268,12 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-lg font-bold text-gray-900">{{ $dashboardData['additionalStats']['todayTests'] }}</p>
-                        <p class="text-sm text-gray-600">Tests Aujourd'hui</p>
+                        <p class="text-lg font-bold text-gray-900" data-activity="testsToday">{{ $dashboardData['additionalStats']['todayTests'] }}</p>
+                        <p class="text-sm text-gray-600">Tests Today</p>
                     </div>
                 </div>
                 <div class="mt-2 text-xs text-gray-500">
-                    Moyenne: {{ number_format($dashboardData['additionalStats']['todayTestsAvg'], 1) }}%
+                    Average: <span data-activity="averageScore">{{ number_format($dashboardData['additionalStats']['todayTestsAvg'], 1) }}</span>%
                 </div>
             </div>
 
@@ -768,8 +774,486 @@ window.exportCharts = function() {
     
     // This is a simplified version - you might want to use a library like html2canvas
     console.log('Exporting charts...');
-    alert('Fonctionnalité d\'export en cours de développement');
+    alert('Chart export functionality in development');
 };
+
+// PowerPoint Export Function
+window.exportToPowerPoint = function() {
+    // Show loading state
+    showExportLoadingState();
+    
+    // Import PptxGenJS library dynamically
+    if (typeof PptxGenJS === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js';
+        script.onload = function() {
+            generatePowerPointPresentation();
+        };
+        script.onerror = function() {
+            hideExportLoadingState();
+            alert('Error loading PowerPoint export library. Please try again.');
+        };
+        document.head.appendChild(script);
+    } else {
+        generatePowerPointPresentation();
+    }
+};
+
+function generatePowerPointPresentation() {
+    try {
+        // Create new PowerPoint presentation
+        const pptx = new PptxGenJS();
+        
+        // Set presentation properties
+        pptx.author = 'APTIV Dashboard System';
+        pptx.company = 'APTIV';
+        pptx.title = 'Dashboard Analytics Report';
+        pptx.subject = 'System Performance Analytics';
+        
+        // Define theme colors
+        const colors = {
+            primary: '3B82F6',
+            secondary: '10B981',
+            accent: 'F97316',
+            purple: '8B5CF6',
+            dark: '1F2937',
+            light: 'F9FAFB'
+        };
+        
+        // Get current date
+        const currentDate = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Slide 1: Title Slide
+        const titleSlide = pptx.addSlide();
+        titleSlide.background = { color: colors.light };
+        
+        // Add title
+        titleSlide.addText('APTIV Dashboard Report', {
+            x: 1,
+            y: 2,
+            w: 8,
+            h: 1.5,
+            fontSize: 36,
+            bold: true,
+            color: colors.dark,
+            align: 'center'
+        });
+        
+        // Add subtitle
+        titleSlide.addText('System Performance Analytics', {
+            x: 1,
+            y: 3.5,
+            w: 8,
+            h: 0.8,
+            fontSize: 20,
+            color: colors.primary,
+            align: 'center'
+        });
+        
+        // Add date
+        titleSlide.addText(currentDate, {
+            x: 1,
+            y: 4.5,
+            w: 8,
+            h: 0.5,
+            fontSize: 14,
+            color: colors.dark,
+            align: 'center'
+        });
+        
+        // Add logo or icon (text-based)
+        titleSlide.addText('📊', {
+            x: 4.5,
+            y: 1,
+            w: 1,
+            h: 1,
+            fontSize: 48,
+            align: 'center'
+        });
+        
+        // Slide 2: System Overview
+        const overviewSlide = pptx.addSlide();
+        overviewSlide.background = { color: colors.light };
+        
+        overviewSlide.addText('System Overview', {
+            x: 0.5,
+            y: 0.5,
+            w: 9,
+            h: 0.8,
+            fontSize: 28,
+            bold: true,
+            color: colors.dark
+        });
+        
+        // Get dashboard data from the page
+        const statsData = extractDashboardStats();
+        
+        // Add statistics cards
+        const cardData = [
+            { title: 'Users', value: statsData.users, color: colors.primary, icon: '👥' },
+            { title: 'Processes', value: statsData.processes, color: colors.secondary, icon: '📋' },
+            { title: 'Categories', value: statsData.categories, color: colors.accent, icon: '🏷️' },
+            { title: 'Tests', value: statsData.tests, color: colors.purple, icon: '🧪' },
+            { title: 'Trainers', value: statsData.formateurs, color: colors.primary, icon: '👨‍🏫' }
+        ];
+        
+        cardData.forEach((card, index) => {
+            const x = 0.5 + (index % 3) * 3;
+            const y = 2 + Math.floor(index / 3) * 2;
+            
+            // Add card background
+            overviewSlide.addShape('rect', {
+                x: x,
+                y: y,
+                w: 2.5,
+                h: 1.5,
+                fill: { color: 'FFFFFF' },
+                line: { color: card.color, width: 2 }
+            });
+            
+            // Add icon
+            overviewSlide.addText(card.icon, {
+                x: x + 0.2,
+                y: y + 0.1,
+                w: 0.6,
+                h: 0.6,
+                fontSize: 20,
+                align: 'center'
+            });
+            
+            // Add value
+            overviewSlide.addText(card.value.toString(), {
+                x: x + 0.8,
+                y: y + 0.1,
+                w: 1.5,
+                h: 0.6,
+                fontSize: 24,
+                bold: true,
+                color: card.color,
+                align: 'center'
+            });
+            
+            // Add title
+            overviewSlide.addText(card.title, {
+                x: x + 0.2,
+                y: y + 0.8,
+                w: 2.1,
+                h: 0.5,
+                fontSize: 12,
+                color: colors.dark,
+                align: 'center'
+            });
+        });
+        
+        // Slide 3: User Distribution
+        const userSlide = pptx.addSlide();
+        userSlide.background = { color: colors.light };
+        
+        userSlide.addText('User Distribution by Role', {
+            x: 0.5,
+            y: 0.5,
+            w: 9,
+            h: 0.8,
+            fontSize: 28,
+            bold: true,
+            color: colors.dark
+        });
+        
+        // Add user roles data
+        const userRoles = extractUserRolesData();
+        if (userRoles.length > 0) {
+            userRoles.forEach((role, index) => {
+                const y = 2 + index * 0.8;
+                
+                // Add role name
+                userSlide.addText(role.name, {
+                    x: 1,
+                    y: y,
+                    w: 3,
+                    h: 0.5,
+                    fontSize: 16,
+                    color: colors.dark
+                });
+                
+                // Add count
+                userSlide.addText(role.count.toString(), {
+                    x: 4,
+                    y: y,
+                    w: 1,
+                    h: 0.5,
+                    fontSize: 16,
+                    bold: true,
+                    color: colors.primary
+                });
+                
+                // Add progress bar
+                const percentage = (role.count / statsData.users) * 100;
+                userSlide.addShape('rect', {
+                    x: 5.5,
+                    y: y + 0.1,
+                    w: 3,
+                    h: 0.3,
+                    fill: { color: 'E5E7EB' }
+                });
+                
+                userSlide.addShape('rect', {
+                    x: 5.5,
+                    y: y + 0.1,
+                    w: (percentage / 100) * 3,
+                    h: 0.3,
+                    fill: { color: colors.primary }
+                });
+            });
+        }
+        
+        // Slide 4: Performance Metrics
+        const performanceSlide = pptx.addSlide();
+        performanceSlide.background = { color: colors.light };
+        
+        performanceSlide.addText('Performance Metrics', {
+            x: 0.5,
+            y: 0.5,
+            w: 9,
+            h: 0.8,
+            fontSize: 28,
+            bold: true,
+            color: colors.dark
+        });
+        
+        // Add performance data
+        const testMetrics = extractTestMetrics();
+        
+        const performanceData = [
+            { label: 'Excellent Performance', value: testMetrics.excellent, color: colors.secondary },
+            { label: 'Good Performance', value: testMetrics.good, color: colors.accent },
+            { label: 'Needs Improvement', value: testMetrics.needsImprovement, color: 'DC2626' }
+        ];
+        
+        performanceData.forEach((metric, index) => {
+            const y = 2 + index * 1.2;
+            
+            // Add metric label
+            performanceSlide.addText(metric.label, {
+                x: 1,
+                y: y,
+                w: 4,
+                h: 0.6,
+                fontSize: 18,
+                color: colors.dark
+            });
+            
+            // Add percentage
+            performanceSlide.addText(metric.value + '%', {
+                x: 5,
+                y: y,
+                w: 1.5,
+                h: 0.6,
+                fontSize: 24,
+                bold: true,
+                color: metric.color
+            });
+            
+            // Add progress bar
+            performanceSlide.addShape('rect', {
+                x: 6.5,
+                y: y + 0.15,
+                w: 2,
+                h: 0.3,
+                fill: { color: 'E5E7EB' }
+            });
+            
+            performanceSlide.addShape('rect', {
+                x: 6.5,
+                y: y + 0.15,
+                w: (metric.value / 100) * 2,
+                h: 0.3,
+                fill: { color: metric.color }
+            });
+        });
+        
+        // Slide 5: Recent Activity Summary
+        const activitySlide = pptx.addSlide();
+        activitySlide.background = { color: colors.light };
+        
+        activitySlide.addText('Recent Activity Summary', {
+            x: 0.5,
+            y: 0.5,
+            w: 9,
+            h: 0.8,
+            fontSize: 28,
+            bold: true,
+            color: colors.dark
+        });
+        
+        // Add recent activity data
+        const recentActivity = extractRecentActivity();
+        
+        activitySlide.addText('Recent Tests Completed', {
+            x: 1,
+            y: 2,
+            w: 8,
+            h: 0.5,
+            fontSize: 20,
+            bold: true,
+            color: colors.primary
+        });
+        
+        activitySlide.addText(`• ${recentActivity.testsToday} tests completed today`, {
+            x: 1.5,
+            y: 2.8,
+            w: 7,
+            h: 0.4,
+            fontSize: 16,
+            color: colors.dark
+        });
+        
+        activitySlide.addText(`• Average score: ${recentActivity.averageScore}%`, {
+            x: 1.5,
+            y: 3.2,
+            w: 7,
+            h: 0.4,
+            fontSize: 16,
+            color: colors.dark
+        });
+        
+        activitySlide.addText('New User Registrations', {
+            x: 1,
+            y: 4,
+            w: 8,
+            h: 0.5,
+            fontSize: 20,
+            bold: true,
+            color: colors.secondary
+        });
+        
+        activitySlide.addText(`• ${recentActivity.newUsers} new users registered`, {
+            x: 1.5,
+            y: 4.8,
+            w: 7,
+            h: 0.4,
+            fontSize: 16,
+            color: colors.dark
+        });
+        
+        // Generate and download the presentation
+        const fileName = `APTIV_Dashboard_Report_${new Date().toISOString().split('T')[0]}.pptx`;
+        
+        pptx.writeFile({ fileName: fileName }).then(() => {
+            hideExportLoadingState();
+            showSuccessMessage('PowerPoint presentation exported successfully!');
+        }).catch((error) => {
+            hideExportLoadingState();
+            console.error('Error generating PowerPoint:', error);
+            alert('Error generating PowerPoint presentation. Please try again.');
+        });
+        
+    } catch (error) {
+        hideExportLoadingState();
+        console.error('Error in PowerPoint generation:', error);
+        alert('Error generating PowerPoint presentation. Please try again.');
+    }
+}
+
+// Helper functions to extract data from the dashboard
+function extractDashboardStats() {
+    return {
+        users: parseInt(document.querySelector('[data-stat="users"]')?.textContent || '0'),
+        processes: parseInt(document.querySelector('[data-stat="processes"]')?.textContent || '0'),
+        categories: parseInt(document.querySelector('[data-stat="categories"]')?.textContent || '0'),
+        tests: parseInt(document.querySelector('[data-stat="tests"]')?.textContent || '0'),
+        formateurs: parseInt(document.querySelector('[data-stat="formateurs"]')?.textContent || '0')
+    };
+}
+
+function extractUserRolesData() {
+    const roles = [];
+    document.querySelectorAll('#userRoleLegend .flex.items-center').forEach(item => {
+        const text = item.textContent.trim();
+        const match = text.match(/(.+) \((\d+)\)/);
+        if (match) {
+            roles.push({
+                name: match[1],
+                count: parseInt(match[2])
+            });
+        }
+    });
+    return roles;
+}
+
+function extractTestMetrics() {
+    const excellent = document.querySelector('[data-metric="excellent"]')?.textContent?.replace('%', '') || '0';
+    const good = document.querySelector('[data-metric="good"]')?.textContent?.replace('%', '') || '0';
+    const needsImprovement = document.querySelector('[data-metric="needsImprovement"]')?.textContent?.replace('%', '') || '0';
+    
+    return {
+        excellent: parseInt(excellent),
+        good: parseInt(good),
+        needsImprovement: parseInt(needsImprovement)
+    };
+}
+
+function extractRecentActivity() {
+    const testsToday = document.querySelector('[data-activity="testsToday"]')?.textContent || '0';
+    const averageScore = document.querySelector('[data-activity="averageScore"]')?.textContent || '0';
+    const newUsers = document.querySelector('[data-activity="newUsers"]')?.textContent || '0';
+    
+    return {
+        testsToday: parseInt(testsToday),
+        averageScore: parseFloat(averageScore),
+        newUsers: parseInt(newUsers)
+    };
+}
+
+function showExportLoadingState() {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'export-overlay';
+    overlay.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    overlay.innerHTML = `
+        <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+            <div class="flex items-center justify-center mb-4">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 text-center mb-2">Exporting to PowerPoint</h3>
+            <p class="text-gray-600 text-center text-sm">Please wait while we generate your presentation...</p>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+}
+
+function hideExportLoadingState() {
+    const overlay = document.getElementById('export-overlay');
+    if (overlay) {
+        overlay.remove();
+    }
+}
+
+function showSuccessMessage(message) {
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity';
+    toast.innerHTML = `
+        <div class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Remove toast after 5 seconds
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 5000);
+}
 
 // Refresh dashboard data
 window.refreshDashboard = function() {
