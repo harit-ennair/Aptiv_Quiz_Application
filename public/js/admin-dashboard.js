@@ -453,11 +453,15 @@ class AdminDashboard {
                     </td>                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         ${new Date(process.created_at || process.create_at).toLocaleDateString('fr-FR')}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">                        <button onclick="adminDashboard.editProcess(${process.id})" class="text-aptiv-orange-600 hover:text-aptiv-orange-900 mr-3">
-                            Modifier
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">                        <button onclick="adminDashboard.editProcess(${process.id})" class="text-aptiv-orange-600 hover:text-aptiv-orange-900 mr-3" title="Modifier">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
                         </button>
-                        <button onclick="adminDashboard.deleteProcess(${process.id})" class="text-red-600 hover:text-red-900">
-                            Supprimer
+                        <button onclick="adminDashboard.deleteProcess(${process.id})" class="text-red-600 hover:text-red-900" title="Supprimer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
                         </button>
                     </td>
                 </tr>
@@ -478,11 +482,15 @@ class AdminDashboard {
                     <div class="flex justify-between items-center pt-2 border-t border-gray-100">
                         <span class="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-md">${new Date(process.created_at || process.create_at).toLocaleDateString('fr-FR')}</span>
                         <div class="flex space-x-3">
-                            <button onclick="adminDashboard.editProcess(${process.id})" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 text-sm font-medium transition-colors btn-touch">
-                                Modifier
+                            <button onclick="adminDashboard.editProcess(${process.id})" class="text-aptiv-orange-600 hover:text-aptiv-orange-700 text-sm font-medium transition-colors btn-touch" title="Modifier">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
                             </button>
-                            <button onclick="adminDashboard.deleteProcess(${process.id})" class="text-red-600 hover:text-red-700 text-sm font-medium transition-colors btn-touch">
-                                Supprimer
+                            <button onclick="adminDashboard.deleteProcess(${process.id})" class="text-red-600 hover:text-red-700 text-sm font-medium transition-colors btn-touch" title="Supprimer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
                             </button>
                         </div>
                     </div>
@@ -806,12 +814,16 @@ class AdminDashboard {
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                     <button onclick="adminDashboard.editCategory(${category.id})" 
-                                                            class="text-aptiv-orange-600 hover:text-aptiv-orange-900 transition-colors mr-3">
-                                                        Modifier
+                                                            class="text-aptiv-orange-600 hover:text-aptiv-orange-900 transition-colors mr-3" title="Modifier">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                        </svg>
                                                     </button>
                                                     <button onclick="adminDashboard.deleteCategory(${category.id})" 
-                                                            class="text-red-600 hover:text-red-900 transition-colors">
-                                                        Supprimer
+                                                            class="text-red-600 hover:text-red-900 transition-colors" title="Supprimer">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                        </svg>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -875,12 +887,16 @@ class AdminDashboard {
                                         </span>
                                         <div class="flex space-x-2">
                                             <button onclick="adminDashboard.editCategory(${category.id})" 
-                                                    class="text-aptiv-orange-600 hover:text-aptiv-orange-700 text-xs font-medium transition-colors btn-touch">
-                                                Modifier
+                                                    class="text-aptiv-orange-600 hover:text-aptiv-orange-700 text-xs font-medium transition-colors btn-touch" title="Modifier">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                </svg>
                                             </button>
                                             <button onclick="adminDashboard.deleteCategory(${category.id})" 
-                                                    class="text-red-600 hover:text-red-700 text-xs font-medium transition-colors btn-touch">
-                                                Supprimer
+                                                    class="text-red-600 hover:text-red-700 text-xs font-medium transition-colors btn-touch" title="Supprimer">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
                                             </button>
                                         </div>
                                     </div>
