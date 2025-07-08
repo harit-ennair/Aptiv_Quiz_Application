@@ -1341,7 +1341,7 @@ function exportTests() {
         // Determine type based on score
         let type = 'Échec';
         if (test.pourcentage >= 75) {
-            type = 'Pass';
+            type = 'Reușit';
         } else if (test.is_retake) {
             type = 'Repris';
         }
@@ -1359,7 +1359,7 @@ function exportTests() {
         ];
     });
     
-    const headers = ['Nom', 'Prénom', 'ID', 'Processus', 'Catégorie', 'Formateur', 'Score (%)', 'Date', 'Type'];
+    const headers = ['Prénom', 'Nom', 'ID', 'Processus', 'Catégorie', 'Formateur', 'Score (%)', 'Date', 'Rezultat'];
     
     // Create workbook and worksheet
     const wb = XLSX.utils.book_new();
@@ -1412,7 +1412,7 @@ function exportTests() {
         // Type column styling
         if (ws[typeCell]) {
             const typeValue = excelData[row - 1][8];
-            if (typeValue === 'Pass') {
+            if (typeValue === 'Reușit') {
                 ws[typeCell].s = { fill: { fgColor: { rgb: "10B981" } }, font: { color: { rgb: "FFFFFF" }, bold: true } };
             } else if (typeValue === 'Repris') {
                 ws[typeCell].s = { fill: { fgColor: { rgb: "8B5CF6" } }, font: { color: { rgb: "FFFFFF" } } };
@@ -1445,7 +1445,7 @@ function exportTestsCSV() {
     const csvData = filteredTests.map(test => {
         let type = 'Échec';
         if (test.pourcentage >= 75) {
-            type = 'Pass';
+            type = 'Reușit';
         } else if (test.is_retake) {
             type = 'Repris';
         }
@@ -1463,7 +1463,7 @@ function exportTestsCSV() {
         ];
     });
     
-    const headers = ['Nom', 'Prénom', 'ID', 'Processus', 'Catégorie', 'Formateur', 'Score (%)', 'Date', 'Type'];
+    const headers = ['Nom', 'Prénom', 'ID', 'Processus', 'Catégorie', 'Formateur', 'Score (%)', 'Date', 'Rezultat'];
     const csv = [headers, ...csvData].map(row => row.join(',')).join('\n');
     
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
