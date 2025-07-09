@@ -25,6 +25,8 @@ class UpdatetestRequest extends FormRequest
             'user_id' => 'sometimes|exists:users,id',
             'description' => 'nullable|string|max:1000',
             'formateur_id' => 'sometimes|exists:formateurs,id',
+            'process_id' => 'nullable|exists:processes,id',
+            'category_id' => 'nullable|exists:categories,id',
             'resultat' => 'sometimes|integer|min:0|max:100',
             'pourcentage' => 'sometimes|integer|min:0|max:100',
         ];

@@ -25,4 +25,9 @@ class categories extends Model
     {
         return $this->hasMany(quz::class, 'categories_id');
     }
+
+    public function tests()
+    {
+        return $this->hasMany(test::class, 'category_id');
+    }
 }

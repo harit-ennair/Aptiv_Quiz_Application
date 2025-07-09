@@ -491,14 +491,38 @@ function loadTestsData() {
 
 function processTestsData() {
     allTests = allTests.map(test => {
-        // Add category and process names based on questions
-        if (test.quzs && test.quzs.length > 0) {
+        // First priority: use direct relationships (new approach)
+        if (test.process_name && test.category_name) {
+            // Data already processed by the API
+            return test;
+        }
+        
+        // Second priority: use direct relationship objects
+        if (test.process && test.process.title) {
+            test.process_name = test.process.title;
+            test.process_id = test.process.id;
+        }
+        
+        if (test.category && test.category.title) {
+            test.category_name = test.category.title;
+            test.category_id = test.category.id;
+            
+            // If category has a process, use that as well
+            if (test.category.process && test.category.process.title) {
+                test.process_name = test.category.process.title;
+                test.process_id = test.category.process.id;
+            }
+        }
+        
+        // Fallback: use questions relationships (legacy approach)
+        if (!test.category_name && test.quzs && test.quzs.length > 0) {
             const firstQuestion = test.quzs[0];
             if (firstQuestion.category) {
                 test.category_name = firstQuestion.category.title;
                 test.category_id = firstQuestion.category.id;
                 if (firstQuestion.category.process) {
                     test.process_name = firstQuestion.category.process.title;
+                    test.process_id = firstQuestion.category.process.id;
                 }
             }
         }
@@ -546,8 +570,11 @@ function loadSampleData() {
             id: 1,
             user: { name: 'John', last_name: 'Doe', identification: '12345' },
             formateur: { name: 'Marie', last_name: 'Dupont' },
+            process: { id: 1, title: 'Process d\'assemblage' },
+            category: { id: 1, title: 'Ultra-sonic Welding' },
+            process_name: 'Process d\'assemblage',
             category_name: 'Ultra-sonic Welding',
-            process_name: 'Assemblage',
+            process_id: 1,
             category_id: 1,
             formateur_id: 1,
             pourcentage: 85,
@@ -558,8 +585,11 @@ function loadSampleData() {
             id: 2,
             user: { name: 'Jane', last_name: 'Smith', identification: '67890' },
             formateur: { name: 'Pierre', last_name: 'Martin' },
+            process: { id: 2, title: 'Process de contrôle' },
+            category: { id: 2, title: 'Quality Control' },
+            process_name: 'Process de contrôle',
             category_name: 'Quality Control',
-            process_name: 'Contrôle',
+            process_id: 2,
             category_id: 2,
             formateur_id: 2,
             pourcentage: 72,
@@ -570,8 +600,11 @@ function loadSampleData() {
             id: 3,
             user: { name: 'Mike', last_name: 'Johnson', identification: '11111' },
             formateur: { name: 'Sophie', last_name: 'Bernard' },
+            process: { id: 1, title: 'Process d\'assemblage' },
+            category: { id: 3, title: 'Safety Procedures' },
+            process_name: 'Process d\'assemblage',
             category_name: 'Safety Procedures',
-            process_name: 'Sécurité',
+            process_id: 1,
             category_id: 3,
             formateur_id: 3,
             pourcentage: 45,
@@ -582,8 +615,11 @@ function loadSampleData() {
             id: 4,
             user: { name: 'Alice', last_name: 'Wonder', identification: '22222' },
             formateur: { name: 'Paul', last_name: 'Durand' },
+            process: { id: 3, title: 'Process de production' },
+            category: { id: 4, title: 'Assembly Line' },
+            process_name: 'Process de production',
             category_name: 'Assembly Line',
-            process_name: 'Production',
+            process_id: 3,
             category_id: 4,
             formateur_id: 4,
             pourcentage: 78,
@@ -594,8 +630,11 @@ function loadSampleData() {
             id: 5,
             user: { name: 'Bob', last_name: 'Builder', identification: '33333' },
             formateur: { name: 'Claire', last_name: 'Moreau' },
+            process: { id: 2, title: 'Process de contrôle' },
+            category: { id: 5, title: 'Quality Assurance' },
+            process_name: 'Process de contrôle',
             category_name: 'Quality Assurance',
-            process_name: 'Contrôle',
+            process_id: 2,
             category_id: 5,
             formateur_id: 5,
             pourcentage: 55,
@@ -1341,7 +1380,7 @@ function exportTests() {
         // Determine type based on score
         let type = 'Échec';
         if (test.pourcentage >= 75) {
-            type = 'Reușit';
+            type = 'Réussi';
         } else if (test.is_retake) {
             type = 'Repris';
         }
@@ -1359,7 +1398,7 @@ function exportTests() {
         ];
     });
     
-    const headers = ['Prénom', 'Nom', 'ID', 'Processus', 'Catégorie', 'Formateur', 'Score (%)', 'Date', 'Rezultat'];
+    const headers = ['Prénom', 'Nom', 'ID', 'Processus', 'Catégorie', 'Formateur', 'Score (%)', 'Date', 'Résultat'];
     
     // Create workbook and worksheet
     const wb = XLSX.utils.book_new();
@@ -1412,7 +1451,7 @@ function exportTests() {
         // Type column styling
         if (ws[typeCell]) {
             const typeValue = excelData[row - 1][8];
-            if (typeValue === 'Reușit') {
+            if (typeValue === 'Réussi') {
                 ws[typeCell].s = { fill: { fgColor: { rgb: "10B981" } }, font: { color: { rgb: "FFFFFF" }, bold: true } };
             } else if (typeValue === 'Repris') {
                 ws[typeCell].s = { fill: { fgColor: { rgb: "8B5CF6" } }, font: { color: { rgb: "FFFFFF" } } };

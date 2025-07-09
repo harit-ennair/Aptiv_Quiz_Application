@@ -22,7 +22,12 @@ class UserTestController extends Controller
     {
         $categories = categories::with('process')->get();
         $formateurs = formateur::all();
+        
+        // Get selected category ID from request or use the first category
         $selectedCategoryId = $request->get('category_id');
+        if (!$selectedCategoryId && $categories->count() > 0) {
+            $selectedCategoryId = $categories->first()->id;
+        }
         
         return view('quiz.test-registration', compact('categories', 'formateurs', 'selectedCategoryId'));
     }
@@ -36,6 +41,7 @@ class UserTestController extends Controller
             'last_name' => 'required|string|max:255',
             'identification' => 'required|integer',
             'category_id' => 'required|exists:categories,id',
+            'process_id' => 'nullable|exists:processes,id',
             'formateur_id' => 'required|exists:formateurs,id',
         ]);        // Get employee role (assuming role_id 3 is for employees)
         $employeeRole = roles::where('name', 'employee')->first();
@@ -80,11 +86,16 @@ class UserTestController extends Controller
             $existingTest->delete();
         }
         
+        // Use process_id from form or get it from category if not provided
+        $processId = $request->process_id ?? $category->process_id;
+        
         // Create new test record with automatic date
         $test = test::create([
             'user_id' => $user->id,
             'formateur_id' => $request->formateur_id,
             'description' => $testDescription,
+            'category_id' => $request->category_id,
+            'process_id' => $processId,
             'resultat' => 0, // Will be updated after test completion
             'pourcentage' => 0, // Will be calculated after test completion
             'create_at' => now()->format('Y-m-d'),

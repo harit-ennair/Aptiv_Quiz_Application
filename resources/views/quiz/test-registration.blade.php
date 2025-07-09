@@ -93,16 +93,33 @@
                         </svg>
                         Configuration du Test
                     </h3>                    
-                    <!-- Hidden category field -->
-                    <select name="category_id" id="category_id" required style="display: none;">
-                        <option value="">Sélectionner une catégorie</option>
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}" 
-                                    {{ (old('category_id') == $category->id || (isset($selectedCategoryId) && $selectedCategoryId == $category->id)) ? 'selected' : '' }}>
-                                {{ $category->title }} ({{ $category->process->title }})
-                            </option>
-                        @endforeach
-                    </select>
+                    <!-- Category field (hidden) -->
+                    <div style="display: none;">
+                        <select name="category_id" id="category_id" required>
+                            <option value="">Sélectionner une catégorie</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" 
+                                        data-process-id="{{ $category->process_id }}"
+                                        {{ (old('category_id') == $category->id || (isset($selectedCategoryId) && $selectedCategoryId == $category->id)) ? 'selected' : '' }}>
+                                    {{ $category->title }} ({{ $category->process->title }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <!-- Champ caché pour process_id -->
+                        <input type="hidden" name="process_id" id="process_id" value="{{ old('process_id') }}">
+                    </div>
+                    
+                    <!-- Display selected category info -->
+                    @if(isset($selectedCategoryId) && $selectedCategoryId)
+                    <div class="bg-aptiv-orange-100 border border-aptiv-orange-300 rounded-lg p-3 mb-4">
+                        <p class="text-aptiv-orange-800 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-aptiv-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Catégorie sélectionnée: <strong class="ml-1">{{ $categories->firstWhere('id', $selectedCategoryId)->title }}</strong>
+                        </p>
+                    </div>
+                    @endif
                     
                     <div class="grid grid-cols-1 gap-6">
                         <div>
@@ -167,6 +184,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('testRegistrationForm');
     const identificationInput = document.getElementById('identification');
     const categorySelect = document.getElementById('category_id');
+    const processIdInput = document.getElementById('process_id');
+    
+    // Ensure category is selected automatically
+    function ensureCategorySelected() {
+        if (categorySelect.options.length > 1 && !categorySelect.value) {
+            // If no category is selected but we have options, select the first non-empty option
+            for (let i = 0; i < categorySelect.options.length; i++) {
+                if (categorySelect.options[i].value) {
+                    categorySelect.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+        updateProcessId();
+    }
+    
+    // Function to update process_id automatically
+    function updateProcessId() {
+        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+        if (selectedOption && selectedOption.dataset.processId) {
+            processIdInput.value = selectedOption.dataset.processId;
+        } else {
+            processIdInput.value = '';
+        }
+    }
+    
+    // Call functions when page loads and when category changes
+    ensureCategorySelected();
+    categorySelect.addEventListener('change', updateProcessId);
     
     // Create warning area
     const warningArea = document.createElement('div');
@@ -229,9 +275,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const categoryId = document.getElementById('category_id').value;
         const formateurId = document.getElementById('formateur_id').value;
         
-        if (!categoryId || !formateurId) {
+        if (!formateurId) {
             e.preventDefault();
-            alert('Veuillez sélectionner une catégorie et un formateur.');
+            alert('Veuillez sélectionner un formateur.');
+            return;
+        }
+        
+        if (!categoryId) {
+            e.preventDefault();
+            alert('Erreur: Aucune catégorie sélectionnée. Veuillez rafraîchir la page.');
             return;
         }
         

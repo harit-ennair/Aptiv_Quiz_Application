@@ -13,6 +13,8 @@ class test extends Model
         'user_id',
         'description',
         'formateur_id',
+        'process_id',
+        'category_id',
         'pourcentage',
         'resultat',
     ];
@@ -26,6 +28,16 @@ class test extends Model
     public function formateur()
     {
         return $this->belongsTo(formateur::class, 'formateur_id');
+    }
+
+    public function process()
+    {
+        return $this->belongsTo(process::class, 'process_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(categories::class, 'category_id');
     }
 
     public function quzs()

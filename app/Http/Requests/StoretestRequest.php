@@ -25,6 +25,8 @@ class StoretestRequest extends FormRequest
             'user_id' => 'required|exists:users,id',
             'description' => 'nullable|string|max:1000',
             'formateur_id' => 'required|exists:formateurs,id',
+            'process_id' => 'nullable|exists:processes,id',
+            'category_id' => 'nullable|exists:categories,id',
             'resultat' => 'required|integer|min:0|max:100',
             'pourcentage' => 'required|integer|min:0|max:100',
         ];

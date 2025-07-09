@@ -19,4 +19,9 @@ protected $fillable = [
     {
         return $this->hasMany(categories::class, 'process_id');
     }
+
+    public function tests()
+    {
+        return $this->hasMany(test::class, 'process_id');
+    }
 }

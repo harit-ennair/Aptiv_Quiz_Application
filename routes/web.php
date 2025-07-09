@@ -109,3 +109,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
     });
 });
+
+// Test route for API verification
+Route::get('/test-api', function () {
+    return view('test-api');
+});
