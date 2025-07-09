@@ -29,7 +29,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'identification' => 'required|numeric',
-            'password' => 'required|string|min:2',
+            'password' => 'required|string|min:1',
         ]);
 
         // Attempt to find user by identification
