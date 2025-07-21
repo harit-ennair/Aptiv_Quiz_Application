@@ -107,6 +107,7 @@ class CategoriesSeeder extends Seeder
             'Ulmer',
             'Sealing',
             'Beri.Co.Cut',
+            'Beri.Co.Cut.V3',
             'SVM',
             'BT 188 T',
             'BT 288',
@@ -117,6 +118,7 @@ class CategoriesSeeder extends Seeder
             'Workman machine',
             'Schleuniger Dénudage',
             'Rework',
+            'Coupe.des.Tuyaux',
             'Torsade',
         ];
 
