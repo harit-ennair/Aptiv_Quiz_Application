@@ -30,7 +30,6 @@ class CategoriesSeeder extends Seeder
             'Emballage',
             'Ultra-sonic Welding',
             'Sealing',
-            'Workman Machine',
             'Vision Machine',
             'Epissure UCAB',
             'Ring terminal',
@@ -95,7 +94,7 @@ class CategoriesSeeder extends Seeder
 
         // Categories for Process de LP
         $lpCategories = [
-            'kabatec',
+            'Kabatec',
             'C. Contention',
             'Sertissage',
             'Etamage Manuel',
