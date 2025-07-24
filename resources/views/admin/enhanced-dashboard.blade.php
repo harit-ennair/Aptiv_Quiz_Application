@@ -471,7 +471,6 @@
                     </svg>
                     <span class="truncate font-medium">Gestion Utilisateurs</span>
                 </a>
-                @endif
                 
                 <a href="#" onclick="showSection('formateurs')" class="nav-link flex items-center px-3 py-3 text-gray-700 hover:bg-aptiv-orange-50 hover:text-aptiv-orange-600 rounded-xl transition-all duration-200">
                     <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -479,7 +478,8 @@
                     </svg>
                     <span class="truncate font-medium">Formateurs</span>
                 </a>
-                
+                @endif
+
                 <a href="#" onclick="showSection('employees')" class="nav-link flex items-center px-3 py-3 text-gray-700 hover:bg-aptiv-orange-50 hover:text-aptiv-orange-600 rounded-xl transition-all duration-200">
                     <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.916-.75M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.916-.75M7 20v-2c0-.656.126-1.283.356-1.857M12 4a4 4 0 100 8 4 4 0 000-8zm-8 8a2 2 0 100-4 2 2 0 000 4zm16 0a2 2 0 100-4 2 2 0 000 4z"></path>
